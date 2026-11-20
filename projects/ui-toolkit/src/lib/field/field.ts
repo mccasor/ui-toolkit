@@ -58,7 +58,7 @@ export const UI_FIELD = new InjectionToken<FieldContext>('UI_FIELD');
   styles: `
     :host { display: grid; gap: 0.375rem; min-width: 0; }
     .label { font-size: var(--ui-type-label-size); font-weight: var(--ui-type-label-weight); color: var(--ui-text); }
-    .req { color: var(--ui-danger-text); margin-inline-start: 0.125rem; }
+    .req { color: var(--ui-danger-text); }
     .hint { margin: 0; font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
     .error { margin: 0; display: flex; gap: 0.375rem; align-items: flex-start; font-size: var(--ui-font-size-sm); line-height: 1.25rem; font-weight: 600; color: var(--ui-danger-text); }
     .error svg { flex: none; margin-top: 0.125rem; }

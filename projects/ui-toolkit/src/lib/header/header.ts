@@ -88,13 +88,15 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       margin-top: 0.125rem;
       font-size: var(--ui-font-size-micro);
       font-weight: 700;
-      line-height: 1rem;
+      line-height: 0.75rem;
       text-transform: uppercase;
       letter-spacing: var(--ui-tracking-tagline);
       color: var(--ui-text-muted);
-      white-space: nowrap;
+      /* come in Torneo: va a capo (max 2 righe) invece di troncare */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
     .actions { display: flex; align-items: center; gap: 0.5rem; flex: none; }
   `,
