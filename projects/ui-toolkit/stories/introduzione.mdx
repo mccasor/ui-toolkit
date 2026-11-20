@@ -1,0 +1,37 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduzione" />
+
+# ui-toolkit
+
+Libreria di componenti Angular del design system **C85 glass**: vetro caldo su sfondo vivo, un solo colore d'azione (arancio), numeri in condensed.
+
+- **Token** (`ui-toolkit/tokens`): unica fonte in `tokens.ts` → `tokens.css` (custom properties `--ui-*`, `--bo-*`, `--brand-*`) e `tailwind-preset.css` (`@theme inline`).
+- **Componenti** (`ui-toolkit`): standalone, `input()`/`model()`, `OnPush`, compatibili zoneless. Solo token, nessun colore letterale.
+- **Temi**: light, dark (attributo `data-theme` su `<html>`, senza attributo segue il sistema) e backoffice (classe `.bo` sul contenitore).
+
+## Toolbar
+
+| Controllo | Effetto |
+| --- | --- |
+| Tema | light · dark · sistema · backoffice · backoffice dark |
+| Motion | simula `prefers-reduced-motion: reduce` (`data-motion="reduce"`) |
+| Trasparenza | simula `prefers-reduced-transparency: reduce` (`data-transparency="reduce"`) |
+| Contrasto | simula `prefers-contrast: more` (`data-contrast="more"`) |
+| Viewport | Mobile 390 · Desktop 1280 |
+
+## Installazione
+
+```css
+@import 'ui-toolkit/styles/fonts.css';
+@import 'ui-toolkit/styles/tokens.css';
+@import 'ui-toolkit/styles/base.css';
+/* opzionale, con Tailwind 4 */
+@import 'tailwindcss';
+@import 'ui-toolkit/styles/tailwind-preset.css';
+```
+
+```html
+<link rel="preload" href="/ui-toolkit/styles/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/ui-toolkit/styles/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+```

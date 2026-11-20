@@ -1,0 +1,25 @@
+{
+  "name": "ui-toolkit",
+  "version": "0.1.0",
+  "peerDependencies": {
+    "@angular/common": "^22.3.0",
+    "@angular/core": "^22.3.0",
+    "@angular/cdk": "^22.3.0",
+    "chart.js": "^4.4.0"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./src/public-api.ts",
+    "./tokens": "./tokens/src/public-api.ts",
+    "./styles/*": "./styles/*"
+  },
+  "description": "C85 glass design system: componenti Angular + token (ui-toolkit/tokens).",
+  "license": "UNLICENSED",
+  "peerDependenciesMeta": {
+    "chart.js": {
+      "optional": true
+    }
+  }
+}

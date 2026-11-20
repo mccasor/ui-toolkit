@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "ui-toolkit": {
+      "projectType": "library",
+      "root": "projects/ui-toolkit",
+      "sourceRoot": "projects/ui-toolkit",
+      "prefix": "ui",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:library",
+          "options": {
+            "tsConfig": "projects/ui-toolkit/tsconfig.lib.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/ui-toolkit/styles",
+                "output": "styles"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {},
+            "development": {
+              "compilationMode": "full",
+              "declarationMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/ui-toolkit/tsconfig.spec.json",
+            "include": [
+              "src/**/*.spec.ts"
+            ]
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular-vite:start-storybook",
+          "options": {
+            "configDir": "projects/ui-toolkit/.storybook",
+            "browserTarget": "ui-toolkit:build",
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular-vite:build-storybook",
+          "options": {
+            "configDir": "projects/ui-toolkit/.storybook",
+            "browserTarget": "ui-toolkit:build",
+            "outputDir": "storybook-static"
+          }
+        }
+      }
+    }
+  }
+}
