@@ -21,3 +21,7 @@ export * from './lib/tab-carousel/tab-carousel';
 export * from './lib/header/header';
 export * from './lib/tab-bar/tab-bar';
 export * from './lib/chart/chart';
+export * from './lib/color-swatches/color-swatches';
+export * from './lib/image-input/image-input';
+export * from './lib/sticky-bar/sticky-bar';
+export * from './lib/footer/footer';
