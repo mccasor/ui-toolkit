@@ -17,7 +17,9 @@ const NAMED =
 export function findLiteralColors(source: string): string[] {
   // i commenti possono citare valori del documento
   const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
-  return [...(code.match(HEX) ?? []), ...(code.match(FN) ?? []), ...(code.match(NAMED) ?? [])];
+  // i nomi dentro var(--…) sono token, non colori
+  const noVars = code.replace(/var\(--[\w-]+/g, 'var(--x');
+  return [...(code.match(HEX) ?? []), ...(code.match(FN) ?? []), ...(noVars.match(NAMED) ?? [])];
 }
 
 function walk(dir: string): string[] {
@@ -37,6 +39,8 @@ describe('Nessun colore letterale nei componenti', () => {
     expect(findLiteralColors('<input #trigger>')).toEqual([]);
     expect(findLiteralColors('avatarColors(this.name(), this.color())')).toEqual([]);
     expect(findLiteralColors('a { color: color(srgb 1 0 0); }')).toHaveLength(1);
+    expect(findLiteralColors('a { color: var(--brand-orange); }')).toEqual([]);
+    expect(findLiteralColors('a { color: var(--x, orange); }')).toHaveLength(1);
   });
 
   const files = walk(LIB);

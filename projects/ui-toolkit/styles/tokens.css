@@ -125,6 +125,8 @@
   --ui-z-tab-bar: 1000;
   --ui-z-toast: 1100;
   --ui-z-skip-link: 1200;
+  --ui-logo-tile-from: #2C2C30;
+  --ui-logo-tile-to: #0F0F10;
   --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ui-duration-micro: 160ms;
   --ui-duration-card: 200ms;
@@ -192,6 +194,7 @@
   --ui-backdrop: rgb(15 15 16 / 0.45);
   --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .6) inset, 0 10px 30px -12px rgb(90 50 0 / .25), 0 2px 6px -2px rgb(30 30 30 / .08);
   --ui-shadow-float: 0 18px 40px -16px rgb(30 30 30 / .4), 0 4px 12px -4px rgb(30 30 30 / .15);
+  --ui-shadow-header: 0 8px 24px -18px rgb(30 30 30 / .4);
   --ui-mesh-alpha: 0.45;
   --bo-bg: #F3F2F0;
   --bo-surface: #FFFFFF;
@@ -249,6 +252,7 @@
     --ui-backdrop: rgb(15 15 16 / 0.45);
     --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6);
     --ui-shadow-float: 0 18px 40px -12px rgb(0 0 0 / .7);
+    --ui-shadow-header: 0 8px 24px -18px rgb(0 0 0 / .7);
     --ui-mesh-alpha: 0.30;
     --bo-bg: #111112;
     --bo-surface: #1B1B1D;
@@ -306,6 +310,7 @@
   --ui-backdrop: rgb(15 15 16 / 0.45);
   --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6);
   --ui-shadow-float: 0 18px 40px -12px rgb(0 0 0 / .7);
+  --ui-shadow-header: 0 8px 24px -18px rgb(0 0 0 / .7);
   --ui-mesh-alpha: 0.30;
   --bo-bg: #111112;
   --bo-surface: #1B1B1D;

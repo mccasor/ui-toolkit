@@ -17,6 +17,7 @@ import {
   TRACKING,
   TYPE,
   Z,
+  LOGO_TILE,
   type BackofficeTokens,
   type ThemeTokens,
 } from './tokens';
@@ -72,6 +73,7 @@ export function staticDecls(): Decl[] {
   for (const [k, v] of Object.entries(LAYOUT.controlHeight)) d.push([`--ui-control-height-${k}`, v]);
   for (const [k, v] of Object.entries(LAYOUT.buttonPaddingX)) d.push([`--ui-button-padding-x-${k}`, v]);
   for (const [k, v] of Object.entries(Z)) d.push([`--ui-z-${kebab(k)}`, v]);
+  d.push(['--ui-logo-tile-from', LOGO_TILE.from], ['--ui-logo-tile-to', LOGO_TILE.to]);
   d.push(['--ui-ease', MOTION.ease]);
   for (const [k, v] of Object.entries(MOTION.duration)) d.push([`--ui-duration-${kebab(k)}`, v]);
   d.push(

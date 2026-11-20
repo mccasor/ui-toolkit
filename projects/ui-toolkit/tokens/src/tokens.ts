@@ -60,6 +60,8 @@ export interface ThemeTokens {
   backdrop: string;
   shadowGlass: string;
   shadowFloat: string;
+  /** ombra header "0 8px 24px -18px": il documento non dà il colore → @derived ink (light) / nero (dark) come le altre ombre */
+  shadowHeader: string;
   meshAlpha: string;
 }
 
@@ -104,6 +106,7 @@ export const THEMES: { light: ThemeTokens; dark: ThemeTokens } = {
     shadowGlass:
       '0 1px 0 0 rgb(255 255 255 / .6) inset, 0 10px 30px -12px rgb(90 50 0 / .25), 0 2px 6px -2px rgb(30 30 30 / .08)',
     shadowFloat: '0 18px 40px -16px rgb(30 30 30 / .4), 0 4px 12px -4px rgb(30 30 30 / .15)',
+    shadowHeader: '0 8px 24px -18px rgb(30 30 30 / .4)',
     meshAlpha: '0.45',
   },
   dark: {
@@ -145,6 +148,7 @@ export const THEMES: { light: ThemeTokens; dark: ThemeTokens } = {
     backdrop: 'rgb(15 15 16 / 0.45)',
     shadowGlass: '0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6)',
     shadowFloat: '0 18px 40px -12px rgb(0 0 0 / .7)',
+    shadowHeader: '0 8px 24px -18px rgb(0 0 0 / .7)',
     meshAlpha: '0.30',
   },
 };
@@ -371,6 +375,9 @@ export const Z = {
 } as const;
 
 /* ------------------------------------------------------------- Ombre */
+
+/** Tile del logo nell'header: gradiente scuro #2c2c30 → #0f0f10 (uguale nei temi). */
+export const LOGO_TILE = { from: '#2C2C30', to: '#0F0F10' } as const;
 
 export const SHADOW = {
   light: { glass: THEMES.light.shadowGlass, float: THEMES.light.shadowFloat },
