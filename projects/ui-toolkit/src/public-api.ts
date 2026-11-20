@@ -16,3 +16,5 @@ export * from './lib/empty-state/empty-state';
 export * from './lib/stat/stat';
 export * from './lib/table/table';
 export * from './lib/avatar/avatar';
+export * from './lib/carousel/carousel';
+export * from './lib/tab-carousel/tab-carousel';
