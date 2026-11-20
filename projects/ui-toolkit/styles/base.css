@@ -45,8 +45,14 @@ h3 {
 }
 
 .bo {
-  background: var(--ui-bg);
   color: var(--ui-text);
+}
+
+/* Backdrop degli overlay (dialog, sheet): rgb(15 15 16 / .45) + blur 4px */
+.ui-overlay-backdrop {
+  background: var(--ui-backdrop);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 
 /* -------------------------------------------------- Sfondo mesh */

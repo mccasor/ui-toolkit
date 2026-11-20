@@ -9,3 +9,4 @@ export * from './lib/spinner/spinner';
 export * from './lib/skeleton/skeleton';
 export * from './lib/field/field';
 export * from './lib/segmented/segmented';
+export * from './lib/select/select';

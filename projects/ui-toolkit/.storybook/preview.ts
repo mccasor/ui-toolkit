@@ -97,6 +97,8 @@ const preview: Preview = {
     a11y: {
       // Le violazioni axe fanno fallire i test delle storie.
       test: 'error',
+      // tutto il body dell'iframe: include gli overlay CDK (select, dialog, toast) montati fuori da #storybook-root
+      context: 'body',
       options: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] } },
     },
     options: {
