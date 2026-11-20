@@ -10,3 +10,4 @@ export * from './lib/skeleton/skeleton';
 export * from './lib/field/field';
 export * from './lib/segmented/segmented';
 export * from './lib/select/select';
+export * from './lib/dialog/dialog';

@@ -16,6 +16,17 @@ const config: StorybookConfig = {
       'ui-toolkit/tokens': resolve(import.meta.dirname, '../tokens/src/public-api.ts'),
       'ui-toolkit': resolve(import.meta.dirname, '../src/public-api.ts'),
     };
+    // pre-bundle delle dipendenze caricate dai componenti, evita il reload a metà dei test
+    cfg.optimizeDeps ??= {};
+    cfg.optimizeDeps.include = [
+      ...(cfg.optimizeDeps.include ?? []),
+      '@angular/cdk/dialog',
+      '@angular/cdk/overlay',
+      '@angular/cdk/portal',
+      '@angular/cdk/a11y',
+      'rxjs',
+      'chart.js/auto',
+    ];
     return cfg;
   },
 };

@@ -214,6 +214,30 @@ body::before,
   border: 0;
 }
 
+/* -------------------------------------------------- Dialog / sheet */
+
+.ui-dialog-surface {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: inherit;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--ui-radius-card);
+  color: var(--ui-text);
+  box-shadow: var(--ui-shadow-float);
+  outline: none;
+}
+.ui-dialog-pane--center .ui-dialog-surface {
+  animation: ui-pop-in var(--ui-duration-dialog) var(--ui-ease) both;
+}
+.ui-dialog-pane--sheet .ui-dialog-surface {
+  border-bottom: 0;
+  border-radius: var(--ui-radius-card) var(--ui-radius-card) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: ui-sheet-up var(--ui-duration-sheet) var(--ui-ease) both;
+}
+
 /* -------------------------------------------------------- Layout */
 
 .ui-container {
