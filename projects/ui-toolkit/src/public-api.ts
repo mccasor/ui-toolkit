@@ -18,3 +18,5 @@ export * from './lib/table/table';
 export * from './lib/avatar/avatar';
 export * from './lib/carousel/carousel';
 export * from './lib/tab-carousel/tab-carousel';
+export * from './lib/header/header';
+export * from './lib/tab-bar/tab-bar';
