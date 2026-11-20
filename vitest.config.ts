@@ -22,7 +22,7 @@ export default defineConfig({
         },
       },
       {
-        plugins: [storybookAngularVitest({ zoneless: true, tsConfig: 'projects/ui-toolkit/.storybook/tsconfig.json' }), storybookTest({ configDir })],
+        plugins: [storybookAngularVitest({ zoneless: true, tsConfig: path.join(configDir, 'tsconfig.json') }), storybookTest({ configDir })],
         test: {
           name: 'storybook',
           browser: {

@@ -3,8 +3,8 @@ import type { StorybookConfig } from '@storybook/angular-vite';
 
 const config: StorybookConfig = {
   stories: ['../stories/**/*.mdx', '../stories/**/*.stories.ts', '../src/**/*.mdx', '../src/**/*.stories.ts'],
-  addons: ['@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs'],
-  framework: '@storybook/angular-vite',
+  addons: ['@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs', 'storybook-addon-pseudo-states'],
+  framework: { name: '@storybook/angular-vite', options: { tsconfig: resolve(import.meta.dirname, 'tsconfig.json') } },
   // Stili e font serviti così come verranno pubblicati (nessuna CDN).
   staticDirs: [{ from: '../styles', to: '/ui-toolkit/styles' }],
   docs: { defaultName: 'Docs' },
