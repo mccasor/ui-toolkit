@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 const LIB = resolve(import.meta.dirname, '../src/lib');
 
 const HEX = /(?<![\w&/-])#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b/gi;
-const FN = /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
+const FN = /(?<![.\w$])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
 const NAMED =
   /\b(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left))?(?:-color)?|outline(?:-color)?|fill|stroke|box-shadow|text-decoration-color|caret-color|accent-color)\s*:\s*[^;`'"]*\b(?:white|black|red|green|blue|orange|yellow|gray|grey|silver|purple|pink)\b/gi;
 
@@ -35,6 +35,8 @@ describe('Nessun colore letterale nei componenti', () => {
     expect(findLiteralColors('a { border-color: white; }')).toHaveLength(1);
     expect(findLiteralColors('a { color: var(--ui-text); background: transparent; }')).toEqual([]);
     expect(findLiteralColors('<input #trigger>')).toEqual([]);
+    expect(findLiteralColors('avatarColors(this.name(), this.color())')).toEqual([]);
+    expect(findLiteralColors('a { color: color(srgb 1 0 0); }')).toHaveLength(1);
   });
 
   const files = walk(LIB);

@@ -27,7 +27,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { avatarColors, initials } from 'ui-toolkit/tokens';
+import { Avatar, TeamLogo } from '../avatar/avatar';
 import { UI_FIELD } from '../field/field';
 import { uniqueId } from '../util/id';
 import { mediaQuery } from '../util/media';
@@ -68,7 +68,7 @@ const normalize = (s: string) =>
  */
 @Component({
   selector: 'ui-select',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, Avatar, TeamLogo],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -179,14 +179,11 @@ const normalize = (s: string) =>
     </ng-template>
 
     <ng-template #avatarTpl let-o>
-      @let c = colors(o);
-      <span class="avatar" [class.square]="o.avatar.shape === 'square'" [style.background]="o.avatar.src ? null : c.fill" [style.color]="c.on" aria-hidden="true">
-        @if (o.avatar.src) {
-          <img [src]="o.avatar.src" alt="" />
-        } @else {
-          {{ initialsOf(o) }}
-        }
-      </span>
+      @if (o.avatar.shape === 'square') {
+        <ui-team-logo [name]="o.avatar.name ?? o.label" [src]="o.avatar.src" [color]="o.avatar.color" size="xs" decorative />
+      } @else {
+        <ui-avatar [name]="o.avatar.name ?? o.label" [src]="o.avatar.src" [color]="o.avatar.color" size="xs" decorative />
+      }
     </ng-template>
   `,
   host: { class: 'ui-select' },
@@ -257,21 +254,6 @@ const normalize = (s: string) =>
     .desc { font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
     .check { flex: none; color: var(--ui-accent-text); }
     .empty { margin: 0; padding: 0.75rem; font-size: var(--ui-font-size-sm); color: var(--ui-text-muted); }
-    .avatar {
-      flex: none;
-      display: grid;
-      place-items: center;
-      width: 1.75rem;
-      height: 1.75rem;
-      border-radius: var(--ui-radius-pill);
-      overflow: hidden;
-      font-family: var(--ui-font-display);
-      font-weight: 700;
-      font-size: calc(1.75rem * 0.38);
-      line-height: 1;
-    }
-    .avatar.square { border-radius: 28%; }
-    .avatar img { width: 100%; height: 100%; object-fit: contain; }
   `,
 })
 export class Select<T = unknown> {
@@ -351,12 +333,6 @@ export class Select<T = unknown> {
   }
   protected isSelected(o: SelectOption<T>) {
     return this.compareWith()(o.value, this.value());
-  }
-  protected colors(o: SelectOption<T>) {
-    return avatarColors(o.avatar?.name ?? o.label, o.avatar?.color);
-  }
-  protected initialsOf(o: SelectOption<T>) {
-    return initials(o.avatar?.name ?? o.label);
   }
 
   protected toggle() {
