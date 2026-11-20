@@ -20,3 +20,4 @@ export * from './lib/carousel/carousel';
 export * from './lib/tab-carousel/tab-carousel';
 export * from './lib/header/header';
 export * from './lib/tab-bar/tab-bar';
+export * from './lib/chart/chart';
