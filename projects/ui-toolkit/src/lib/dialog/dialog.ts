@@ -14,6 +14,9 @@ import {
   input,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+
+/** Riesportati per i componenti aperti con DialogService. */
+export { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Button } from '../button/button';
 import { uniqueId } from '../util/id';
 import { applyThemeContext } from '../util/theme-context';

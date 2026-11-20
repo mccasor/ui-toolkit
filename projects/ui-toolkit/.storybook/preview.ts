@@ -79,7 +79,7 @@ const preview: Preview = {
     componentWrapperDecorator((story) => `<div class="${wrapperClass}">${story}</div>`),
     (storyFn, ctx) => {
       const bo = applyGlobals(ctx.globals as Record<string, string>);
-      wrapperClass = bo ? 'sb-story-root bo' : 'sb-story-root';
+      wrapperClass = ['sb-story-root', bo ? 'bo' : '', ctx.parameters['fullBleed'] ? 'sb-full' : ''].filter(Boolean).join(' ');
       return storyFn();
     },
     applicationConfig({ providers: [provideZonelessChangeDetection()] }),

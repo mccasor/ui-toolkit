@@ -53,7 +53,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      height: var(--ui-header-height);
+      /* 3.75rem complessivi, bordo inferiore compreso: --ui-sticky-top resta esatto */
+      height: calc(var(--ui-header-height) - 1px);
       max-width: var(--ui-container-max);
       margin-inline: auto;
       padding-inline: var(--ui-page-padding-x);

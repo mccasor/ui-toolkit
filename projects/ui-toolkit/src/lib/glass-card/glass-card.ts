@@ -37,6 +37,7 @@ export type GlassCardPadding = 'none' | 'sm' | 'md' | 'lg';
     :host(.ui-glass-card--brand) {
       background-image: radial-gradient(120% 80% at 0% 0%, var(--ui-brand-soft), transparent 60%);
       border-color: color-mix(in srgb, var(--ui-primary) 55%, transparent);
+      border-left: var(--ui-brand-card-edge) solid var(--ui-brand-card-edge-color);
     }
     :host(a), :host(button) {
       font: inherit;

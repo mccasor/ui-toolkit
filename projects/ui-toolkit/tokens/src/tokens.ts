@@ -222,6 +222,9 @@ export const BACKOFFICE_REMAP: Record<string, string> = {
   'row-zebra': 'var(--bo-surface-alt)',
   'table-header-bg': 'var(--bo-surface-alt)',
   'table-header-position': 'sticky',
+  /** card brand nel backoffice: bordo sinistro 3px arancio */
+  'brand-card-edge': '3px',
+  'brand-card-edge-color': 'var(--ui-primary)',
   border: 'var(--bo-divider)',
   'border-strong': 'var(--bo-border)',
   'glass-edge': 'var(--bo-divider)',
@@ -252,6 +255,8 @@ export const STRUCTURAL_DEFAULTS: Record<string, string> = {
   'row-zebra': 'transparent',
   'table-header-bg': 'transparent',
   'table-header-position': 'static',
+  'brand-card-edge': '1px',
+  'brand-card-edge-color': 'color-mix(in srgb, var(--ui-primary) 55%, transparent)',
   'glass-blur': 'blur(18px) saturate(170%)',
   'table-cell-padding': '0.75rem',
   'input-padding': '0.625rem 0.875rem',
