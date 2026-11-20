@@ -14,3 +14,4 @@ export * from './lib/dialog/dialog';
 export * from './lib/toast/toast';
 export * from './lib/empty-state/empty-state';
 export * from './lib/stat/stat';
+export * from './lib/table/table';

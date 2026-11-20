@@ -40,6 +40,7 @@
   --color-row-hover: var(--ui-row-hover);
   --color-row-zebra: var(--ui-row-zebra);
   --color-table-header-bg: var(--ui-table-header-bg);
+  --color-table-header-position: var(--ui-table-header-position);
   --color-muted: var(--ui-text-muted);
   --color-accent: var(--ui-accent-text);
   --color-fg: var(--ui-text);

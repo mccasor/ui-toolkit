@@ -145,6 +145,7 @@
   --ui-row-hover: var(--ui-surface-sunken);
   --ui-row-zebra: transparent;
   --ui-table-header-bg: transparent;
+  --ui-table-header-position: static;
   --ui-glass-blur: blur(18px) saturate(170%);
   --ui-table-cell-padding: 0.75rem;
   --ui-input-padding: 0.625rem 0.875rem;
@@ -332,6 +333,7 @@
   --ui-row-hover: var(--bo-row-hover);
   --ui-row-zebra: var(--bo-surface-alt);
   --ui-table-header-bg: var(--bo-surface-alt);
+  --ui-table-header-position: sticky;
   --ui-border: var(--bo-divider);
   --ui-border-strong: var(--bo-border);
   --ui-glass-edge: var(--bo-divider);
