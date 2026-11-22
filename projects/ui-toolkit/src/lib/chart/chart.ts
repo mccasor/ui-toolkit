@@ -4,6 +4,7 @@ import {
   DestroyRef,
   ElementRef,
   afterNextRender,
+  isDevMode,
   computed,
   effect,
   inject,
@@ -14,12 +15,14 @@ import {
 } from '@angular/core';
 import { chartSeries, relativeLuminance, withAlpha, type Mode } from 'ui-toolkit/tokens';
 import { prefersReducedMotion } from '../util/media';
+import { uniqueId } from '../util/id';
 
 /** Sottoinsieme dei tipi Chart.js usato dall'API pubblica (chart.js è una peer dependency opzionale). */
 export type ChartKind = 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea' | 'scatter' | 'bubble';
+export type ChartPoint = number | null | { x: number | string; y: number; r?: number };
 export interface ChartDataset {
   label?: string;
-  data: (number | null)[];
+  data: ChartPoint[];
   [key: string]: unknown;
 }
 export interface ChartData {
@@ -27,26 +30,50 @@ export interface ChartData {
   datasets: ChartDataset[];
 }
 
+interface ActiveElement {
+  datasetIndex: number;
+  index: number;
+}
 interface ChartInstance {
   data: ChartData;
   options: Record<string, unknown>;
   update(mode?: string): void;
   destroy(): void;
+  isDatasetVisible(i: number): boolean;
+  setActiveElements(els: ActiveElement[]): void;
+  tooltip?: { setActiveElements(els: ActiveElement[], pos: { x: number; y: number }): void };
 }
+
+/** Forme e tratteggi per serie: la serie non è mai distinta dal solo colore (legenda con le stesse forme). */
+const POINT_STYLES = ['circle', 'rect', 'triangle', 'rectRot', 'star', 'crossRot', 'rectRounded'] as const;
+const DASHES: number[][] = [[], [6, 4], [2, 3], [10, 3, 2, 3]];
+const CATEGORICAL = ['line', 'bar', 'radar'];
 
 /**
  * Wrapper Chart.js 4 caricato on demand (`import('chart.js/auto')`).
  * Colori di assi (text-muted), griglia (border) e serie (palette agganciata alla banda del modo) letti dai token
  * e aggiornati al cambio tema; animazioni off con reduced motion.
- * Accessibilità: canvas `role="img"` con `ariaLabel` + tabella sr-only con i dati.
+ * Accessibilità: canvas `role="img"` con `ariaLabel` + tabella sr-only con i dati. Il canvas è focusabile:
+ * ←/→ (Home/End) scorrono le categorie mostrando il tooltip e annunciandone i valori in una live region, Esc chiude.
+ * Codifica: serie distinte anche da forma del punto e tratteggio; barre sempre da zero; legenda solo con più serie.
  */
 @Component({
   selector: 'ui-chart',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="box" [style.height]="height()">
-      <canvas #canvas role="img" [attr.aria-label]="ariaLabel()"></canvas>
+      <canvas
+        #canvas
+        role="img"
+        tabindex="0"
+        [attr.aria-label]="ariaLabel()"
+        [attr.aria-describedby]="hintId"
+        (keydown)="onKey($event)"
+        (blur)="clearActive()"
+      ></canvas>
     </div>
+    <span class="sr-only" [id]="hintId">Usa le frecce sinistra e destra per scorrere i valori.</span>
+    <span class="sr-only" aria-live="polite">{{ announcement() }}</span>
     <table class="sr-only">
       <caption>{{ ariaLabel() }}</caption>
       <thead>
@@ -62,7 +89,7 @@ interface ChartInstance {
           <tr>
             <th scope="row">{{ l }}</th>
             @for (d of data().datasets; track $index) {
-              <td>{{ d.data[i] ?? '—' }}</td>
+              <td>{{ format(d.data[i]) }}</td>
             }
           </tr>
         }
@@ -73,7 +100,7 @@ interface ChartInstance {
   styles: `
     :host { display: block; position: relative; min-width: 0; }
     .box { position: relative; width: 100%; }
-    canvas { display: block; }
+    canvas { display: block; border-radius: var(--ui-radius-control); }
   `,
 })
 export class Chart {
@@ -91,6 +118,10 @@ export class Chart {
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   protected readonly mode = signal<Mode>('light');
   protected readonly ready = signal(false);
+  protected readonly announcement = signal('');
+  protected readonly hintId = uniqueId('ui-chart-hint');
+  private activeIndex = -1;
+  private nf = new Intl.NumberFormat(locale());
   private readonly themeTick = signal(0);
   private chart: ChartInstance | null = null;
   private ChartCtor: (new (el: HTMLCanvasElement, cfg: unknown) => ChartInstance) | null = null;
@@ -143,39 +174,126 @@ export class Chart {
   private config() {
     const t = this.tokens();
     this.mode.set(t.mode);
+    const type = this.type();
     const series = chartSeries(t.mode);
-    const radial = ['pie', 'doughnut', 'polarArea'].includes(this.type());
+    const radial = ['pie', 'doughnut', 'polarArea'].includes(type);
+    const categorical = CATEGORICAL.includes(type);
+    const horizontal = (this.options() as { indexAxis?: string }).indexAxis === 'y';
+    const multi = this.data().datasets.length > 1;
+    if (radial && isDevMode() && (this.data().labels?.length ?? 0) > 5) {
+      console.warn(`[ui-chart] "${this.ariaLabel()}": ${type} con più di 5 fette è difficile da leggere, preferire type="bar".`);
+    }
     const datasets = this.data().datasets.map((d, i) => {
       const c = series[i % series.length];
       const colors = radial ? (d.data.map((_, j) => series[j % series.length]) as string[]) : c;
+      const shape = POINT_STYLES[i % POINT_STYLES.length];
       return {
-        borderWidth: 2,
+        borderWidth: type === 'bar' ? 0 : 2,
         borderColor: radial ? t.surface : c,
-        backgroundColor: this.type() === 'line' ? withAlpha(c, 0.15) : colors,
+        backgroundColor: type === 'line' ? withAlpha(c, 0.15) : type === 'radar' ? withAlpha(c, 0.2) : colors,
         pointBackgroundColor: c,
+        pointBorderColor: c,
+        pointStyle: shape,
+        pointRadius: type === 'line' || type === 'radar' ? 3.5 : 3,
+        pointHoverRadius: 6,
+        borderDash: type === 'line' || type === 'radar' ? DASHES[i % DASHES.length] : undefined,
         cubicInterpolationMode: 'monotone',
-        pointRadius: 3,
+        borderRadius: type === 'bar' ? 4 : undefined,
+        maxBarThickness: 48,
         ...d,
       };
     });
-    const axis = {
-      ticks: { color: t.muted, font: { family: t.font, size: 12, weight: 600 } },
-      grid: { color: t.border },
-      border: { color: t.border },
-    };
+    const ticks = { color: t.muted, font: { family: t.font, size: 12, weight: 600 } };
+    // indice (categorie) senza griglia, valori con griglia leggera e baseline a zero per le barre
+    const index = { ticks, grid: { display: false }, border: { color: t.border } };
+    const value = { ticks, grid: { color: t.border }, border: { display: false }, beginAtZero: type === 'bar' };
+    const scales = radial
+      ? undefined
+      : type === 'radar'
+        ? { r: { angleLines: { color: t.border }, grid: { color: t.border }, pointLabels: ticks, ticks: { ...ticks, backdropColor: 'transparent' }, beginAtZero: true } }
+        : categorical
+          ? horizontal
+            ? { x: value, y: index }
+            : { x: index, y: value }
+          : { x: { ...value, beginAtZero: false }, y: { ...value, beginAtZero: false } };
     const base = {
       responsive: true,
       maintainAspectRatio: false,
+      locale: locale(),
       animation: prefersReducedMotion() ? false : { duration: 400 },
       color: t.muted,
       font: { family: t.font },
+      interaction: categorical ? { mode: 'index', intersect: false } : { mode: 'nearest', intersect: true },
       plugins: {
-        legend: { labels: { color: t.muted, font: { family: t.font, size: 12, weight: 600 }, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8 } },
-        tooltip: { backgroundColor: t.text, titleColor: t.surface, bodyColor: t.surface, titleFont: { family: t.font, weight: 700 }, bodyFont: { family: t.font } },
+        legend: {
+          display: multi || radial,
+          align: 'start',
+          labels: { color: t.muted, font: { family: t.font, size: 12, weight: 600 }, usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 12 },
+        },
+        tooltip: {
+          backgroundColor: t.text,
+          titleColor: t.surface,
+          bodyColor: t.surface,
+          titleFont: { family: t.font, weight: 700 },
+          bodyFont: { family: t.font },
+          usePointStyle: true,
+          boxPadding: 4,
+        },
       },
-      scales: radial ? undefined : { x: axis, y: axis },
+      scales,
     };
-    return { type: this.type(), data: { labels: this.data().labels, datasets }, options: deepMerge(base, this.options()) };
+    return { type, data: { labels: this.data().labels, datasets }, options: deepMerge(base, this.options()) };
+  }
+
+  /** valore leggibile per tabella e annunci */
+  protected format(p: ChartPoint | undefined): string {
+    if (p == null) return '—';
+    if (typeof p === 'number') return this.nf.format(p);
+    return [p.x, p.y, p.r].filter((v) => v != null).map((v) => (typeof v === 'number' ? this.nf.format(v) : v)).join(', ');
+  }
+
+  protected onKey(e: KeyboardEvent) {
+    const n = this.rows().length;
+    if (!this.chart || !n) return;
+    const keys: Record<string, () => number> = {
+      ArrowRight: () => (this.activeIndex + 1) % n,
+      ArrowDown: () => (this.activeIndex + 1) % n,
+      ArrowLeft: () => (this.activeIndex <= 0 ? n - 1 : this.activeIndex - 1),
+      ArrowUp: () => (this.activeIndex <= 0 ? n - 1 : this.activeIndex - 1),
+      Home: () => 0,
+      End: () => n - 1,
+    };
+    if (e.key === 'Escape') return this.clearActive();
+    const next = keys[e.key];
+    if (!next) return;
+    e.preventDefault();
+    this.activeIndex = next();
+    this.showActive();
+  }
+
+  protected clearActive() {
+    this.activeIndex = -1;
+    this.announcement.set('');
+    if (!this.chart) return;
+    this.chart.setActiveElements([]);
+    this.chart.tooltip?.setActiveElements([], { x: 0, y: 0 });
+    this.chart.update('none');
+  }
+
+  private showActive() {
+    const chart = this.chart!;
+    const i = this.activeIndex;
+    const ds = this.data().datasets;
+    const radial = ['pie', 'doughnut', 'polarArea'].includes(this.type());
+    const els = radial ? [{ datasetIndex: 0, index: i }] : ds.map((_, d) => ({ datasetIndex: d, index: i })).filter((el) => chart.isDatasetVisible(el.datasetIndex));
+    chart.setActiveElements(els);
+    chart.tooltip?.setActiveElements(els, { x: 0, y: 0 });
+    chart.update('none');
+    const label = String(this.rows()[i]);
+    const values = radial
+      ? this.format(ds[0]?.data[i])
+      : ds.map((d, k) => `${d.label ?? 'Serie ' + (k + 1)} ${this.format(d.data[i])}`).join(', ');
+    this.announcement.set(`${label}: ${values}`);
   }
 
   private render() {
@@ -188,9 +306,14 @@ export class Chart {
       return;
     }
     this.chart?.destroy();
+    this.activeIndex = -1;
     this.chart = new this.ChartCtor(this.canvas().nativeElement, cfg);
     this.builtType = cfg.type;
   }
+}
+
+function locale(): string {
+  return (typeof document !== 'undefined' && document.documentElement.lang) || 'it-IT';
 }
 
 function deepMerge<T extends Record<string, unknown>>(a: T, b: Record<string, unknown>): T {
