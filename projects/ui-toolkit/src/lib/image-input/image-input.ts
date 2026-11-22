@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input, model, numberAttribute, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input, model, numberAttribute, signal, viewChild, computed } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { Avatar, TeamLogo } from '../avatar/avatar';
 import { Button } from '../button/button';
 import { Field, FieldInput } from '../field/field';
@@ -13,7 +14,7 @@ import { uniqueId } from '../util/id';
   imports: [Field, FieldInput, Avatar, TeamLogo, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ui-field [label]="label()" [hint]="hint()" [error]="error()" [required]="required()">
+    <ui-field [label]="labelText()" [hint]="hint()" [error]="error()" [required]="required()">
       <div class="row">
         @if (shape() === 'circle') {
           <ui-avatar [name]="previewName()" [src]="value()" size="xl" decorative />
@@ -23,9 +24,9 @@ import { uniqueId } from '../util/id';
         <div class="actions">
           <label class="ui-btn ui-btn--secondary ui-btn--sm file">
             <input #file type="file" class="sr-only" [accept]="accept()" [attr.aria-describedby]="statusId" (change)="onFile($event)" />
-            {{ busy() ? 'Elaborazione…' : uploadLabel() }}
+            {{ busy() ? 'Elaborazione…' : uploadLabelText() }}
           </label>
-          <button uiButton variant="ghost" size="sm" [disabled]="!value()" (click)="remove()">{{ removeLabel() }}</button>
+          <button uiButton variant="ghost" size="sm" [disabled]="!value()" (click)="remove()">{{ removeLabelText() }}</button>
           <span class="sr-only" [id]="statusId" aria-live="polite">{{ value() ? previewText() : '' }}</span>
         </div>
       </div>
@@ -42,7 +43,9 @@ import { uniqueId } from '../util/id';
   `,
 })
 export class ImageInput {
-  readonly label = input('Immagine');
+  protected readonly uiLabels = injectUiLabels();
+  readonly label = input<string>();
+  protected readonly labelText = computed(() => this.label() ?? this.uiLabels().image);
   readonly hint = input<string>('JPG, PNG o WebP, oppure incolla un URL');
   readonly required = input(false, { transform: booleanAttribute });
   readonly shape = input<'circle' | 'square'>('circle');
@@ -54,8 +57,10 @@ export class ImageInput {
   /** dimensione massima del file originale (byte) */
   readonly maxBytes = input(10 * 1024 * 1024, { transform: numberAttribute });
   readonly accept = input('image/png,image/jpeg,image/webp,image/gif');
-  readonly uploadLabel = input('Carica immagine');
-  readonly removeLabel = input('Rimuovi');
+  readonly uploadLabel = input<string>();
+  protected readonly uploadLabelText = computed(() => this.uploadLabel() ?? this.uiLabels().imageUpload);
+  readonly removeLabel = input<string>();
+  protected readonly removeLabelText = computed(() => this.removeLabel() ?? this.uiLabels().imageRemove);
   readonly urlPlaceholder = input('https://…');
 
   protected readonly error = signal<string | null>(null);
@@ -65,7 +70,7 @@ export class ImageInput {
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('file');
 
   protected previewName() {
-    return this.name() || this.label();
+    return this.name() || this.labelText();
   }
   protected previewText() {
     return `Immagine impostata per ${this.previewName()}`;

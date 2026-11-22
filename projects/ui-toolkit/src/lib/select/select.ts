@@ -27,7 +27,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { Avatar, TeamLogo } from '../avatar/avatar';
+import { Icon } from '../icon/icon';
 import { UI_FIELD } from '../field/field';
 import { uniqueId } from '../util/id';
 import { mediaQuery } from '../util/media';
@@ -68,7 +70,7 @@ const normalize = (s: string) =>
  */
 @Component({
   selector: 'ui-select',
-  imports: [NgTemplateOutlet, Avatar, TeamLogo],
+  imports: [NgTemplateOutlet, Avatar, TeamLogo, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -108,8 +110,8 @@ const normalize = (s: string) =>
         @if (sheet()) {
           <div class="sheet-head">
             <span class="sheet-title" aria-hidden="true">{{ title() }}</span>
-            <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm" aria-label="Chiudi" (click)="close(true)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm" [attr.aria-label]="uiLabels().close" (click)="close(true)">
+              <ui-icon name="close" />
             </button>
           </div>
         }
@@ -124,14 +126,14 @@ const normalize = (s: string) =>
             autocomplete="off"
             [attr.aria-controls]="listboxId"
             [attr.aria-activedescendant]="activeIndex() >= 0 ? optionId(activeIndex()) : null"
-            [attr.aria-label]="searchLabel()"
-            [placeholder]="searchLabel()"
+            [attr.aria-label]="searchLabelText()"
+            [placeholder]="searchLabelText()"
             [value]="query()"
             (input)="onQuery($any($event.target).value)"
           />
         }
         @if (filtered().length === 0) {
-          <p class="empty" role="status">{{ emptyText() }}</p>
+          <p class="empty" role="status">{{ emptyTextText() }}</p>
         }
         <div class="list" role="listbox" [id]="listboxId" [attr.aria-labelledby]="labelledBy()" [attr.aria-label]="field ? null : ariaLabel() ?? null">
           @for (g of groups(); track g.id) {
@@ -264,8 +266,11 @@ export class Select<T = unknown> {
   readonly invalid = input(false, { transform: booleanAttribute });
   /** Oltre questo numero di opzioni compare la ricerca interna. */
   readonly searchThreshold = input(8, { transform: numberAttribute });
-  readonly searchLabel = input('Cerca');
-  readonly emptyText = input('Nessun risultato');
+  protected readonly uiLabels = injectUiLabels();
+  readonly searchLabel = input<string>();
+  protected readonly searchLabelText = computed(() => this.searchLabel() ?? this.uiLabels().search);
+  readonly emptyText = input<string>();
+  protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().noResults);
   readonly compareWith = input<(a: T | null, b: T | null) => boolean>((a, b) => a === b);
   readonly opened = output<void>();
   readonly closed = output<void>();

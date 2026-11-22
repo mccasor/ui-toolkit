@@ -4,6 +4,7 @@
  */
 export * from './lib/button/button';
 export * from './lib/icon/icon';
+export * from './lib/util/labels';
 export * from './lib/glass-card/glass-card';
 export * from './lib/badge/badge';
 export * from './lib/spinner/spinner';

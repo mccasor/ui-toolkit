@@ -10,6 +10,7 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
 
 export interface TableColumn<T = Record<string, unknown>> {
@@ -87,7 +88,7 @@ export class TableCell<T = unknown> {
             </tr>
           } @empty {
             <tr role="row" class="empty">
-              <td role="cell" [attr.colspan]="columns().length">{{ emptyText() }}</td>
+              <td role="cell" [attr.colspan]="columns().length">{{ emptyTextText() }}</td>
             </tr>
           }
         </tbody>
@@ -188,7 +189,9 @@ export class Table<T = Record<string, unknown>> {
   readonly rowKey = input<keyof T | ((row: T) => unknown)>();
   /** URL della riga: rende la riga navigabile con un solo link esteso */
   readonly rowLink = input<(row: T) => string | null | undefined>();
-  readonly emptyText = input('Nessun dato');
+  protected readonly uiLabels = injectUiLabels();
+  readonly emptyText = input<string>();
+  protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().tableEmpty);
 
   protected readonly captionId = uniqueId('ui-table-caption');
   private readonly cells = contentChildren(TableCell);

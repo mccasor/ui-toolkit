@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, model, computed } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { SWATCHES, type Swatch } from 'ui-toolkit/tokens';
 import { uniqueId } from '../util/id';
 
@@ -12,13 +13,13 @@ import { uniqueId } from '../util/id';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <fieldset>
-      <legend class="legend">{{ label() }}</legend>
+      <legend class="legend">{{ labelText() }}</legend>
       <div class="grid">
         @if (allowNone()) {
           <label class="item">
             <input type="radio" class="sr-only" [name]="name" [checked]="value() === null" (change)="value.set(null)" />
             <span class="dot none" aria-hidden="true"></span>
-            <span class="sr-only">{{ noneLabel() }}</span>
+            <span class="sr-only">{{ noneLabelText() }}</span>
           </label>
         }
         @for (s of swatches(); track s.id) {
@@ -55,10 +56,13 @@ import { uniqueId } from '../util/id';
   `,
 })
 export class ColorSwatches {
-  readonly label = input('Colore');
+  protected readonly uiLabels = injectUiLabels();
+  readonly label = input<string>();
+  protected readonly labelText = computed(() => this.label() ?? this.uiLabels().color);
   readonly swatches = input<readonly Swatch[]>(SWATCHES);
   readonly value = model<string | null>(null);
   readonly allowNone = input(true, { transform: booleanAttribute });
-  readonly noneLabel = input('Nessuno');
+  readonly noneLabel = input<string>();
+  protected readonly noneLabelText = computed(() => this.noneLabel() ?? this.uiLabels().colorNone);
   protected readonly name = uniqueId('ui-swatches');
 }

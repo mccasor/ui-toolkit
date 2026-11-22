@@ -13,6 +13,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { CHART_MAX_SERIES, chartSeries, relativeLuminance, withAlpha, type Mode } from 'ui-toolkit/tokens';
 import { prefersReducedMotion } from '../util/media';
 import { uniqueId } from '../util/id';
@@ -81,7 +82,7 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
       <caption>{{ ariaLabel() }}</caption>
       <thead>
         <tr>
-          <th scope="col">{{ categoryLabel() }}</th>
+          <th scope="col">{{ categoryLabelText() }}</th>
           @for (d of data().datasets; track $index) {
             <th scope="col">{{ d.label ?? 'Serie ' + ($index + 1) }}</th>
           }
@@ -115,7 +116,9 @@ export class Chart {
   readonly ariaLabel = input.required<string>();
   readonly height = input('12rem');
   /** intestazione della colonna categorie nella tabella sr-only */
-  readonly categoryLabel = input('Categoria');
+  protected readonly uiLabels = injectUiLabels();
+  readonly categoryLabel = input<string>();
+  protected readonly categoryLabelText = computed(() => this.categoryLabel() ?? this.uiLabels().chartCategory);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
