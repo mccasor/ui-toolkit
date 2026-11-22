@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 import { themeStories } from '../../../stories/support/themes';
 import { Badge } from '../badge/badge';
 import { GlassCard } from '../glass-card/glass-card';
-import { Table, TableCell, type TableColumn } from './table';
+import { Table, TableCell, TableHeader, TableRowDetail, type TableColumn } from './table';
 
 interface Riga {
   id: string;
@@ -42,7 +42,7 @@ const meta: Meta<Args> = {
   title: 'Components/Table',
   component: Table,
   subcomponents: { TableCell },
-  decorators: [moduleMetadata({ imports: [Table, TableCell, GlassCard, Badge] })],
+  decorators: [moduleMetadata({ imports: [Table, TableCell, TableHeader, TableRowDetail, GlassCard, Badge] })],
   args: { stack: true, captionVisible: true, linked: true },
   render: (args) => ({
     props: { ...args, rows: RIGHE, cols: COLONNE, link: (r: Riga) => `#squadra-${r.id}` },
@@ -122,6 +122,34 @@ const BO = () => ({
     <ui-table caption="Classifica generale" [columns]="cols" [rows]="rows" rowKey="id" [rowLink]="link" stack />
   </ui-glass-card>`,
 });
+export const Dense: Story = {
+  name: 'Densa: totale, dettaglio, colonna fissa',
+  render: () => ({
+    props: {
+      cols: [
+        { key: 'line', label: 'Voce', primary: true, sticky: true },
+        { key: 'income', label: 'Entrate', numeric: true },
+        { key: 'expense', label: 'Uscite', numeric: true },
+        { key: 'net', label: 'Netto', numeric: true },
+      ],
+      rows: [
+        { id: 'g1', line: 'Giornata 1', income: 140, expense: 30, net: 110 },
+        { id: 'g2', line: 'Giornata 2', income: 0, expense: 30, net: -30 },
+      ],
+      total: { id: 't', line: 'Totale', income: 140, expense: 60, net: 80 },
+      open: (r: { id: string }) => r.id === 'g2',
+    },
+    template: `<ui-glass-card padding="none"><ui-table caption="Incassi" [columns]="cols" [rows]="rows" rowKey="id" [footer]="total" [rowExpanded]="open" scrollable>
+      <ng-template uiHeader="net" let-column>{{ column.label }} <span class="text-muted">€</span></ng-template>
+      <ng-template uiRowDetail let-row><span>Nessun incasso nella {{ row.line }}.</span></ng-template>
+    </ui-table></ui-glass-card>`,
+  }),
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('tfoot')?.textContent).toContain('Totale');
+    await expect(within(canvasElement).getByText(/Nessun incasso/)).toBeTruthy();
+  },
+};
+
 const themes = themeStories<Args>(BO);
 export const Light: Story = themes.Light;
 export const Dark: Story = themes.Dark;

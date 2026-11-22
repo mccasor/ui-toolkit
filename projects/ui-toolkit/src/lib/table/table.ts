@@ -6,6 +6,7 @@ import {
   TemplateRef,
   booleanAttribute,
   computed,
+  contentChild,
   contentChildren,
   inject,
   input,
@@ -30,6 +31,10 @@ export interface TableColumn<T = any> {
   value?: (row: T) => unknown;
   /** nascosta sotto 640px */
   hideOnMobile?: boolean;
+  /** resta visibile a sinistra nello scroll orizzontale (es. il nome nelle tabelle larghe) */
+  sticky?: boolean;
+  /** classi aggiunte all'intestazione e alle celle della colonna */
+  class?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +43,22 @@ export interface TableCellContext<T = any> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- valore della cella, di qualsiasi tipo
   value: any;
   column: TableColumn<T>;
-  /** posizione della riga */
+  /** posizione della riga (-1 nella riga di totale) */
+  index: number;
+  /** true nella riga di totale (`footer`) */
+  footer: boolean;
+}
+
+/** Contesto di `uiHeader`: la colonna. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface TableHeaderContext<T = any> {
+  $implicit: TableColumn<T>;
+}
+
+/** Contesto di `uiRowDetail`: la riga espansa. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface TableRowDetailContext<T = any> {
+  $implicit: T;
   index: number;
 }
 
@@ -53,12 +73,38 @@ export class TableCell<T = any> {
   }
 }
 
+/** Intestazione custom di una colonna: `<ng-template uiHeader="squadra" let-column>…</ng-template>` */
+@Directive({ selector: 'ng-template[uiHeader]' })
+export class TableHeader {
+  readonly key = input.required<string>({ alias: 'uiHeader' });
+  readonly template = inject<TemplateRef<TableHeaderContext>>(TemplateRef);
+  static ngTemplateContextGuard(_d: TableHeader, ctx: unknown): ctx is TableHeaderContext {
+    return true;
+  }
+}
+
+/**
+ * Riga di dettaglio sotto una riga, a tutta larghezza, quando `rowExpanded(row)` è vero:
+ * `<ng-template uiRowDetail let-row>…</ng-template>`
+ */
+@Directive({ selector: 'ng-template[uiRowDetail]' })
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class TableRowDetail<T = any> {
+  readonly template = inject<TemplateRef<TableRowDetailContext<T>>>(TemplateRef);
+  static ngTemplateContextGuard<T>(_d: TableRowDetail<T>, ctx: unknown): ctx is TableRowDetailContext<T> {
+    return true;
+  }
+}
+
 /**
  * Tabella responsive.
  * - Da 640px: tabella vera (header 0.75rem/700 muted in frase, celle 0.75rem, divisori border, hover surface-sunken).
  * - Sotto 640px con `stack`: ogni riga è una card a griglia 2 colonne con label da data-label, cella primaria a tutta larghezza.
  * - Sotto 640px senza `stack`: righe compatte su una linea con la cella primaria troncata.
+ * - Sotto 640px con `scrollable`: resta una tabella, con scroll orizzontale (tabelle dense; colonne `sticky` fisse).
  * - `rowLink`: un solo link esteso su tutta la riga (sulla cella primaria).
+ * - `footer`: riga di totale in `<tfoot>`, con gli stessi template di cella (`footer: true` nel contesto).
+ * - `uiHeader`: intestazioni custom; `uiRowDetail` + `rowExpanded`: riga di dettaglio espandibile.
  * - Backoffice: header sticky su surface-alt, zebra, hover row-hover, celle dense.
  */
 @Component({
@@ -67,12 +113,18 @@ export class TableCell<T = any> {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="scroll" role="region" tabindex="0" [attr.aria-labelledby]="captionId">
-      <table role="table" [class.stack]="stack()" [class.compact]="!stack()" [class.linked]="!!rowLink()">
+      <table role="table" [class.stack]="stack() && !scrollable()" [class.compact]="!stack() && !scrollable()" [class.scrollable]="scrollable()" [class.linked]="!!rowLink()">
         <caption [id]="captionId" [class.sr-only]="!captionVisible()">{{ caption() }}</caption>
         <thead role="rowgroup">
           <tr role="row">
             @for (c of columns(); track c.key) {
-              <th role="columnheader" scope="col" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null" [class.hide-mobile]="c.hideOnMobile">{{ c.label }}</th>
+              <th role="columnheader" scope="col" [class]="c.class ?? ''" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null" [class.hide-mobile]="c.hideOnMobile" [class.sticky]="c.sticky">
+                @if (headers().get(c.key); as tpl) {
+                  <ng-container *ngTemplateOutlet="tpl; context: { $implicit: c }" />
+                } @else {
+                  {{ c.label }}
+                }
+              </th>
             }
           </tr>
         </thead>
@@ -81,32 +133,56 @@ export class TableCell<T = any> {
             <tr role="row">
               @for (c of columns(); track c.key) {
                 @if (c.primary) {
-                  <th role="rowheader" scope="row" class="primary" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile">
+                  <th role="rowheader" scope="row" [class]="'primary ' + (c.class ?? '')" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile" [class.sticky]="c.sticky">
                     @if (linkOf(r); as href) {
-                      <a class="row-link" [href]="href" (click)="linkClick(href, $event)"><ng-container *ngTemplateOutlet="cell; context: { r, c, i }" /></a>
+                      <a class="row-link" [href]="href" (click)="linkClick(href, $event)"><ng-container *ngTemplateOutlet="cell; context: { r, c, i, f: false }" /></a>
                     } @else {
-                      <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
+                      <ng-container *ngTemplateOutlet="cell; context: { r, c, i, f: false }" />
                     }
                   </th>
                 } @else {
-                  <td role="cell" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading" [class.hide-mobile]="c.hideOnMobile">
-                    <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
+                  <td role="cell" [class]="c.class ?? ''" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading" [class.hide-mobile]="c.hideOnMobile" [class.sticky]="c.sticky">
+                    <ng-container *ngTemplateOutlet="cell; context: { r, c, i, f: false }" />
                   </td>
                 }
               }
             </tr>
+            @if (detail() && rowExpanded()?.(r)) {
+              <tr role="row" class="detail">
+                <td role="cell" [attr.colspan]="columns().length">
+                  <ng-container *ngTemplateOutlet="detail()!.template; context: { $implicit: r, index: i }" />
+                </td>
+              </tr>
+            }
           } @empty {
             <tr role="row" class="empty">
               <td role="cell" [attr.colspan]="columns().length">{{ emptyTextText() }}</td>
             </tr>
           }
         </tbody>
+        @if (footer(); as f) {
+          <tfoot role="rowgroup">
+            <tr role="row" class="footer">
+              @for (c of columns(); track c.key) {
+                @if (c.primary) {
+                  <th role="rowheader" scope="row" [class]="'primary ' + (c.class ?? '')" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile" [class.sticky]="c.sticky">
+                    <ng-container *ngTemplateOutlet="cell; context: { r: f, c, i: -1, f: true }" />
+                  </th>
+                } @else {
+                  <td role="cell" [class]="c.class ?? ''" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile" [class.sticky]="c.sticky">
+                    <ng-container *ngTemplateOutlet="cell; context: { r: f, c, i: -1, f: true }" />
+                  </td>
+                }
+              }
+            </tr>
+          </tfoot>
+        }
       </table>
     </div>
 
-    <ng-template #cell let-r="r" let-c="c" let-i="i">
+    <ng-template #cell let-r="r" let-c="c" let-i="i" let-f="f">
       @if (templates().get(c.key); as tpl) {
-        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c, index: i }" />
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c, index: i, footer: f }" />
       } @else {
         {{ valueOf(r, c) }}
       }
@@ -146,11 +222,18 @@ export class TableCell<T = any> {
     .row-link:focus-visible { outline: none; }
     .row-link:focus-visible::after { outline: 3px solid var(--ui-focus); outline-offset: -3px; border-radius: inherit; }
     .empty td { text-align: center; color: var(--ui-text-muted); padding: 1.5rem 0.75rem; }
+    tfoot th, tfoot td { border-top: 1px solid var(--ui-border-strong); font-weight: 800; }
+    .detail td { background: var(--ui-surface-sunken); }
+    .sticky { position: sticky; inset-inline-start: 0; z-index: 1; background: var(--ui-surface-solid); }
+    thead th.sticky { z-index: 2; }
 
     @media (max-width: 639.98px) {
-      thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
-      table, tbody { display: block; }
-      caption { display: block; }
+      table:not(.scrollable) thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+      table:not(.scrollable), table:not(.scrollable) tbody { display: block; }
+      table:not(.scrollable) caption { display: block; }
+      /* scrollable: resta una tabella, scorre in orizzontale */
+      .scrollable { width: max-content; min-width: 100%; }
+      .scrollable th, .scrollable td { white-space: nowrap; }
       /* stack: ogni riga una card a griglia 2 colonne */
       .stack tbody { display: grid; gap: 0.75rem; }
       .stack tbody tr {
@@ -183,8 +266,8 @@ export class TableCell<T = any> {
       .compact tbody tr > *:first-child { padding-inline-start: 0.25rem; }
       .compact tbody tr > *:last-child { padding-inline-end: 0.25rem; }
       .compact tbody .primary { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-      .empty { display: block !important; }
-      .empty td { display: block; }
+      table:not(.scrollable) .empty { display: block !important; }
+      table:not(.scrollable) .empty td { display: block; }
     }
   `,
 })
@@ -196,6 +279,12 @@ export class Table<T = any> {
   readonly caption = input.required<string>();
   readonly captionVisible = input(false, { transform: booleanAttribute });
   readonly stack = input(false, { transform: booleanAttribute });
+  /** sotto 640px resta una tabella con scroll orizzontale (tabelle dense), invece di card o righe compatte */
+  readonly scrollable = input(false, { transform: booleanAttribute });
+  /** riga di totale in `<tfoot>` (stesse colonne e template) */
+  readonly footer = input<T | null>(null);
+  /** righe con la riga di dettaglio `uiRowDetail` aperta */
+  readonly rowExpanded = input<(row: T) => boolean>();
   /** chiave di riga: nome di proprietà o funzione (default: indice) */
   readonly rowKey = input<keyof T | ((row: T) => unknown)>();
   /** URL della riga (o i suoi segmenti, uniti con `/`): rende la riga navigabile con un solo link esteso */
@@ -207,6 +296,9 @@ export class Table<T = any> {
   protected readonly captionId = uniqueId('ui-table-caption');
   protected readonly linkClick = injectLinkClick();
   private readonly cells = contentChildren(TableCell);
+  private readonly headerTpls = contentChildren(TableHeader);
+  protected readonly headers = computed(() => new Map(this.headerTpls().map((h) => [h.key(), h.template])));
+  protected readonly detail = contentChild(TableRowDetail);
   protected readonly templates = computed(() => new Map(this.cells().map((c) => [c.key(), c.template as TemplateRef<TableCellContext<unknown>>])));
 
   protected keyOf(row: T, i: number): unknown {
