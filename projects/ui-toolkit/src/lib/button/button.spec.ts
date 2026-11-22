@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Button, type ButtonVariant } from './button';
+import { Button, UI_DISABLED_SCOPE, type ButtonVariant } from './button';
 
 @Component({
   imports: [Button],
@@ -66,5 +66,33 @@ describe('Button', () => {
     await f.whenStable();
     expect(btn.classList).toContain('ui-btn--danger');
     expect(btn.classList).not.toContain('ui-btn--primary');
+  });
+
+  describe('write e UI_DISABLED_SCOPE', () => {
+    @Component({
+      imports: [Button],
+      template: `<button uiButton write id="w">Salva</button><button uiButton id="r">Esporta</button>`,
+    })
+    class Scoped {}
+
+    it('disabilita solo i bottoni write quando lo scope vale true', async () => {
+      const locked = signal(true);
+      TestBed.configureTestingModule({ providers: [{ provide: UI_DISABLED_SCOPE, useValue: locked }] });
+      const f = TestBed.createComponent(Scoped);
+      await f.whenStable();
+      const w = f.nativeElement.querySelector('#w') as HTMLButtonElement;
+      const r = f.nativeElement.querySelector('#r') as HTMLButtonElement;
+      expect(w.disabled).toBe(true);
+      expect(r.disabled).toBe(false);
+      locked.set(false);
+      await f.whenStable();
+      expect(w.disabled).toBe(false);
+    });
+
+    it('senza scope fornito, write non cambia nulla', async () => {
+      const f = TestBed.createComponent(Scoped);
+      await f.whenStable();
+      expect((f.nativeElement.querySelector('#w') as HTMLButtonElement).disabled).toBe(false);
+    });
   });
 });
