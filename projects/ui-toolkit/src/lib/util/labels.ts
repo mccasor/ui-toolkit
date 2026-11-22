@@ -14,6 +14,8 @@ export interface UiLabels {
   clear: string;
   tableEmpty: string;
   chartCategory: string;
+  chartSeries: string;
+  chartKeyboardHint: string;
   image: string;
   imageUpload: string;
   imageRemove: string;
@@ -38,6 +40,8 @@ export const UI_LABELS_IT: UiLabels = {
   clear: 'Svuota',
   tableEmpty: 'Nessun dato',
   chartCategory: 'Categoria',
+  chartSeries: 'Serie',
+  chartKeyboardHint: 'Usa le frecce sinistra e destra per scorrere i valori.',
   image: 'Immagine',
   imageUpload: 'Carica immagine',
   imageRemove: 'Rimuovi',
