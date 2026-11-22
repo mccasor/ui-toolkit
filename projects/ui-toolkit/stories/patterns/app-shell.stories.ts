@@ -18,8 +18,8 @@ import { MatchCard, PatternShell } from './shell';
       <section aria-labelledby="h-stat" class="section">
         <h2 id="h-stat" class="ui-section-title">In numeri</h2>
         <div class="stats">
-          <ui-stat label="Squadre" [value]="24" hint="4 gironi"><sb-icon uiStatIcon name="users" [size]="16" /></ui-stat>
-          <ui-stat label="Gol" [value]="128" tone="brand" hint="3,6 a partita"><sb-icon uiStatIcon name="goal" [size]="16" /></ui-stat>
+          <ui-stat label="Squadre" [value]="24" hint="4 gironi" />
+          <ui-stat label="Gol" [value]="128" tone="brand" hint="3,6 a partita" />
         </div>
       </section>
 

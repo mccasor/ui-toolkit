@@ -241,13 +241,13 @@ const normalize = (s: string) =>
       animation: ui-sheet-up var(--ui-duration-sheet) var(--ui-ease) both;
     }
     .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.25rem 0.25rem 0.5rem 0.75rem; }
-    .sheet-title { font-size: var(--ui-type-card-title-size); font-weight: 800; }
+    .sheet-title { font-size: var(--ui-type-card-title-size); font-weight: 600; }
     .search { margin: 0.25rem 0.25rem 0.5rem; width: calc(100% - 0.5rem); }
     .list { overflow-y: auto; overscroll-behavior: contain; }
     .group-h {
       padding: 0.5rem 0.75rem 0.25rem;
       font-size: var(--ui-font-size-xs);
-      font-weight: 700;
+      font-weight: 600;
       color: var(--ui-text-muted);
     }
     .option {
@@ -262,7 +262,7 @@ const normalize = (s: string) =>
       user-select: none;
     }
     .option.active { background: var(--ui-surface-sunken); }
-    .option[aria-selected='true'] .label { font-weight: 700; }
+    .option[aria-selected='true'] .label { font-weight: 600; }
     .option[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; }
     .text { flex: 1; min-width: 0; display: grid; }
     .desc { font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }

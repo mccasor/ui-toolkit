@@ -36,7 +36,7 @@ import { uniqueId } from '../util/id';
   styles: `
     :host { display: block; }
     fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
-    .legend { padding: 0; margin-bottom: 0.5rem; font-size: var(--ui-type-label-size); font-weight: 700; color: var(--ui-text); }
+    .legend { padding: 0; margin-bottom: 0.5rem; font-size: var(--ui-type-label-size); font-weight: 600; color: var(--ui-text); }
     .grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .item { position: relative; display: grid; place-items: center; width: var(--ui-touch-target); height: var(--ui-touch-target); cursor: pointer; }
     .dot {

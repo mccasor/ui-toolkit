@@ -5,7 +5,8 @@ export type StatTone = 'neutral' | 'brand' | 'success' | 'danger';
 
 /**
  * Statistica: superficie, padding 1rem, `<dl>`. Label 0.875rem/600 muted in frase (niente maiuscole spaziate),
- * icona opzionale 1rem in linea, senza tile; valore font-numeric 2.25rem/700 + hint text-sm muted. `tone` colora solo il valore.
+ * icona opzionale 1rem in linea, senza tile; valore font-numeric 2.25rem/700 + hint text-sm muted. `tone` colora solo il valore:
+ * usarlo su una sola statistica per schermata (quella che conta), le altre restano neutral. L'icona è facoltativa: nelle griglie di KPI meglio ometterla.
  * Icona: `icon` (nome di `<ui-icon>`) o lo slot `[uiStatIcon]` (decorativa).
  */
 @Component({

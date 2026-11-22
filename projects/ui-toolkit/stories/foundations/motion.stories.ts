@@ -89,20 +89,20 @@ import { FOUNDATION_STYLES } from './shared';
       .demo h2, .demo p { margin: 0; }
       .stage { height: 5rem; width: 100%; display: grid; place-items: center; }
       .clip { overflow: hidden; align-items: end; border-radius: var(--ui-radius-tile); background: var(--ui-surface-sunken); }
-      .mini { padding: 0.75rem 1.25rem; border-radius: var(--ui-radius-card); font-weight: 700; }
-      .toast { border-radius: var(--ui-radius-toast); border-left: 4px solid var(--ui-success); box-shadow: var(--ui-shadow-float); }
-      .sheet { width: 100%; padding: 1rem; border-radius: var(--ui-radius-card) var(--ui-radius-card) 0 0; font-weight: 700; text-align: center; box-sizing: border-box; }
+      .mini { padding: 0.75rem 1.25rem; border-radius: var(--ui-radius-card); font-weight: 600; }
+      .toast { border-radius: var(--ui-radius-toast); box-shadow: var(--ui-shadow-float); }
+      .sheet { width: 100%; padding: 1rem; border-radius: var(--ui-radius-card) var(--ui-radius-card) 0 0; font-weight: 600; text-align: center; box-sizing: border-box; }
       .anim-dialog { animation: ui-pop-in var(--ui-duration-dialog) var(--ui-ease) both; }
       .anim-sheet { animation: ui-sheet-up var(--ui-duration-sheet) var(--ui-ease) both; }
       .anim-toast { animation: ui-toast-in var(--ui-duration-toast) var(--ui-ease) both; }
       .lift {
-        display: block; padding: 1rem; border-radius: var(--ui-radius-card); color: var(--ui-text); font-weight: 700; text-decoration: none;
+        display: block; padding: 1rem; border-radius: var(--ui-radius-card); color: var(--ui-text); font-weight: 600; text-decoration: none;
         transition: transform var(--ui-duration-card) var(--ui-ease), box-shadow var(--ui-duration-card) var(--ui-ease);
       }
       .lift:hover { transform: translateY(var(--ui-card-lift)); box-shadow: var(--ui-shadow-float); }
       .lift:active { transform: scale(var(--ui-card-active-scale)); }
       .loops { display: flex; gap: 1.25rem; align-items: center; font-size: 1.25rem; }
-      .live { display: inline-flex; gap: 0.5rem; align-items: center; font-size: var(--ui-font-size-xs); font-weight: 700; color: var(--ui-danger-text); }
+      .live { display: inline-flex; gap: 0.5rem; align-items: center; font-size: var(--ui-font-size-xs); font-weight: 600; color: var(--ui-danger-text); }
       .sk { width: 6rem; height: 1rem; }
       .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.375rem 1rem; margin: 0; font-size: var(--ui-font-size-sm); }
       .kv dd { margin: 0; }

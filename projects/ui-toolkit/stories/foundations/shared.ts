@@ -12,8 +12,8 @@ export const FOUNDATION_STYLES = `
 .fd-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--ui-border); vertical-align: middle; }
 .fd-table tr:last-child td { border-bottom: 0; }
 .fd-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
-.fd-pass { color: var(--ui-success-text); font-weight: 700; }
-.fd-fail { color: var(--ui-danger-text); font-weight: 700; }
+.fd-pass { color: var(--ui-success-text); font-weight: 600; }
+.fd-fail { color: var(--ui-danger-text); font-weight: 600; }
 .fd-muted { color: var(--ui-text-muted); }
 .fd-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); }
 `;

@@ -69,7 +69,7 @@ export class PatternShell {
     .card { display: grid; gap: 0.75rem; }
     .top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
     .teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.75rem; }
-    .team { display: flex; align-items: center; gap: 0.5rem; min-width: 0; font-weight: 700; font-size: var(--ui-font-size-sm); }
+    .team { display: flex; align-items: center; gap: 0.5rem; min-width: 0; font-weight: 600; font-size: var(--ui-font-size-sm); }
     .team span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .away { justify-content: flex-end; text-align: end; }
     .score { font-size: var(--ui-font-size-3xl); line-height: 1; }

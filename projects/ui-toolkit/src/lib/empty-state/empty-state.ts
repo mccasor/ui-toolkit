@@ -43,7 +43,7 @@ import { Icon } from '../icon/icon';
     }
     .icon:not(:has(*)) { display: none; }
     .icon ::ng-deep svg { width: 32px; height: 32px; }
-    .title { margin: 0; font-size: var(--ui-type-card-title-size); font-weight: 800; line-height: 1.4; text-wrap: balance; }
+    .title { margin: 0; font-size: var(--ui-type-card-title-size); font-weight: 600; line-height: 1.4; text-wrap: balance; }
     .desc { margin: 0.375rem 0 0; max-width: 24rem; font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
     .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }
     .actions:not(:has(*)) { display: none; }

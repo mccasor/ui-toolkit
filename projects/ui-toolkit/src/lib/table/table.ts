@@ -197,7 +197,7 @@ export class TableRowDetail<T = any> {
     .scroll[style*='max-height'] thead th.sticky { z-index: 3; }
     .scroll:focus-visible { outline-offset: -3px; }
     table { width: 100%; border-collapse: collapse; font-size: var(--ui-font-size-sm); line-height: 1.25rem; }
-    caption { text-align: start; padding: 0 0 0.75rem; font-size: var(--ui-type-card-title-size); font-weight: 800; }
+    caption { text-align: start; padding: 0 0 0.75rem; font-size: var(--ui-type-card-title-size); font-weight: 600; }
     th, td { padding: var(--ui-table-cell-padding); text-align: start; vertical-align: middle; }
     th[data-align='end'], td[data-align='end'] { text-align: end; }
     th[data-align='center'], td[data-align='center'] { text-align: center; }
@@ -217,14 +217,14 @@ export class TableRowDetail<T = any> {
     tbody td, tbody th { border-bottom: 1px solid var(--ui-border); }
     tbody tr:last-child > * { border-bottom: 0; }
     @media (hover: hover) { tbody tr:not(.empty):hover { background: var(--ui-row-hover); } }
-    .primary { font-weight: 700; }
+    .primary { font-weight: 600; }
     .num { font-family: var(--ui-font-display); font-variant-numeric: tabular-nums; letter-spacing: var(--ui-tracking-numeric); font-weight: 700; font-size: var(--ui-font-size-base); }
     .row-link { color: inherit; text-decoration: none; }
     .row-link::after { content: ''; position: absolute; inset: 0; }
     .row-link:focus-visible { outline: none; }
     .row-link:focus-visible::after { outline: 3px solid var(--ui-focus); outline-offset: -3px; border-radius: inherit; }
     .empty td { text-align: center; color: var(--ui-text-muted); padding: 1.5rem 0.75rem; }
-    tfoot th, tfoot td { border-top: 1px solid var(--ui-border-strong); font-weight: 800; }
+    tfoot th, tfoot td { border-top: 1px solid var(--ui-border-strong); font-weight: 600; }
     .detail td { background: var(--ui-surface-sunken); }
     .sticky { position: sticky; inset-inline-start: 0; z-index: 1; background: var(--ui-surface-solid); }
     thead th.sticky { z-index: 2; }
@@ -258,7 +258,7 @@ export class TableRowDetail<T = any> {
         display: block;
         font-family: var(--ui-font-sans);
         font-size: var(--ui-font-size-xs);
-        font-weight: 700;
+        font-weight: 600;
         color: var(--ui-text-muted);
       }
       /* compatto: una riga per linea, primaria troncata */

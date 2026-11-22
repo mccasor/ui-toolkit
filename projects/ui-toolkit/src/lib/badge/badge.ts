@@ -28,7 +28,7 @@ export type BadgeTone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' |
       border-radius: var(--ui-radius-pill);
       font-family: var(--ui-font-sans);
       font-size: var(--ui-font-size-xs);
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1rem;
       white-space: nowrap;
       vertical-align: middle;
@@ -70,7 +70,7 @@ export type RoleChipTone = 'primary' | 'warning' | 'danger' | 'success';
       border-radius: var(--ui-radius-pill);
       font-family: var(--ui-font-sans);
       font-size: var(--ui-font-size-micro);
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1;
       cursor: default;
       vertical-align: middle;

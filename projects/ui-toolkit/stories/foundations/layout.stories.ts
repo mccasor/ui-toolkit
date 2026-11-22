@@ -72,7 +72,7 @@ import { FOUNDATION_STYLES } from './shared';
       .bar { height: 1rem; background: var(--ui-primary); border-radius: 2px; }
       .pads { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
       .pad { background: var(--ui-brand-soft); border-radius: var(--ui-radius-card); }
-      .inner { background: var(--ui-surface-solid); border-radius: var(--ui-radius-tile); padding: 0.5rem 0.75rem; font-size: var(--ui-font-size-sm); font-weight: 700; }
+      .inner { background: var(--ui-surface-solid); border-radius: var(--ui-radius-tile); padding: 0.5rem 0.75rem; font-size: var(--ui-font-size-sm); font-weight: 600; }
       .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.375rem 1rem; margin: 0; font-size: var(--ui-font-size-sm); }
       .kv dd { margin: 0; }
     `,
@@ -138,7 +138,7 @@ class SpacingPage {
       .b2 { border-radius: var(--ui-radius-control); }
       .b3 { border-radius: var(--ui-radius-card); }
       .b4 { background: var(--ui-primary); border-color: var(--ui-primary-border); border-radius: var(--ui-radius-control); }
-      .b5 { border: 0; border-left: 4px solid var(--ui-success); border-radius: var(--ui-radius-toast); }
+      .b5 { border-color: var(--ui-border); border-radius: var(--ui-radius-toast); }
     `,
   ],
 })

@@ -19,7 +19,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@an
       gap: 0.5rem;
       min-width: 0;
     }
-    :host(.ui-sticky-bar--surface) { padding: 0.25rem; border-radius: var(--ui-radius-pill); box-shadow: var(--ui-shadow-float); }
+    :host(.ui-sticky-bar--surface) { padding: 0.25rem; border-radius: var(--ui-radius-pill); box-shadow: var(--ui-shadow-glass); }
   `,
 })
 export class StickyBar {

@@ -41,7 +41,7 @@ describe('Valori vincolanti del documento presenti identici', () => {
     expect(RADIUS.backoffice).toEqual({ card: '0.5rem', control: '0.375rem' });
     expect(LAYOUT.controlHeight).toEqual({ sm: '2.25rem', md: '2.75rem', lg: '3.25rem' });
     expect(MOTION.ease).toBe('cubic-bezier(0.22, 1, 0.36, 1)');
-    expect(FONT.weights).toEqual([400, 600, 700, 800]);
+    expect(FONT.weights).toEqual([400, 500, 600, 700]);
   });
 });
 

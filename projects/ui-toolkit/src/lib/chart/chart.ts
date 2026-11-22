@@ -274,7 +274,7 @@ export class Chart {
           backgroundColor: t.text,
           titleColor: t.surface,
           bodyColor: t.surface,
-          titleFont: { family: t.font, weight: 700 },
+          titleFont: { family: t.font, weight: 600 },
           bodyFont: { family: t.font },
           usePointStyle: true,
           boxPadding: 4,

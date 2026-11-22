@@ -218,9 +218,6 @@ export const BACKOFFICE_REMAP: Record<string, string> = {
   'row-zebra': 'var(--bo-surface-alt)',
   'table-header-bg': 'var(--bo-surface-alt)',
   'table-header-position': 'sticky',
-  /** card brand nel backoffice: bordo sinistro 3px arancio */
-  'brand-card-edge': '3px',
-  'brand-card-edge-color': 'var(--ui-primary)',
   border: 'var(--bo-divider)',
   'border-strong': 'var(--bo-border)',
   'glass-edge': 'var(--bo-divider)',
@@ -249,8 +246,6 @@ export const STRUCTURAL_DEFAULTS: Record<string, string> = {
   'row-zebra': 'transparent',
   'table-header-bg': 'transparent',
   'table-header-position': 'static',
-  'brand-card-edge': '1px',
-  'brand-card-edge-color': 'color-mix(in srgb, var(--ui-primary) 55%, transparent)',
   'table-cell-padding': '0.75rem',
   'input-padding': '0.625rem 0.875rem',
 };
@@ -260,8 +255,8 @@ export const STRUCTURAL_DEFAULTS: Record<string, string> = {
 export const FONT = {
   sans: '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
   display: '"Barlow Condensed", "Manrope", ui-sans-serif, system-ui, sans-serif',
-  /** I soli pesi ammessi: niente 300 o 900. */
-  weights: [400, 600, 700, 800],
+  /** I soli pesi ammessi: Manrope 400–600, Barlow Condensed (display, numeri) 700. */
+  weights: [400, 500, 600, 700],
   body: { size: '16px', lineHeight: '1.5' },
 } as const;
 
@@ -283,18 +278,18 @@ export const TYPE: Record<string, TypeStyle> = {
   displayHero: { family: 'display', size: '3rem', sizeSm: '3.75rem', lineHeight: '1', weight: 700, transform: 'uppercase', use: 'titolo pagina/torneo, landing' },
   h1: { family: 'display', size: '2.25rem', sizeSm: '3rem', lineHeight: '1', weight: 700, transform: 'uppercase', tracking: '0.025em', use: 'titoli di pagina interni' },
   h2Display: { family: 'display', size: '1.875rem', weight: 700, transform: 'uppercase', use: 'blocchi principali' },
-  cardTitle: { family: 'sans', size: '1.125rem', weight: 800, use: 'titolo dentro card' },
-  sectionTitle: { family: 'sans', size: '1rem', lineHeight: '1.5', weight: 800, use: 'titolo di sezione (frase, senza maiuscole spaziate)' },
+  cardTitle: { family: 'sans', size: '1.125rem', weight: 600, use: 'titolo dentro card' },
+  sectionTitle: { family: 'sans', size: '1rem', lineHeight: '1.5', weight: 600, use: 'titolo di sezione (frase, senza maiuscole spaziate)' },
   body: { family: 'sans', size: '1rem', lineHeight: '1.5', weight: '400–500', use: 'testo corrente' },
   bodySm: { family: 'sans', size: '0.875rem', lineHeight: '1.25rem', weight: '400–600', use: 'metadati, liste, hint' },
-  label: { family: 'sans', size: '0.875rem', weight: 700, use: 'label di form' },
-  caption: { family: 'sans', size: '0.75rem', lineHeight: '1rem', weight: '600–700', use: 'badge, note' },
-  micro: { family: 'sans', size: '0.6875rem', weight: 700, use: 'chip iniziali, header tabella backoffice' },
-  tableHeader: { family: 'sans', size: '0.75rem', weight: 700, color: 'muted', use: 'header tabella (frase, senza tracking)' },
-  button: { family: 'sans', size: '0.9375rem', lineHeight: '1', weight: 700, use: 'bottone (sm 0.875rem, lg 1rem)' },
-  numberLg: { family: 'display', size: '3rem', weight: 800, numeric: true, use: 'punteggi live, KPI' },
+  label: { family: 'sans', size: '0.875rem', weight: 600, use: 'label di form' },
+  caption: { family: 'sans', size: '0.75rem', lineHeight: '1rem', weight: 600, use: 'badge, note' },
+  micro: { family: 'sans', size: '0.6875rem', weight: 600, use: 'chip iniziali, header tabella backoffice' },
+  tableHeader: { family: 'sans', size: '0.75rem', weight: 600, color: 'muted', use: 'header tabella (frase, senza tracking)' },
+  button: { family: 'sans', size: '0.9375rem', lineHeight: '1', weight: 600, use: 'bottone (sm 0.875rem, lg 1rem)' },
+  numberLg: { family: 'display', size: '3rem', weight: 700, numeric: true, use: 'punteggi live, KPI' },
   numeric: { family: 'display', weight: 700, numeric: true, tracking: '0.01em', use: 'classifiche, minuti' },
-  boH1: { family: 'sans', size: '1.375rem', lineHeight: '1.2', weight: 800, use: 'titoli pagina gestionale' },
+  boH1: { family: 'sans', size: '1.375rem', lineHeight: '1.2', weight: 600, use: 'titoli pagina gestionale' },
 };
 
 /** Tracking solo sulla voce display (maiuscole condensed) e sui numeri: etichette e badge non sono spaziati. */
@@ -370,7 +365,7 @@ export const Z = {
 /* ------------------------------------------------------------- Ombre */
 
 /** Tile del logo nell'header: gradiente scuro #2c2c30 → #0f0f10 (uguale nei temi). */
-export const LOGO_TILE = { from: '#2C2C30', to: '#0F0F10' } as const;
+export const LOGO_TILE = '#1E1E1E';
 
 export const SHADOW = {
   light: { glass: THEMES.light.shadowGlass, float: THEMES.light.shadowFloat },

@@ -101,7 +101,7 @@ interface Check {
       .roles { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.75rem; }
       .roles li { display: flex; gap: 0.75rem; align-items: center; font-size: var(--ui-font-size-sm); }
       .roles strong { margin-right: 0.375rem; }
-      .sw { width: 2.75rem; height: 2.75rem; flex: none; border-radius: var(--ui-radius-tile); display: grid; place-items: center; font-weight: 800; border: 3px solid transparent; box-sizing: border-box; }
+      .sw { width: 2.75rem; height: 2.75rem; flex: none; border-radius: var(--ui-radius-tile); display: grid; place-items: center; font-weight: 600; border: 3px solid transparent; box-sizing: border-box; }
       .txt { border-color: var(--ui-border); }
       .css { margin: 0; white-space: pre; overflow-x: auto; }
     `,

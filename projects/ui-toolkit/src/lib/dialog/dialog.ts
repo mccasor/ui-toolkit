@@ -152,7 +152,7 @@ export class DialogActions {}
   styles: `
     :host { display: block; padding: var(--ui-card-padding-lg); color: var(--ui-text); }
     .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
-    .title { margin: 0; font-size: var(--ui-type-card-title-size); font-weight: 800; line-height: 1.3; text-wrap: balance; }
+    .title { margin: 0; font-size: var(--ui-type-card-title-size); font-weight: 600; line-height: 1.3; text-wrap: balance; }
     .close { margin: -0.375rem -0.5rem 0 0; }
     .desc { margin: 0.5rem 0 0; color: var(--ui-text-muted); font-size: var(--ui-font-size-sm); line-height: 1.25rem; }
     .body:not(:empty) { margin-top: 1rem; }
@@ -259,7 +259,7 @@ export class ConfirmDialog {
     }
     @media (hover: hover) { .choice:hover { background: var(--ui-surface-solid); } }
     .choice:active { transform: scale(var(--ui-press-scale)); }
-    .label { font-weight: 700; }
+    .label { font-weight: 600; }
     .desc { font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
   `,
 })

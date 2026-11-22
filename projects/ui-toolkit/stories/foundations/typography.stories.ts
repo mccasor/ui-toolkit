@@ -114,7 +114,7 @@ const SAMPLE: Record<string, string> = {
       .sans { font-family: var(--ui-font-sans); font-size: 1.5rem; font-weight: 600; }
       .display { font-family: var(--ui-font-display); font-size: 1.75rem; font-weight: 700; }
       .spec { white-space: normal; min-width: 14rem; }
-      .ui-btn-type { font-size: var(--ui-type-button-size); font-weight: 700; line-height: 1; }
+      .ui-btn-type { font-size: var(--ui-type-button-size); font-weight: 600; line-height: 1; }
       .tracking { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.25rem; }
       .tracking li { display: flex; gap: 0.75rem; }
     `,

@@ -90,7 +90,7 @@ export class TabBar {
     .label {
       max-width: 100%;
       font-size: var(--ui-font-size-micro);
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1rem;
       white-space: nowrap;
       overflow: hidden;
