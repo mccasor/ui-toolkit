@@ -20,7 +20,7 @@ import { prefersReducedMotion } from '../util/media';
 /**
  * Carousel con scroll-snap orizzontale nativo. Le slide sono i figli diretti (qualsiasi elemento).
  * - `slideWidth` (default 85%), gap 0.75rem, frecce e pallini opzionali, tastiera sulla traccia (←/→, Home/End).
- * - `adaptiveHeight`: l'altezza segue la slide attiva (200ms).
+ * - `adaptiveHeight`: l'altezza segue la slide attiva, senza animazione (si animano solo transform e opacity).
  * - Swipe/scroll aggiornano `index`; impostare `index` scorre alla slide.
  */
 @Component({
@@ -83,7 +83,6 @@ import { prefersReducedMotion } from '../util/media';
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      transition: height var(--ui-duration-carousel-height) var(--ui-ease);
       /* spazio per l'ombra delle card (non tagliata dall'overflow), compensato dal margine */
       padding-block: 0.25rem 1.25rem;
       margin-block: -0.25rem -1.25rem;
@@ -113,7 +112,8 @@ import { prefersReducedMotion } from '../util/media';
       height: 0.5rem;
       border-radius: var(--ui-radius-pill);
       background: var(--ui-border-strong);
-      transition: width var(--ui-duration-micro) var(--ui-ease), background-color var(--ui-duration-micro) var(--ui-ease);
+      /* la larghezza del pallino attivo cambia senza animazione: si anima solo il colore */
+      transition: background-color var(--ui-duration-micro) var(--ui-ease);
     }
     .dot[aria-current='true']::after { width: 1.25rem; background: var(--ui-text); }
   `,

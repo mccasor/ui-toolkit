@@ -390,7 +390,6 @@ export const MOTION = {
     toast: '260ms',
     page: '240ms',
     pageFade: '180ms',
-    carouselHeight: '200ms',
     spinner: '700ms',
     live: '1.4s',
     skeleton: '1.4s',

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import type { Meta, StoryObj } from '@storybook/angular-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { MOTION } from 'ui-toolkit/tokens';
 import { FOUNDATION_STYLES } from './shared';
 
@@ -68,13 +68,6 @@ import { FOUNDATION_STYLES } from './shared';
             <span class="ui-skeleton sk" aria-hidden="true"></span>
           </div>
         </section>
-
-        <section class="glass fd-card demo" aria-labelledby="d-h">
-          <h2 id="d-h" class="ui-card-title">Altezza carousel, 200ms</h2>
-          <p class="ui-body-sm fd-muted">si adatta al pannello attivo</p>
-          <button type="button" class="ui-btn ui-btn--secondary ui-btn--sm" (click)="tall.set(!tall())">Cambia pannello</button>
-          <div class="grow" [style.height]="tall() ? '8rem' : '3rem'"></div>
-        </section>
       </div>
 
       <section class="glass fd-card" aria-labelledby="dur-h">
@@ -111,7 +104,6 @@ import { FOUNDATION_STYLES } from './shared';
       .loops { display: flex; gap: 1.25rem; align-items: center; font-size: 1.25rem; }
       .live { display: inline-flex; gap: 0.5rem; align-items: center; font-size: var(--ui-font-size-xs); font-weight: 700; color: var(--ui-danger-text); }
       .sk { width: 6rem; height: 1rem; }
-      .grow { width: 100%; background: var(--ui-brand-soft); border-radius: var(--ui-radius-tile); transition: height var(--ui-duration-carousel-height) var(--ui-ease); }
       .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.375rem 1rem; margin: 0; font-size: var(--ui-font-size-sm); }
       .kv dd { margin: 0; }
     `,
@@ -121,7 +113,6 @@ class MotionPage {
   protected readonly m = MOTION;
   protected readonly durations = Object.entries(MOTION.duration).map(([k, v]) => [k.replace(/[A-Z]/g, (x) => '-' + x.toLowerCase()), v]);
   protected readonly keys = signal({ dialog: 0, sheet: 0, toast: 0 });
-  protected readonly tall = signal(false);
   protected replay(k: 'dialog' | 'sheet' | 'toast') {
     this.keys.update((v) => ({ ...v, [k]: v[k] + 1 }));
   }
@@ -145,6 +136,5 @@ export const ReducedMotion: StoryObj = {
     await expect(parseFloat(dur)).toBeLessThan(0.001);
     const sk = canvasElement.querySelector('.ui-skeleton')!;
     await expect(getComputedStyle(sk).animationName).toBe('none');
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cambia pannello' }));
   },
 };

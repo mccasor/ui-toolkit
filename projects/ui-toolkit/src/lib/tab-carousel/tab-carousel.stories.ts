@@ -31,7 +31,7 @@ const meta: Meta<Args> = {
   parameters: {
     docs: {
       description: {
-        component: `Segmented sopra un Carousel di pannelli a tutta larghezza; l'altezza si adatta al pannello attivo (200ms). Scegliere un tab scorre al
+        component: `Segmented sopra un Carousel di pannelli a tutta larghezza; l'altezza si adatta al pannello attivo, senza animazione. Scegliere un tab scorre al
 pannello, lo swipe sul pannello aggiorna il tab.
 
 **Accessibilità** — tablist (Segmented) con \`aria-controls\` verso i \`ui-tab-panel\` (\`role="tabpanel"\`, \`aria-labelledby\` del tab).

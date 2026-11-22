@@ -378,9 +378,7 @@ shimmer gradient 200%
 transizione pagina
 240ms
 View Transitions: slide 12% + fade nella direzione della tab; fade 180ms tra altre pagine; header e tab bar fermi
-altezza carousel
-200ms
-adatta l'altezza al pannello attivo
+Si animano solo transform e opacity (più colori e ombre negli stati dei controlli): mai width, height, top o left, mai transition: all. Per questo il carousel adatta l'altezza al pannello attivo senza animazione.
 Reduced motion (obbligatorio): tutte le animazioni e transizioni a 0.01ms, niente view transition, live dot e skeleton statici, scroll-behavior: auto.
 Catalogo componenti
 I componenti sotto esistono in Torneo (src/app/ui) e vanno replicati con la stessa API e lo stesso aspetto. Prefisso consigliato ui-. Ogni componente usa solo token, ha stati hover / focus-visible / active / disabled, e una storia per tema light, dark e backoffice.
@@ -420,7 +418,7 @@ ImageInput — file (ridimensionato nel browser) o URL, anteprima circle o squar
 Navigazione e layout
 Header — sticky, superficie a tutta larghezza senza radius, solo bordo inferiore, ombra shadow-header (0 6px 16px -12px). Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem con gradiente scuro #2c2c30 → #0f0f10) + titolo display 1.375rem UPPERCASE tracking 0.025em (wordmark) + tagline 0.75rem/600 muted in frase, fino a 2 righe.
 TabBar — flottante in basso (0.75rem + safe-area), max 30rem, radius 1.5rem, superficie strong + shadow-glass + shadow-float. Voci: colonna icona+label 0.6875rem/700 (0.75rem da 640px), min-height 3.5rem; icona in una pill 3rem × 1.875rem che da attiva prende nav-active bg/fg; press scale(0.92).
-Carousel — scroll-snap orizzontale nativo, slideWidth (85% default), gap 0.75rem, frecce e pallini opzionali, tastiera sulla traccia. TabCarousel = Segmented sopra un Carousel di pannelli a tutta larghezza, altezza adattata al pannello attivo.
+Carousel — scroll-snap orizzontale nativo, slideWidth (85% default), gap 0.75rem, frecce e pallini opzionali (l'attivo si allarga a 1.25rem senza animare la larghezza: si anima solo il colore), tastiera sulla traccia. TabCarousel = Segmented sopra un Carousel di pannelli a tutta larghezza, altezza adattata al pannello attivo senza animazione.
 Sticky bar — barra di pagina che si ferma sotto l'header (top: sticky-top + 0.5rem).
 Footer — bordo superiore border, link 0.875rem/600 muted, hover text + sottolineatura offset 4px; i link sono separati dallo spazio (gap 1.25rem), senza puntino.
 Icone
@@ -483,6 +481,7 @@ Registro modifiche
 • Display hero: line-height 1 (era 0.95) per non far toccare le maiuscole su due righe.
 • Grafici: palette categorica a 7 tinte sostituita dalla rampa di luminosità sull'accento (max 3 serie + contesto); torta e ciambella sconsigliate a favore della barra impilata.
 • Base: ::selection, scrollbar-color e caret-color dalla palette; anello di focus degli input istantaneo.
+• Motion: tolta l'animazione d'altezza del carousel (200ms) e il token --ui-duration-carousel-height: l'altezza si adatta al pannello senza transizione. Anche i pallini del carousel non animano più la larghezza.
 Lo stile resta riconoscibile come C85: stesso arancio d'azione, stessi neutri caldi, stesse famiglie, stesse misure di componenti e motion.
 Prompt da incollare
 Sei un senior design-system engineer. Costruisci "ui-toolkit", una libreria di componenti Angular riusabile con Storybook,
