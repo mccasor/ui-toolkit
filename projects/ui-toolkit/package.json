@@ -15,7 +15,7 @@
     "./styles/*": "./styles/*"
   },
   "description": "Design system C85: componenti Angular + token (ui-toolkit/tokens), temi light, dark e backoffice.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mccasor/ui-toolkit.git"

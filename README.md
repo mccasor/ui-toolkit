@@ -47,3 +47,7 @@ Uso dei componenti, temi e Tailwind: vedi il [README del pacchetto](projects/ui-
 2. `npm test && npm run pack`;
 3. `git tag vX.Y.Z && git push --tags`;
 4. `gh release create vX.Y.Z release/ui-toolkit-X.Y.Z.tgz --title "vX.Y.Z" --notes "…"`.
+
+## Licenza
+
+[MIT](LICENSE). I font in `projects/ui-toolkit/styles/fonts/` sono sotto SIL Open Font License.
