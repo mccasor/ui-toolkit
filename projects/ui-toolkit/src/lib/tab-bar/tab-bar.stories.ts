@@ -16,7 +16,7 @@ const TEMPLATE = `
   <ui-tab-bar [fixed]="false">
     @for (i of items; track i.id) {
       <a uiTabBarItem [href]="'#' + i.id" [active]="current() === i.id" (click)="$event.preventDefault(); current.set(i.id)">
-        <sb-icon uiTabIcon [name]="i.icon" />{{ i.label }}
+        <sb-icon uiTabIcon [name]="i.icon" [weight]="current() === i.id ? 'fill' : 'bold'" />{{ i.label }}
       </a>
     }
   </ui-tab-bar>`;

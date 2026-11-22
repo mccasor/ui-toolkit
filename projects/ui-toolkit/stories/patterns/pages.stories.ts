@@ -150,7 +150,7 @@ class TeamDialog {
       } @else {
         <ui-glass-card>
           <ui-empty-state title="Nessuna squadra iscritta" description="Crea la prima squadra o condividi il link d'iscrizione: le squadre compariranno qui." [headingLevel]="2">
-            <sb-icon uiEmptyIcon name="users" [size]="32" [stroke]="1.75" />
+            <sb-icon uiEmptyIcon name="users" [size]="32" weight="regular" />
             <div uiEmptyActions>
               <button uiButton variant="primary" (click)="nuova()"><sb-icon name="plus" /> Crea squadra</button>
               <button uiButton variant="ghost">Copia link d'iscrizione</button>

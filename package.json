@@ -9,7 +9,8 @@
     "build-storybook": "ng run ui-toolkit:build-storybook",
     "tokens": "tsx scripts/build-tokens.ts",
     "test:tokens": "vitest run --project=tokens",
-    "test:storybook": "vitest run --project=storybook"
+    "test:storybook": "vitest run --project=storybook",
+    "icons": "tsx scripts/build-story-icons.ts"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
@@ -34,6 +35,7 @@
     "@angular/compiler-cli": "^22.3.0",
     "@fontsource-variable/manrope": "^5",
     "@fontsource/barlow-condensed": "^5",
+    "@phosphor-icons/core": "2.1.1",
     "@storybook/addon-a11y": "^10.6.8",
     "@storybook/addon-docs": "^10.6.8",
     "@storybook/addon-vitest": "^10.6.8",

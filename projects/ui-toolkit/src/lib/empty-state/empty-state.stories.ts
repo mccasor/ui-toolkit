@@ -14,7 +14,7 @@ const meta: Meta<EmptyState> = {
   render: (args) => ({
     props: args,
     template: `<ui-glass-card style="max-width:28rem"><ui-empty-state ${argsToTemplate(args)}>
-      <sb-icon uiEmptyIcon name="calendar" [size]="32" [stroke]="1.75" />
+      <sb-icon uiEmptyIcon name="calendar" [size]="32" weight="regular" />
       <div uiEmptyActions><button uiButton variant="primary">Crea calendario</button></div>
     </ui-empty-state></ui-glass-card>`,
   }),
@@ -41,7 +41,7 @@ export const WithoutActions: Story = {
   name: 'Senza azioni',
   render: (args) => ({
     props: args,
-    template: `<ui-empty-state ${argsToTemplate(args)}><sb-icon uiEmptyIcon name="inbox" [size]="32" [stroke]="1.75" /></ui-empty-state>`,
+    template: `<ui-empty-state ${argsToTemplate(args)}><sb-icon uiEmptyIcon name="inbox" [size]="32" weight="regular" /></ui-empty-state>`,
   }),
   args: { title: 'Nessun risultato', description: 'Prova a cambiare i filtri o a cercare un altro nome.' },
 };
@@ -49,7 +49,7 @@ export const Minimal: Story = { name: 'Solo titolo', render: (args) => ({ props:
 
 const ALL = () => ({
   template: `<ui-glass-card style="max-width:28rem"><ui-empty-state title="Nessuna squadra iscritta" description="Condividi il link d'iscrizione: le squadre compariranno qui." [headingLevel]="2">
-    <sb-icon uiEmptyIcon name="users" [size]="32" [stroke]="1.75" />
+    <sb-icon uiEmptyIcon name="users" [size]="32" weight="regular" />
     <div uiEmptyActions><button uiButton variant="primary">Copia link</button><button uiButton variant="ghost">Aggiungi a mano</button></div>
   </ui-empty-state></ui-glass-card>`,
 });

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Avatar, Badge, Button, Footer, GlassCard, Header, TabBar, TabBarItem, TeamLogo } from 'ui-toolkit';
-import { SbIcon } from '../support/icon';
+import { SbIcon, iconSvg } from '../support/icon';
 import type { Partita } from './data';
 
 /** Shell comune: header (con skip link) + main + footer + tab bar flottante. */
@@ -10,7 +10,7 @@ import type { Partita } from './data';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ui-header title="Torneo C85" tagline="Calcio a 5 · Bergamo" homeHref="#home" skipTo="#main">
-      <svg uiHeaderLogo viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7" /></svg>
+      ${iconSvg('trophy', 'fill', 'uiHeaderLogo')}
       <div uiHeaderActions>
         <button uiButton variant="ghost" iconOnly aria-label="Cerca"><sb-icon name="search" /></button>
         <ui-avatar name="Mario Rossi" size="sm" />
@@ -22,7 +22,7 @@ import type { Partita } from './data';
     <ui-footer [links]="links">© 2026 Torneo C85</ui-footer>
     <ui-tab-bar>
       @for (t of tabs; track t.id) {
-        <a uiTabBarItem [href]="'#' + t.id" [active]="active() === t.id"><sb-icon uiTabIcon [name]="t.icon" />{{ t.label }}</a>
+        <a uiTabBarItem [href]="'#' + t.id" [active]="active() === t.id"><sb-icon uiTabIcon [name]="t.icon" [weight]="active() === t.id ? 'fill' : 'bold'" />{{ t.label }}</a>
       }
     </ui-tab-bar>
   `,
