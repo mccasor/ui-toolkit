@@ -4,7 +4,7 @@ import { Chart, UI_CHART_LOADER, type ChartConstructor, type ChartData } from '.
 
 @Component({
   imports: [Chart],
-  template: `<ui-chart type="bar" [data]="data" ariaLabel="Gol per giornata" [dataTable]="table()" />`,
+  template: `<ui-chart type="bar" [data]="data" ariaLabel="Gol per giornata" [dataTable]="table()"><p class="own">Tabella dell'app</p></ui-chart>`,
 })
 class Host {
   data: ChartData = { labels: ['G1', 'G2'], datasets: [{ label: 'Gol', data: [3, 5] }] };
@@ -36,5 +36,6 @@ describe('Chart', () => {
     f.componentInstance.table.set(false);
     await f.whenStable();
     expect(f.nativeElement.querySelector('table')).toBeNull();
+    expect(f.nativeElement.querySelector('ui-chart .own')?.textContent).toContain("Tabella dell'app");
   });
 });

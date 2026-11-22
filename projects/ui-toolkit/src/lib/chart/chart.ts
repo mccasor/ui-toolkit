@@ -115,6 +115,8 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
     </table>
     </div>
     }
+    <!-- contenuto accessibile dell'app (es. una tabella già formattata, con dataTable=false) -->
+    <ng-content />
   `,
   host: { class: 'ui-chart', '[attr.data-mode]': 'mode()', '[attr.aria-busy]': 'ready() ? null : "true"' },
   styles: `
@@ -131,7 +133,7 @@ export class Chart {
   /** descrizione del grafico per gli screen reader (obbligatoria) */
   readonly ariaLabel = input.required<string>();
   readonly height = input('12rem');
-  /** tabella sr-only con i dati; da spegnere se la pagina mostra già gli stessi dati in una tabella */
+  /** tabella sr-only con i dati; da spegnere se la pagina mostra già gli stessi dati, o ne proietta una sua (contenuto di `<ui-chart>`) */
   readonly dataTable = input(true, { transform: booleanAttribute });
   /** intestazione della colonna categorie nella tabella sr-only */
   protected readonly uiLabels = injectUiLabels();
