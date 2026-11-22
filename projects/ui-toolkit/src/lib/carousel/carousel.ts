@@ -210,7 +210,9 @@ export class Carousel {
     const target = Math.max(0, Math.min(slides.length - 1, i));
     const track = this.track().nativeElement;
     const left = slides[target].offsetLeft - (slides[0]?.offsetLeft ?? 0);
-    track.scrollTo({ left, behavior: instant || prefersReducedMotion() ? 'auto' : 'smooth' });
+    // scrollTo manca in jsdom e nei vecchi browser
+    if (typeof track.scrollTo === 'function') track.scrollTo({ left, behavior: instant || prefersReducedMotion() ? 'auto' : 'smooth' });
+    else track.scrollLeft = left;
     this.settledIndex = target;
     if (this.index() !== target) this.index.set(target);
   }

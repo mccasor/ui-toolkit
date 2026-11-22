@@ -166,11 +166,11 @@ export class Chart {
       mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class', 'data-contrast', 'data-motion'] });
       const scope = this.host.closest('.bo, [data-theme]');
       if (scope && scope !== document.documentElement) mo.observe(scope, { attributes: true, attributeFilter: ['data-theme', 'class'] });
-      const mql = matchMedia('(prefers-color-scheme: dark)');
-      mql.addEventListener('change', bump);
+      const mql = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+      mql?.addEventListener('change', bump);
       destroy.onDestroy(() => {
         mo.disconnect();
-        mql.removeEventListener('change', bump);
+        mql?.removeEventListener('change', bump);
         this.chart?.destroy();
       });
     });
