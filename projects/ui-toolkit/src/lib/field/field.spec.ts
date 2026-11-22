@@ -9,6 +9,7 @@ import { Field, FieldInput } from './field';
       <input uiInput type="email" />
     </ui-field>
     <ui-field label="Note"><textarea uiInput id="note"></textarea></ui-field>
+    <ui-field label="Arbitro" fieldId="referee-pick"><input uiInput /></ui-field>
   `,
 })
 class Host {
@@ -48,5 +49,13 @@ describe('Field + Input', () => {
     await f.whenStable();
     const labels = f.nativeElement.querySelectorAll('label');
     expect(labels[1].getAttribute('for')).toBe('note');
+  });
+
+  it('fieldId: id scelto per il controllo e la label', async () => {
+    const f = TestBed.createComponent(Host);
+    await f.whenStable();
+    const el: HTMLElement = f.nativeElement;
+    expect(el.querySelectorAll('label')[2].getAttribute('for')).toBe('referee-pick');
+    expect(el.querySelectorAll('input')[1].id).toBe('referee-pick');
   });
 });

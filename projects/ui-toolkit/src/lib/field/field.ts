@@ -70,13 +70,15 @@ export class Field implements FieldContext {
   /** Messaggio di errore: se presente il campo è invalido. */
   readonly error = input<string | null>();
   readonly required = input(false, { transform: booleanAttribute });
+  /** id del controllo (es. per collegarlo da fuori); di default generato o quello del controllo registrato */
+  readonly fieldId = input<string>();
 
   readonly labelId = uniqueId('ui-field-label');
   protected readonly hintId = uniqueId('ui-field-hint');
   protected readonly errorId = uniqueId('ui-field-error');
   private readonly ownId = signal(uniqueId('ui-field-control'));
 
-  readonly controlId = this.ownId.asReadonly();
+  readonly controlId = computed(() => this.fieldId() || this.ownId());
   readonly invalid = computed(() => !!this.error());
   readonly describedBy = computed(() => [this.hint() ? this.hintId : null, this.error() ? this.errorId : null].filter(Boolean).join(' ') || null);
 

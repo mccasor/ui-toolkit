@@ -17,14 +17,14 @@ import { uniqueId } from '../util/id';
       <div class="grid">
         @if (allowNone()) {
           <label class="item">
-            <input type="radio" class="sr-only" [name]="name" [checked]="value() === null" (change)="value.set(null)" />
+            <input type="radio" class="sr-only" [name]="name()" [checked]="value() === null" (change)="value.set(null)" />
             <span class="dot none" aria-hidden="true"></span>
             <span class="sr-only">{{ noneLabelText() }}</span>
           </label>
         }
         @for (s of swatches(); track s.id) {
           <label class="item" [title]="s.label">
-            <input type="radio" class="sr-only" [name]="name" [value]="s.fill" [checked]="value() === s.fill" (change)="value.set(s.fill)" />
+            <input type="radio" class="sr-only" [name]="name()" [value]="s.fill" [checked]="value() === s.fill" (change)="value.set(s.fill)" />
             <span class="dot" aria-hidden="true" [style.background]="s.fill"></span>
             <span class="sr-only">{{ s.label }}</span>
           </label>
@@ -64,5 +64,6 @@ export class ColorSwatches {
   readonly allowNone = input(true, { transform: booleanAttribute });
   readonly noneLabel = input<string>();
   protected readonly noneLabelText = computed(() => this.noneLabel() ?? this.uiLabels().colorNone);
-  protected readonly name = uniqueId('ui-swatches');
+  /** nome del gruppo di radio (default generato) */
+  readonly name = input(uniqueId('ui-swatches'));
 }
