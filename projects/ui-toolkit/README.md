@@ -13,7 +13,7 @@ Documentazione e storie: Storybook del repository ([mccasor/ui-toolkit](https://
 Il pacchetto non è su npm: si installa dal tarball allegato alle [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
 
 ```bash
-npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.1/ui-toolkit-0.1.1.tgz
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.2.0/ui-toolkit-0.2.0.tgz
 ```
 
 Basta questo comando: `chart.js` è una dipendenza del pacchetto (caricata on demand solo se usi `<ui-chart>`), e `@angular/cdk` è una peer dependency che npm ≥ 7 e pnpm installano in automatico, in un'unica copia condivisa con l'app. Con Yarn aggiungila a mano: `yarn add @angular/cdk@^22.3.0`.
@@ -69,7 +69,20 @@ export class App {
 }
 ```
 
-Componenti disponibili: Button, GlassCard, Badge, RoleChip, Spinner, Skeleton, Field/FieldInput, Segmented, Select, Dialog (DialogService: `open`, `confirm`, `choose`), Toast (ToastService + `<ui-toast-region>`), EmptyState, Stat, Table, Avatar, TeamLogo, Carousel, TabCarousel, Header, TabBar, Chart, ColorSwatches, ImageInput, StickyBar, Footer.
+Componenti disponibili: Button, Icon, GlassCard, Badge, RoleChip, Spinner, Skeleton, Field/FieldInput, Segmented, Select, Dialog (DialogService: `open`, `confirm`, `choose`, `closeAll`), Toast (ToastService + `<ui-toast-region>`), EmptyState, Stat, Table, Avatar, TeamLogo, Carousel, TabCarousel, Header, TabBar, Chart, ColorSwatches, ImageInput, StickyBar, Footer.
+
+### Integrazione con l'app
+
+Hook opzionali, tutti forniti dall'app nei `providers`:
+
+| Provider | A cosa serve |
+|---|---|
+| `provideIcons({ nome: ['M…'] })` | Icone di dominio in più (o al posto di) quelle incluse in `<ui-icon>` (Phosphor regular, griglia 256). |
+| `provideUiLabels(signal)` | Testi predefiniti dei componenti (Annulla, Chiudi, Cerca, errori immagine…), anche reattivi al cambio lingua; le chiavi mancanti restano in italiano. |
+| `{ provide: UI_DISABLED_SCOPE, useValue: Signal<boolean> }` | Disabilita i bottoni con l'attributo `write` (es. dati in sola lettura). |
+| `provideUiLinkHandler((href, e) => …)` | Navigazione dei link interni (righe di Table) col router dell'app, senza ricaricare la pagina. |
+| `{ provide: UI_IMAGE_RESOLVER, useValue: { handles, peek, resolve } }` | `src` di Avatar / TeamLogo / ImageInput che l'app risolve da sé (es. riferimenti a immagini salvate). |
+| `{ provide: IMAGE_RESIZER, … }`, `{ provide: UI_CHART_LOADER, … }` | Sostituti di ridimensionamento immagini e Chart.js nei test. |
 
 ### Temi
 
