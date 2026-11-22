@@ -10,7 +10,7 @@ const meta: Meta<Args> = {
   title: 'Components/GlassCard',
   component: GlassCard,
   decorators: [moduleMetadata({ imports: [GlassCard, Badge] })],
-  args: { variant: 'default', padding: 'md', interactive: false, content: 'Girone A · 4 squadre · prossima partita sabato alle 15:00' },
+  args: { variant: 'default', padding: 'md', interactive: false, content: 'Girone A, 4 squadre, prossima partita sabato alle 15:00' },
   argTypes: {
     variant: { control: 'inline-radio', options: ['default', 'strong', 'brand'] },
     padding: { control: 'inline-radio', options: ['none', 'sm', 'md', 'lg'] },
@@ -26,8 +26,9 @@ const meta: Meta<Args> = {
   parameters: {
     docs: {
       description: {
-        component: `Card di vetro: surface + blur 18px saturate 170%, bordo glass-edge, shadow-glass, radius 1.25rem, overflow hidden.
-Il vetro ha senso solo sopra il mesh; con reduced transparency, high contrast o senza backdrop-filter diventa surface-solid. Nel backoffice è piatta (niente blur né ombra, radius 0.5rem).
+        component: `Card su superficie piena (nome storico \`GlassCard\`): surface, bordo glass-edge, shadow-glass corta, radius 1.25rem, overflow hidden.
+L'elevazione è data dalla luminosità e dall'ombra, non da blur o gradienti. Variante \`brand\`: fondo arancio all'8% piatto + bordo arancio 55%.
+Con high contrast il bordo diventa border-strong. Nel backoffice è piatta (niente ombra, radius 0.5rem).
 
 **Accessibilità** — per una card cliccabile usa \`<a uiGlassCard interactive>\` o \`<button uiGlassCard>\`: un solo elemento focusabile, con focus visibile. Il lift è puramente visivo (statico con reduced motion).`,
       },
@@ -51,7 +52,7 @@ export const Interactive: Story = {
       <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
         <strong class="ui-card-title">Leoni – Falchi</strong><ui-badge tone="live">Live</ui-badge>
       </div>
-      <p class="ui-body-sm text-muted" style="margin:.25rem 0 0">Campo 2 · 2° tempo</p>
+      <p class="ui-body-sm text-muted" style="margin:.25rem 0 0">Campo 2, 2° tempo</p>
     </a>`,
   }),
   play: async ({ canvasElement }) => {
@@ -66,7 +67,7 @@ const ALL = () => ({
   template: `<div style="display:grid;gap:.75rem;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))">
     <ui-glass-card><strong class="ui-card-title">Default</strong><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">surface 72%</p></ui-glass-card>
     <ui-glass-card variant="strong"><strong class="ui-card-title">Strong</strong><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">surface 86%</p></ui-glass-card>
-    <ui-glass-card variant="brand"><strong class="ui-card-title">Brand</strong><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">glow + bordo arancio</p></ui-glass-card>
+    <ui-glass-card variant="brand"><strong class="ui-card-title">Brand</strong><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">fondo tinto + bordo arancio</p></ui-glass-card>
     <a uiGlassCard interactive href="#x"><strong class="ui-card-title">Interattiva</strong><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">lift + float</p></a>
   </div>`,
 });

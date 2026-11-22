@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 /**
  * Header di app: sticky, glass a tutta larghezza senza radius, solo bordo inferiore, ombra 0 8px 24px -18px.
  * Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem con gradiente scuro) + titolo display 1.375rem UPPERCASE tracking 0.025em
- * + tagline 0.6875rem/700 UPPERCASE tracking 0.18em muted. Slot: `[uiHeaderLogo]`, `[uiHeaderActions]`.
+ * + tagline 0.75rem/600 muted in frase (niente maiuscole spaziate). Slot: `[uiHeaderLogo]`, `[uiHeaderActions]`.
  * Con `skipTo` rende lo skip link "Vai al contenuto" come primo elemento focusabile.
  */
 @Component({
@@ -86,11 +86,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     }
     .tagline {
       margin-top: 0.125rem;
-      font-size: var(--ui-font-size-micro);
-      font-weight: 700;
-      line-height: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: var(--ui-tracking-tagline);
+      font-size: var(--ui-font-size-xs);
+      font-weight: 600;
+      line-height: 1rem;
       color: var(--ui-text-muted);
       /* come in Torneo: va a capo (max 2 righe) invece di troncare */
       display: -webkit-box;

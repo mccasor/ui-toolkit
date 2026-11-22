@@ -32,8 +32,8 @@ const GROUPS: { title: string; rows: Row[] }[] = [
   {
     title: 'Superfici',
     rows: [
-      { token: 'bg', kind: 'surface', note: 'sotto il mesh' },
-      { token: 'surface', kind: 'surface', note: 'vetro, blur 18px saturate 170%' },
+      { token: 'bg', kind: 'surface', note: 'fondo pagina' },
+      { token: 'surface', kind: 'surface', note: 'card, un gradino sopra bg' },
       { token: 'surfaceStrong', kind: 'surface', note: 'input, secondary button' },
       { token: 'surfaceSolid', kind: 'surface', note: 'fallback glass, popover' },
       { token: 'surfaceSunken', kind: 'surface', note: 'hover ghost, righe tabella' },
@@ -112,7 +112,7 @@ function cell(row: Row, v: Values): Cell {
   const solid = v['surfaceSolid'] ?? '#fff';
   const alpha = val ? parseColor(val).a : 1;
   const ok = (val && formatOklch(alpha < 1 ? blend(val, bg) : val)) || '';
-  const base: Cell = { value: val, oklch: ok + (alpha < 1 ? ` · α ${alpha}` : ''), ratio: '—', pass: null, label: '', bg, swatchBg: 'transparent', swatchFg: v['text'] ?? '', swatchBorder: 'transparent', sample: false };
+  const base: Cell = { value: val, oklch: ok + (alpha < 1 ? `, α ${alpha}` : ''), ratio: '—', pass: null, label: '', bg, swatchBg: 'transparent', swatchFg: v['text'] ?? '', swatchBorder: 'transparent', sample: false };
   if (!val) return base;
   switch (row.kind) {
     case 'text': {
@@ -136,7 +136,7 @@ function cell(row: Row, v: Values): Cell {
     case 'surface': {
       const r = contrastRatio(v['text'], blend(val, bg));
       const rm = contrastRatio(v['textMuted'], blend(val, bg));
-      return { ...base, ratio: `${fmt(r)} · ${fmt(rm)}`, pass: Math.min(r, rm) >= 4.5, label: 'text · text-muted sopra', swatchBg: val, swatchFg: v['text'], sample: true };
+      return { ...base, ratio: `${fmt(r)}, ${fmt(rm)}`, pass: Math.min(r, rm) >= 4.5, label: 'text, text-muted sopra', swatchBg: val, swatchFg: v['text'], sample: true };
     }
     default:
       return { ...base, swatchBg: val, swatchBorder: v['border'] ?? 'transparent' };
@@ -168,7 +168,7 @@ function cell(row: Row, v: Values): Cell {
               <div>
                 <strong>{{ b.name }}</strong>
                 <div class="fd-code">{{ b.hex }}</div>
-                <div class="fd-code fd-muted">doc {{ b.doc }} · calc {{ b.calc }}</div>
+                <div class="fd-code fd-muted">doc {{ b.doc }}, calc {{ b.calc }}</div>
                 <div class="ui-caption fd-muted">{{ b.use }}</div>
               </div>
             </div>
@@ -253,7 +253,7 @@ class ColorsPage {
     hex: b.hex,
     use: b.use,
     on: onColor(b.hex),
-    // il green è solo per mesh e soft: nessun testo sopra (né ink né bianco raggiungono 4.5:1)
+    // il green è solo per i soft: nessun testo sopra (né ink né bianco raggiungono 4.5:1)
     text: contrastRatio(onColor(b.hex), b.hex) >= 4.5,
     doc: `${b.oklch[0]} / ${b.oklch[1]} / ${b.oklch[2] ?? '–'}`,
     calc: oklch(b.hex)
@@ -332,17 +332,18 @@ class ColorsPage {
           @for (a of avatar; track a.fill) {
             <div class="tok">
               <span class="chip round" [style.background]="a.fill" [style.color]="a.on">MR</span>
-              <span class="fd-code">{{ a.fill }} / {{ a.on }} · {{ ratio(a.on, a.fill) }}</span>
+              <span class="fd-code">{{ a.fill }} / {{ a.on }}, {{ ratio(a.on, a.fill) }}</span>
             </div>
           }
         </div>
       </section>
 
       <section class="glass fd-card" aria-labelledby="ch-h">
-        <h2 id="ch-h" class="ui-card-title fd-h2">Serie grafici (snapToMode)</h2>
+        <h2 id="ch-h" class="ui-card-title fd-h2">Serie grafici (rampa sull'accento)</h2>
         <p class="fd-intro">
-          Banda OKLCH L 0.43–0.77 (light) / 0.48–0.67 (dark), C ≥ 0.10, contrasto ≥ 3:1, ΔE OKLab ≥ 15 tra serie adiacenti e ≥ 8 simulando protanopia e
-          deuteranopia (Machado 2009).
+          Una sola tinta, tre gradini di luminosità in ordine fisso (la prima serie è la più contrastata): banda OKLCH L 0.42–0.66 (light) /
+          0.57–0.83 (dark), C ≥ 0.09, contrasto ≥ 3:1, ΔE OKLab ≥ 12 tra serie adiacenti e ≥ 8 simulando protanopia e deuteranopia (Machado 2009).
+          Oltre tre serie: contesto in text-muted, piccoli multipli o tabella.
         </p>
         @for (m of chart; track m.mode) {
           <div class="series" [style.background]="m.surface">
@@ -352,7 +353,7 @@ class ColorsPage {
           </div>
           <p class="ui-body-sm">
             {{ m.mode }}: <span [class]="m.issues === 0 ? 'fd-pass' : 'fd-fail'">{{ m.issues === 0 ? 'valida ✓' : m.issues + ' problemi' }}</span>
-            <span class="fd-code fd-muted"> {{ m.colors.join(' · ') }}</span>
+            <span class="fd-code fd-muted"> {{ m.colors.join(', ') }}</span>
           </p>
         }
       </section>

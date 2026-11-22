@@ -27,7 +27,7 @@ import { FOUNDATION_STYLES } from './shared';
         <div class="pads">
           @for (p of pads; track p[0]) {
             <div class="pad" [style.padding]="p[1]">
-              <div class="inner">{{ p[0] }} · {{ p[1] }}</div>
+              <div class="inner">{{ p[0] }}, {{ p[1] }}</div>
             </div>
           }
         </div>
@@ -92,7 +92,7 @@ class SpacingPage {
     ['tabbar-reserve', LAYOUT.tabbarReserve],
     ['touch-target', LAYOUT.touchTarget],
     ['control-height-sm / md / lg', Object.values(LAYOUT.controlHeight).join(' / ')],
-    ['breakpoint', Object.values(LAYOUT.breakpoints).join(' · ')],
+    ['breakpoint', Object.values(LAYOUT.breakpoints).join(', ')],
   ];
   protected readonly zs = Object.entries(Z).map(([k, v]) => [kebab(k), v]);
 }
@@ -114,7 +114,7 @@ class SpacingPage {
           }
         </div>
         <p class="ui-body-sm fd-muted">
-          Backoffice: card {{ bo.card }} · control {{ bo.control }} (cambia il tema dalla toolbar: i box card e control si aggiornano).
+          Backoffice: card {{ bo.card }}, control {{ bo.control }} (cambia il tema dalla toolbar: i box card e control si aggiornano).
         </p>
       </section>
       <section class="glass fd-card" aria-labelledby="b-h">
@@ -122,7 +122,7 @@ class SpacingPage {
         <div class="fd-grid">
           <div class="item"><div class="box b1"></div><span class="fd-code">border</span><span class="ui-caption fd-muted">divisori decorativi</span></div>
           <div class="item"><div class="box b2"></div><span class="fd-code">border-strong</span><span class="ui-caption fd-muted">controlli</span></div>
-          <div class="item"><div class="box b3 glass"></div><span class="fd-code">glass-edge</span><span class="ui-caption fd-muted">card vetro</span></div>
+          <div class="item"><div class="box b3 glass"></div><span class="fd-code">glass-edge</span><span class="ui-caption fd-muted">bordo card</span></div>
           <div class="item"><div class="box b4"></div><span class="fd-code">primary-border</span><span class="ui-caption fd-muted">bottoni primari</span></div>
           <div class="item"><div class="box b5"></div><span class="fd-code">4px stato</span><span class="ui-caption fd-muted">toast</span></div>
         </div>

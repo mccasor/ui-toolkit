@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Stato vuoto: colonna centrata (padding 2.5rem 1.5rem), tile icona 4rem radius 1rem su brand-soft con icona 32px accent-text,
+ * Stato vuoto: colonna centrata (padding 2.5rem 1.5rem), icona 32px accent-text senza tile,
  * titolo 1.125rem/800, descrizione muted max 24rem, slot azioni.
  *
  * Slot: `[uiEmptyIcon]` per l'icona (decorativa, aria-hidden), contenuto con attributo `uiEmptyActions` per le azioni.
@@ -29,17 +29,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       color: var(--ui-text);
     }
     .icon {
-      display: grid;
-      place-items: center;
-      width: 4rem;
-      height: 4rem;
-      border-radius: var(--ui-radius-empty-icon);
-      background: var(--ui-brand-soft);
+      display: inline-flex;
       color: var(--ui-accent-text);
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
     .icon:not(:has(*)) { display: none; }
-    .icon ::ng-deep svg { width: 32px; height: 32px; stroke-width: 1.75; }
+    .icon ::ng-deep svg { width: 32px; height: 32px; }
     .title { margin: 0; font-size: var(--ui-type-card-title-size); font-weight: 800; line-height: 1.4; text-wrap: balance; }
     .desc { margin: 0.375rem 0 0; max-width: 24rem; font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
     .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }

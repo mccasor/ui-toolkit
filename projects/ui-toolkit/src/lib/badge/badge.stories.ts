@@ -17,8 +17,8 @@ const meta: Meta<Args> = {
   parameters: {
     docs: {
       description: {
-        component: `Pill 0.25rem 0.625rem, 0.75rem/700, tracking 0.02em. Toni: neutral (surface-sunken + border), brand (fill primary, testo ink),
-success / warning / danger (soft + *-text, ≥ 4.5:1), live (fill danger, testo bianco, UPPERCASE 0.08em, pallino pulsante).
+        component: `Pill 0.25rem 0.625rem, 0.75rem/700, testo in frase senza tracking. Toni: neutral (surface-sunken + border), brand (fill primary, testo ink),
+success / warning / danger (soft + *-text, ≥ 4.5:1), live (fill danger, testo bianco, pallino pulsante).
 
 **Role chip** — cerchio 1.25rem con una lettera visibile, nome completo \`sr-only\` e tooltip \`title\`.
 

@@ -13,16 +13,16 @@ const CATEGORIE: SelectOption<string>[] = [
 ];
 
 const SQUADRE: SelectOption<string>[] = [
-  { value: 'leoni', label: 'Leoni di Quartiere', description: 'Girone A · 12 punti', group: 'Girone A', avatar: { color: '#1565C0', shape: 'square' } },
-  { value: 'falchi', label: 'Falchi', description: 'Girone A · 9 punti', group: 'Girone A', avatar: { color: '#FFB936', shape: 'square' } },
-  { value: 'aquile', label: 'Aquile Città', description: 'Girone A · 7 punti', group: 'Girone A', avatar: { shape: 'square' } },
-  { value: 'sanmarco', label: 'San Marco', description: 'Girone A · 4 punti', group: 'Girone A', avatar: { color: '#6A1B9A', shape: 'square' } },
-  { value: 'perche', label: 'Perché No', description: 'Girone B · 11 punti', group: 'Girone B', avatar: { color: '#00796B', shape: 'square' } },
-  { value: 'citta', label: 'Città Alta', description: 'Girone B · 10 punti', group: 'Girone B', avatar: { shape: 'square' } },
-  { value: 'olimpia', label: 'Olimpia', description: 'Girone B · 6 punti', group: 'Girone B', avatar: { color: '#C62828', shape: 'square' } },
-  { value: 'stella', label: 'Stella Rossa', description: 'Girone B · 2 punti', group: 'Girone B', avatar: { color: '#455A64', shape: 'square' } },
-  { value: 'velox', label: 'Velox', description: 'Girone C · 8 punti', group: 'Girone C', avatar: { color: '#FDD835', shape: 'square' } },
-  { value: 'atletico', label: 'Atlético Borgo', description: 'Girone C · 5 punti', group: 'Girone C', avatar: { shape: 'square' } },
+  { value: 'leoni', label: 'Leoni di Quartiere', description: 'Girone A, 12 punti', group: 'Girone A', avatar: { color: '#1565C0', shape: 'square' } },
+  { value: 'falchi', label: 'Falchi', description: 'Girone A, 9 punti', group: 'Girone A', avatar: { color: '#FFB936', shape: 'square' } },
+  { value: 'aquile', label: 'Aquile Città', description: 'Girone A, 7 punti', group: 'Girone A', avatar: { shape: 'square' } },
+  { value: 'sanmarco', label: 'San Marco', description: 'Girone A, 4 punti', group: 'Girone A', avatar: { color: '#6A1B9A', shape: 'square' } },
+  { value: 'perche', label: 'Perché No', description: 'Girone B, 11 punti', group: 'Girone B', avatar: { color: '#00796B', shape: 'square' } },
+  { value: 'citta', label: 'Città Alta', description: 'Girone B, 10 punti', group: 'Girone B', avatar: { shape: 'square' } },
+  { value: 'olimpia', label: 'Olimpia', description: 'Girone B, 6 punti', group: 'Girone B', avatar: { color: '#C62828', shape: 'square' } },
+  { value: 'stella', label: 'Stella Rossa', description: 'Girone B, 2 punti', group: 'Girone B', avatar: { color: '#455A64', shape: 'square' } },
+  { value: 'velox', label: 'Velox', description: 'Girone C, 8 punti', group: 'Girone C', avatar: { color: '#FDD835', shape: 'square' } },
+  { value: 'atletico', label: 'Atlético Borgo', description: 'Girone C, 5 punti', group: 'Girone C', avatar: { shape: 'square' } },
 ];
 
 const ARBITRI: SelectOption<string>[] = [

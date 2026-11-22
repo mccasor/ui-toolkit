@@ -45,7 +45,7 @@ export class TableCell<T = unknown> {
 
 /**
  * Tabella responsive.
- * - Da 640px: tabella vera (header 0.75rem UPPERCASE muted, celle 0.75rem, divisori border, hover surface-sunken).
+ * - Da 640px: tabella vera (header 0.75rem/700 muted in frase, celle 0.75rem, divisori border, hover surface-sunken).
  * - Sotto 640px con `stack`: ogni riga è una card a griglia 2 colonne con label da data-label, cella primaria a tutta larghezza.
  * - Sotto 640px senza `stack`: righe compatte su una linea con la cella primaria troncata.
  * - `rowLink`: un solo link esteso su tutta la riga (sulla cella primaria).
@@ -117,10 +117,8 @@ export class TableCell<T = unknown> {
       top: 0;
       z-index: 1;
       background: var(--ui-table-header-bg);
-      font-size: var(--ui-font-size-xs);
-      font-weight: 700;
-      letter-spacing: var(--ui-tracking-table-header);
-      text-transform: uppercase;
+      font-size: var(--ui-type-table-header-size);
+      font-weight: var(--ui-type-table-header-weight);
       color: var(--ui-text-muted);
       border-bottom: 1px solid var(--ui-border);
       white-space: nowrap;
@@ -163,10 +161,8 @@ export class TableCell<T = unknown> {
         content: attr(data-label);
         display: block;
         font-family: var(--ui-font-sans);
-        font-size: var(--ui-font-size-micro);
+        font-size: var(--ui-font-size-xs);
         font-weight: 700;
-        letter-spacing: var(--ui-tracking-table-header);
-        text-transform: uppercase;
         color: var(--ui-text-muted);
       }
       /* compatto: una riga per linea, primaria troncata */

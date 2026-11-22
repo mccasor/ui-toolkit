@@ -17,8 +17,8 @@ const meta: Meta<Footer> = {
   parameters: {
     docs: {
       description: {
-        component: `Bordo superiore border, link 0.875rem/600 muted con target 44px, hover text + sottolineatura offset 4px, separatore · (decorativo,
-non letto dagli screen reader). Slot per note/copyright.
+        component: `Bordo superiore border, link 0.875rem/600 muted con target 44px, hover text + sottolineatura offset 4px; i link sono
+separati dallo spazio, senza separatore a puntino. Slot per note/copyright.
 
 **Accessibilità** — \`<footer>\` (contentinfo) con \`<nav>\` etichettata ed elenco di link.`,
       },

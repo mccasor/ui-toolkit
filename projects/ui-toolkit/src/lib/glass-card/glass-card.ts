@@ -4,8 +4,8 @@ export type GlassCardVariant = 'default' | 'strong' | 'brand';
 export type GlassCardPadding = 'none' | 'sm' | 'md' | 'lg';
 
 /**
- * Card di vetro. Radius 1.25rem, overflow hidden, classe `.glass`.
- * - `brand`: glow arancio in alto a sinistra + bordo arancio 55%.
+ * Card su superficie piena (classe storica `.glass`). Radius 1.25rem, overflow hidden.
+ * - `brand`: fondo tinto arancio all'8% (piatto, senza glow) + bordo arancio 55%.
  * - `interactive`: lift 2px + shadow-float (200ms), active scale(0.99).
  *
  * Per una card navigabile usare `<a uiGlassCard interactive href="…">`: un solo elemento focusabile.
@@ -35,7 +35,7 @@ export type GlassCardPadding = 'none' | 'sm' | 'md' | 'lg';
     :host([data-padding='md']) { padding: var(--ui-card-padding-md); }
     :host([data-padding='lg']) { padding: var(--ui-card-padding-lg); }
     :host(.ui-glass-card--brand) {
-      background-image: radial-gradient(120% 80% at 0% 0%, var(--ui-brand-soft), transparent 60%);
+      background: color-mix(in srgb, var(--ui-primary) 8%, var(--ui-surface));
       border-color: color-mix(in srgb, var(--ui-primary) 55%, transparent);
       border-left: var(--ui-brand-card-edge) solid var(--ui-brand-card-edge-color);
     }

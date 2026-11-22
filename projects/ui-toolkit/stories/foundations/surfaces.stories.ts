@@ -9,7 +9,7 @@ import { FOUNDATION_STYLES } from './shared';
   template: `
     <div class="fd-page">
       <p class="fd-intro">
-        Due soli livelli di elevazione: <strong>glass</strong> (card a riposo) e <strong>float</strong> (hover di card interattive, tab attiva, toast, tab bar,
+        Due soli livelli di elevazione, ombre corte (blur ≤ 20px): <strong>glass</strong> (card a riposo) e <strong>float</strong> (hover di card interattive, tab attiva, toast, tab bar,
         menu). Tinte calde in light, nere in dark. Il backoffice azzera shadow-glass e usa un float leggero.
       </p>
       <div class="row">
@@ -22,7 +22,7 @@ import { FOUNDATION_STYLES } from './shared';
           <p class="fd-code fd-muted">{{ s.light.float }}</p>
         </div>
       </div>
-      <p class="ui-body-sm fd-muted">Dark: <span class="fd-code">{{ s.dark.glass }}</span> · <span class="fd-code">{{ s.dark.float }}</span></p>
+      <p class="ui-body-sm fd-muted">Dark: <span class="fd-code">{{ s.dark.glass }}</span>, <span class="fd-code">{{ s.dark.float }}</span></p>
     </div>
   `,
   styles: [
@@ -46,29 +46,28 @@ class ShadowsPage {
   template: `
     <div class="fd-page">
       <p class="fd-intro">
-        Vetro: background surface, backdrop-filter blur(18px) saturate(170%), bordo glass-edge, shadow-glass. Ha senso solo sul mesh (body::before, 4
-        radial-gradient con --ui-mesh-alpha 0.45 light / 0.30 dark). Fallback a surface-solid senza backdrop-filter, con reduced transparency o high contrast:
-        usa la toolbar per verificarli.
+        Superfici piene e calde, niente vetro sfocato né mesh: l'elevazione è data dalla luminosità (bg, poi surface, poi surface-strong) e da
+        un'ombra corta. Le classi mantengono il nome storico <span class="fd-code">.glass</span> / <span class="fd-code">.glass-strong</span>.
+        Con high contrast i bordi diventano border-strong; con reduced transparency il backdrop degli overlay diventa opaco.
       </p>
       <div class="row">
         <div class="tile glass">
           <h2 class="ui-card-title">.glass</h2>
-          <p class="ui-body-sm fd-muted">surface 72% (light) / 70% (dark)</p>
+          <p class="ui-body-sm fd-muted">surface, bordo glass-edge, shadow-glass</p>
         </div>
         <div class="tile glass-strong">
           <h2 class="ui-card-title">.glass-strong</h2>
-          <p class="ui-body-sm fd-muted">surface-strong 86%</p>
+          <p class="ui-body-sm fd-muted">surface-strong: un gradino più chiaro (input, popover)</p>
         </div>
         <div class="tile glass brand">
           <h2 class="ui-card-title">Card brand</h2>
-          <p class="ui-body-sm fd-muted">glow brand-soft in alto a sinistra, bordo arancio 55%</p>
+          <p class="ui-body-sm fd-muted">fondo arancio all'8% piatto, bordo arancio 55%</p>
         </div>
-        <div class="tile solid">
-          <h2 class="ui-card-title">Fallback</h2>
-          <p class="ui-body-sm fd-muted">surface-solid (senza vetro)</p>
+        <div class="tile sunken">
+          <h2 class="ui-card-title">Incassata</h2>
+          <p class="ui-body-sm fd-muted">surface-sunken (righe, hover ghost)</p>
         </div>
       </div>
-      <div class="mesh-demo ui-mesh" aria-label="Mesh isolato" role="img"></div>
     </div>
   `,
   styles: [
@@ -79,11 +78,10 @@ class ShadowsPage {
       .tile h2 { margin: 0 0 0.25rem; }
       .tile p { margin: 0; }
       .brand {
-        background-image: radial-gradient(120% 80% at 0% 0%, var(--ui-brand-soft), transparent 60%);
+        background: color-mix(in srgb, var(--ui-primary) 8%, var(--ui-surface));
         border-color: color-mix(in srgb, var(--ui-primary) 55%, transparent);
       }
-      .solid { background: var(--ui-surface-solid); border: 1px solid var(--ui-border); }
-      .mesh-demo { height: 12rem; border-radius: var(--ui-radius-card); overflow: hidden; background: var(--ui-bg); border: 1px solid var(--ui-border); }
+      .sunken { background: var(--ui-surface-sunken); border: 1px solid var(--ui-border); }
     `,
   ],
 })
@@ -96,22 +94,17 @@ export const Ombre: StoryObj = {
   name: 'Ombre ed elevazione',
   render: () => ({ template: `<fd-shadows />`, moduleMetadata: { imports: [ShadowsPage] } }),
 };
-export const VetroEMesh: StoryObj = {
-  name: 'Vetro e mesh',
+export const Superfici: StoryObj = {
+  name: 'Superfici',
   render: () => ({ template: `<fd-glass />`, moduleMetadata: { imports: [GlassPage] } }),
 };
-export const VetroEMeshDark: StoryObj = {
-  name: 'Vetro e mesh (dark)',
+export const SuperficiDark: StoryObj = {
+  name: 'Superfici (dark)',
   globals: { theme: 'dark' },
   render: () => ({ template: `<fd-glass />`, moduleMetadata: { imports: [GlassPage] } }),
 };
-export const VetroReducedTransparency: StoryObj = {
-  name: 'Vetro (reduced transparency)',
-  globals: { transparency: 'reduce' },
-  render: () => ({ template: `<fd-glass />`, moduleMetadata: { imports: [GlassPage] } }),
-};
-export const VetroHighContrast: StoryObj = {
-  name: 'Vetro (high contrast)',
+export const SuperficiHighContrast: StoryObj = {
+  name: 'Superfici (high contrast)',
   globals: { contrast: 'more' },
   render: () => ({ template: `<fd-glass />`, moduleMetadata: { imports: [GlassPage] } }),
 };

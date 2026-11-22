@@ -1,4 +1,4 @@
-import { onColor, snapToMode, type Mode } from './color';
+import { fromOklch, onColor, type Mode } from './color';
 import { BRAND, THEMES, WHITE } from './tokens';
 
 export interface Swatch {
@@ -58,19 +58,19 @@ export function initials(name: string): string {
 }
 
 /**
- * Sorgente delle serie dei grafici: tinte del sistema, agganciate alla banda di ciascun modo con `snapToMode`.
- * L'ordine è stato scelto per rispettare ΔE ≥ 15 e ≥ 8 in protanopia/deuteranopia tra serie adiacenti (verificato da test).
+ * Serie dei grafici: una rampa di luminosità sulla tinta accento, non una palette categorica.
+ * Serie 1 = la più contrastata (l'accento), poi a passi di L 0.12 verso la superficie, in ordine fisso, mai ciclato.
+ * Light: tinta 62 (l'arancio ruotato verso il rosso come accent-text). Dark: si parte dall'arancio brand.
+ * Oltre {@link CHART_MAX_SERIES} serie non si aggiungono colori: le altre sono contesto (text-muted),
+ * oppure si passa a piccoli multipli o a una tabella.
  */
-export const CHART_SOURCE: readonly string[] = [
-  BRAND.orange.hex,
-  '#1565C0', // blu
-  BRAND.red.hex,
-  '#6A1B9A', // viola
-  BRAND.green.hex,
-  '#4FC3F7', // azzurro
-  '#AD1457', // fucsia
-];
+export const CHART_RAMP: Record<Mode, { h: number; c: number; l: readonly number[] }> = {
+  light: { h: 62, c: 0.14, l: [0.42, 0.54, 0.66] },
+  dark: { h: 78, c: 0.158, l: [0.83, 0.7, 0.57] },
+};
+export const CHART_MAX_SERIES = 3;
 
 export function chartSeries(mode: Mode): string[] {
-  return CHART_SOURCE.map((c) => snapToMode(c, mode));
+  const r = CHART_RAMP[mode];
+  return r.l.map((l, i) => (mode === 'dark' && i === 0 ? BRAND.orange.hex : fromOklch(l, r.c, r.h)));
 }

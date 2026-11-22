@@ -22,7 +22,7 @@ const meta: Meta<Avatar> = {
   parameters: {
     docs: {
       description: {
-        component: `Immagine con fallback a iniziali (max 2, font display 700, size × 0.38). Size xs 1.5 · sm 2 · md 2.5 · lg 3.5 · xl 5rem.
+        component: `Immagine con fallback a iniziali (max 2, font display 700, size × 0.38). Size xs 1.5, sm 2, md 2.5, lg 3.5, xl 5rem.
 \`ui-avatar\` = cerchio; \`ui-team-logo\` = quadrato radius 28% su tile glass, \`object-fit: contain\`. Colore del fallback: colore scelto con on
 calcolato (\`onColor\`), altrimenti palette fallback via hash del nome (orange/ink, ink/orange, #23704A/bianco, #CE2828/bianco).
 

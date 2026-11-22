@@ -12,11 +12,11 @@ import { MatchCard, PatternShell } from './shell';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <pt-shell active="home">
-      <p class="ui-eyebrow" style="margin:0">Sabato 21 novembre</p>
+      <p class="ui-meta" style="margin:0">Sabato 21 novembre</p>
       <h1 class="ui-display-hero" style="margin:.25rem 0 1.5rem">Torneo C85</h1>
 
       <section aria-labelledby="h-stat" class="section">
-        <h2 id="h-stat" class="ui-eyebrow">In numeri</h2>
+        <h2 id="h-stat" class="ui-section-title">In numeri</h2>
         <div class="stats">
           <ui-stat label="Squadre" [value]="24" hint="4 gironi"><sb-icon uiStatIcon name="users" [size]="16" /></ui-stat>
           <ui-stat label="Gol" [value]="128" tone="brand" hint="3,6 a partita"><sb-icon uiStatIcon name="goal" [size]="16" /></ui-stat>
@@ -24,14 +24,14 @@ import { MatchCard, PatternShell } from './shell';
       </section>
 
       <section aria-labelledby="h-live" class="section">
-        <h2 id="h-live" class="ui-eyebrow">In evidenza</h2>
+        <h2 id="h-live" class="ui-section-title">In evidenza</h2>
         <ui-carousel label="Partite in evidenza" slideWidth="var(--pt-slide)" dots>
           @for (m of partite.slice(0, 4); track m.id) { <pt-match-card [m]="m" /> }
         </ui-carousel>
       </section>
 
       <section aria-labelledby="h-list" class="section">
-        <h2 id="h-list" class="ui-eyebrow">Partite di oggi</h2>
+        <h2 id="h-list" class="ui-section-title">Partite di oggi</h2>
         <ui-sticky-bar surface style="justify-self:start">
           <ui-segmented [options]="filters" [(value)]="filter" ariaLabel="Filtra partite" />
         </ui-sticky-bar>

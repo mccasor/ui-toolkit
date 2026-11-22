@@ -1,6 +1,6 @@
 # ui-toolkit
 
-Libreria di componenti Angular del design system **C85 glass**, documentata in Storybook. Specifica: [`linee-guida.md`](linee-guida.md).
+Libreria di componenti Angular del design system **C85**, documentata in Storybook. Specifica: [`linee-guida.md`](linee-guida.md).
 
 | Pacchetto | Contenuto |
 | --- | --- |

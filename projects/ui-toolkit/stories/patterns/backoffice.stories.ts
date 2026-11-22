@@ -69,7 +69,7 @@ const ISCRIZIONI_CHART: ChartData = {
         <main id="bo-main" class="content" tabindex="-1">
           <div class="page-head">
             <div>
-              <p class="ui-eyebrow" style="margin:0">Torneo C85 · 2026</p>
+              <p class="ui-meta" style="margin:0">Torneo C85, 2026</p>
               <h1 class="ui-bo-h1" style="margin:0">Iscrizioni</h1>
             </div>
             <div class="page-actions">

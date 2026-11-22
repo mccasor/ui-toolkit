@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export type BadgeTone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' | 'live';
 
 /**
- * Badge a pill: padding 0.25rem 0.625rem, 0.75rem/700, tracking 0.02em.
+ * Badge a pill: padding 0.25rem 0.625rem, 0.75rem/700, in frase e senza tracking.
  * L'informazione è sempre nel testo (mai solo nel colore). `live` ha pallino pulsante (statico con reduced motion).
  * Icona opzionale da fuori (16px, currentColor).
  */
@@ -30,7 +30,6 @@ export type BadgeTone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' |
       font-size: var(--ui-font-size-xs);
       font-weight: 700;
       line-height: 1rem;
-      letter-spacing: var(--ui-tracking-badge);
       white-space: nowrap;
       vertical-align: middle;
     }
@@ -43,8 +42,6 @@ export type BadgeTone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' |
     :host([data-tone='live']) {
       background: var(--ui-danger);
       color: var(--ui-on-danger);
-      text-transform: uppercase;
-      letter-spacing: var(--ui-tracking-live);
     }
   `,
 })

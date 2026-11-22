@@ -8,7 +8,7 @@ const CLASS: Record<string, string> = {
   h1: 'ui-h1',
   h2Display: 'ui-h2-display',
   cardTitle: 'ui-card-title',
-  eyebrow: 'ui-eyebrow',
+  sectionTitle: 'ui-section-title',
   body: 'ui-body',
   bodySm: 'ui-body-sm',
   label: 'ui-label',
@@ -26,16 +26,16 @@ const SAMPLE: Record<string, string> = {
   h1: 'Classifica',
   h2Display: 'Prossime partite',
   cardTitle: 'Girone A',
-  eyebrow: 'In evidenza',
+  sectionTitle: 'Partite di oggi',
   body: 'Testo corrente per descrizioni e contenuti.',
-  bodySm: '12 squadre · 3 campi · sabato 21 novembre',
+  bodySm: '12 squadre, 3 campi, sabato 21 novembre',
   label: 'Nome squadra',
   caption: 'Aggiornato 2 min fa',
   micro: 'MR',
   tableHeader: 'Punti',
   button: 'Iscriviti',
   numberLg: '3 – 2',
-  numeric: "12 · 45' · 1.024",
+  numeric: "12, 45', 1.024",
   boH1: 'Gestione tornei',
 };
 
@@ -48,12 +48,12 @@ const SAMPLE: Record<string, string> = {
         <h2 id="fam-h" class="ui-card-title fd-h2">Famiglie</h2>
         <div class="fams">
           <div>
-            <p class="ui-eyebrow">--ui-font-sans · 200–800</p>
+            <p class="ui-meta">--ui-font-sans, 200–800</p>
             <p class="sans">Manrope Aa Bb Cc 0123456789</p>
             <p class="fd-code fd-muted">{{ font.sans }}</p>
           </div>
           <div>
-            <p class="ui-eyebrow">--ui-font-display · 500 / 600 / 700</p>
+            <p class="ui-meta">--ui-font-display, 500 / 600 / 700</p>
             <p class="display">Barlow Condensed 0123456789</p>
             <p class="fd-code fd-muted">{{ font.display }}</p>
           </div>
@@ -95,7 +95,7 @@ const SAMPLE: Record<string, string> = {
 
       <section class="glass fd-card" aria-labelledby="tr-h">
         <h2 id="tr-h" class="ui-card-title fd-h2">Tracking</h2>
-        <p class="ui-body-sm fd-muted">Il tracking positivo cresce al calare della size. UPPERCASE solo su display, eyebrow, header tabella e badge live.</p>
+        <p class="ui-body-sm fd-muted">Tracking solo sulla voce display (maiuscole condensed) e sui numeri. Etichette, header tabella, badge e tagline sono in frase, senza maiuscole spaziate.</p>
         <ul class="tracking">
           @for (t of tracking; track t[0]) {
             <li>
@@ -139,7 +139,7 @@ class TypographyPage {
       style.color ? 'text-muted' : null,
     ]
       .filter(Boolean)
-      .join(' · '),
+      .join(', '),
   }));
 }
 

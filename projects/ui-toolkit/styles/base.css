@@ -1,7 +1,9 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: C85 (by request, linee-guida.md) · posture: restrained · surfaces: solid, elevation by lightness · labels: sentence case · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, sistema unico senza log di rotazione; la varietà è nelle composizioni dei pattern, non nel sistema */
 /*
  * ui-toolkit — base.css
- * Utility condivise (vetro, tipografia, bottoni, input, skeleton, spinner, keyframes),
- * mesh di sfondo, preferenze utente e stampa. Usa solo token di tokens.css.
+ * Utility condivise (superfici, tipografia, bottoni, input, skeleton, spinner, keyframes),
+ * preferenze utente e stampa. Usa solo token di tokens.css.
  *
  * Ordine di import consigliato:
  *   @import 'ui-toolkit/styles/fonts.css';
@@ -57,60 +59,25 @@ h3 {
   color: var(--ui-text);
 }
 
-/* Backdrop degli overlay (dialog, sheet): rgb(15 15 16 / .45) + blur 4px */
+/* Backdrop degli overlay (dialog, sheet): ink al 45%, senza blur */
 .ui-overlay-backdrop {
   background: var(--ui-backdrop);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
 }
 
-/* -------------------------------------------------- Sfondo mesh */
-
-body::before,
-.ui-mesh::before {
-  content: '';
-  display: var(--ui-mesh-display);
-  position: fixed;
-  inset: -20vmax;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(40vmax 40vmax at 12% 8%, color-mix(in srgb, var(--brand-orange) calc(var(--ui-mesh-alpha) * 100%), transparent), transparent 70%),
-    radial-gradient(34vmax 34vmax at 92% 22%, color-mix(in srgb, var(--brand-red) calc(var(--ui-mesh-alpha) * 100%), transparent), transparent 70%),
-    radial-gradient(36vmax 36vmax at 70% 96%, color-mix(in srgb, var(--brand-green) calc(var(--ui-mesh-alpha) * 100%), transparent), transparent 70%),
-    radial-gradient(30vmax 30vmax at 8% 88%, color-mix(in srgb, var(--brand-orange) calc(var(--ui-mesh-alpha) * 100%), transparent), transparent 70%);
-  filter: saturate(115%);
-}
-
-.ui-mesh {
-  position: relative;
-  isolation: isolate;
-}
-.ui-mesh::before {
-  position: absolute;
-  inset: 0;
-}
-
-/* --------------------------------------------------------- Vetro */
+/* ------------------------------------------------------- Superfici */
+/*
+ * Superfici piene e calde: l'elevazione è data dalla luminosità (bg → surface → surface-strong) e da un'ombra corta.
+ * Le classi conservano il nome storico .glass / .glass-strong per compatibilità.
+ */
 
 .glass,
 .glass-strong {
   background: var(--ui-surface);
-  -webkit-backdrop-filter: var(--ui-glass-blur);
-  backdrop-filter: var(--ui-glass-blur);
   border: 1px solid var(--ui-glass-edge);
   box-shadow: var(--ui-shadow-glass);
 }
 .glass-strong {
   background: var(--ui-surface-strong);
-}
-
-/* Fallback: senza backdrop-filter il vetro diventa superficie solida */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass,
-  .glass-strong {
-    background: var(--ui-surface-solid);
-  }
 }
 
 /* ------------------------------------------------------ Tipografia */
@@ -154,11 +121,18 @@ body::before,
   font-size: var(--ui-type-card-title-size);
   font-weight: var(--ui-type-card-title-weight);
 }
-.ui-eyebrow {
-  font-size: var(--ui-type-eyebrow-size);
-  font-weight: var(--ui-type-eyebrow-weight);
-  letter-spacing: var(--ui-type-eyebrow-tracking);
-  text-transform: uppercase;
+.ui-section-title {
+  margin: 0;
+  font-size: var(--ui-type-section-title-size);
+  line-height: var(--ui-type-section-title-line-height);
+  font-weight: var(--ui-type-section-title-weight);
+  color: var(--ui-text);
+}
+/* metadati (data, campo e ora, contesto): body small muted, mai maiuscole spaziate */
+.ui-meta {
+  font-size: var(--ui-type-body-sm-size);
+  line-height: var(--ui-type-body-sm-line-height);
+  font-weight: 600;
   color: var(--ui-text-muted);
 }
 .ui-body {
@@ -185,8 +159,6 @@ body::before,
 .ui-table-header {
   font-size: var(--ui-type-table-header-size);
   font-weight: var(--ui-type-table-header-weight);
-  letter-spacing: var(--ui-type-table-header-tracking);
-  text-transform: uppercase;
   color: var(--ui-text-muted);
 }
 .ui-number-lg {
@@ -598,20 +570,15 @@ textarea.ui-input {
 }
 
 /* -------------------------------------- Preferenze: reduced transparency */
+/* Le superfici sono già piene: resta solo il backdrop degli overlay, che diventa opaco. */
 
 @media (prefers-reduced-transparency: reduce) {
-  .glass,
-  .glass-strong {
-    background: var(--ui-surface-solid);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+  .ui-overlay-backdrop {
+    background: var(--ui-bg);
   }
 }
-:root[data-transparency='reduce'] .glass,
-:root[data-transparency='reduce'] .glass-strong {
-  background: var(--ui-surface-solid);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+:root[data-transparency='reduce'] .ui-overlay-backdrop {
+  background: var(--ui-bg);
 }
 
 /* ------------------------------------------- Preferenze: high contrast */
@@ -624,9 +591,6 @@ textarea.ui-input {
   }
   .glass,
   .glass-strong {
-    background: var(--ui-surface-solid);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
     border-color: var(--ui-border-strong);
   }
 }
@@ -637,9 +601,6 @@ textarea.ui-input {
 }
 :root[data-contrast='more'] .glass,
 :root[data-contrast='more'] .glass-strong {
-  background: var(--ui-surface-solid);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
   border-color: var(--ui-border-strong);
 }
 
@@ -658,10 +619,6 @@ textarea.ui-input {
     --ui-border-strong: #000;
     --ui-shadow-glass: none;
     --ui-shadow-float: none;
-    --ui-mesh-display: none;
-  }
-  body::before {
-    display: none;
   }
   .ui-header,
   .ui-tab-bar,
@@ -677,8 +634,6 @@ textarea.ui-input {
     border: 1px solid var(--ui-text);
     border-radius: 0 !important;
     box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
     break-inside: avoid;
   }
   tr {

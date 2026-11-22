@@ -73,7 +73,7 @@ class DialogDemo {
     const v = await this.dialog.choose({
       title: 'Su quale campo?',
       options: [
-        { value: 'c1', label: 'Campo 1', description: 'Erba sintetica · coperto' },
+        { value: 'c1', label: 'Campo 1', description: 'Erba sintetica, coperto' },
         { value: 'c2', label: 'Campo 2', description: 'Erba naturale' },
         { value: 'c3', label: 'Campo 3', description: 'Calcio a 5' },
       ],

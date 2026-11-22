@@ -6,12 +6,12 @@ import { TabCarousel, TabPanel } from './tab-carousel';
 
 const BODY = `
   <ui-tab-panel value="partite" label="Partite">
-    <ui-glass-card><p class="ui-card-title" style="margin:0">Leoni – Falchi</p><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">Campo 1 · 15:00</p></ui-glass-card>
+    <ui-glass-card><p class="ui-card-title" style="margin:0">Leoni – Falchi</p><p class="ui-body-sm text-muted" style="margin:.25rem 0 0">Campo 1, 15:00</p></ui-glass-card>
   </ui-tab-panel>
   <ui-tab-panel value="classifica" label="Classifica">
     <ui-glass-card>
       <ol class="ui-body-sm" style="margin:0;padding-left:1.25rem;display:grid;gap:.5rem">
-        <li>Leoni di Quartiere · 12 pt</li><li>Falchi · 9 pt</li><li>Aquile Città · 7 pt</li><li>San Marco · 4 pt</li><li>Olimpia · 3 pt</li>
+        <li>Leoni di Quartiere, 12 pt</li><li>Falchi, 9 pt</li><li>Aquile Città, 7 pt</li><li>San Marco, 4 pt</li><li>Olimpia, 3 pt</li>
       </ol>
     </ui-glass-card>
   </ui-tab-panel>

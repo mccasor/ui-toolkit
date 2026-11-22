@@ -252,10 +252,16 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export type Mode = 'light' | 'dark';
 
+/**
+ * Banda OKLCH delle serie: in light il limite alto è quello che tiene il contrasto ≥ 3:1 su surface,
+ * in dark il limite alto è l'arancio brand (L 0.83), che è la prima serie.
+ */
 export const CHART_BAND: Record<Mode, { lMin: number; lMax: number; cMin: number }> = {
-  light: { lMin: 0.43, lMax: 0.77, cMin: 0.1 },
-  dark: { lMin: 0.48, lMax: 0.67, cMin: 0.1 },
+  light: { lMin: 0.42, lMax: 0.66, cMin: 0.09 },
+  dark: { lMin: 0.57, lMax: 0.83, cMin: 0.09 },
 };
+/** ΔE OKLab ×100 minimo tra serie adiacenti (rampa di luminosità a passi di 0.12). */
+export const CHART_MIN_DELTA_E = 12;
 
 /**
  * Aggancia un colore alla banda OKLCH dei grafici muovendo solo L
@@ -274,7 +280,7 @@ export function snapToMode(color: string, mode: Mode, surface = mode === 'light'
   return out;
 }
 
-/** ΔE in OKLab, scala ×100 (come nelle linee guida: ≥ 15 tra serie adiacenti). */
+/** ΔE in OKLab, scala ×100 (linee guida: ≥ 12 tra serie adiacenti, ≥ 8 in protanopia/deuteranopia). */
 export function deltaE(a: string, b: string): number {
   const [l1, a1, b1] = rgbToOklab(parseColor(a));
   const [l2, a2, b2] = rgbToOklab(parseColor(b));
@@ -322,7 +328,7 @@ export function validateSeries(colors: readonly string[], mode: Mode, surface?: 
     if (i > 0) {
       const prev = colors[i - 1];
       const d = deltaE(prev, col);
-      if (d < 15) issues.push({ index: i, rule: 'deltaE', value: d });
+      if (d < CHART_MIN_DELTA_E) issues.push({ index: i, rule: 'deltaE', value: d });
       for (const t of ['protan', 'deutan'] as const) {
         const dc = deltaE(simulateCvd(prev, t), simulateCvd(col, t));
         if (dc < 8) issues.push({ index: i, rule: t, value: dc });

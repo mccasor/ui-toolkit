@@ -20,16 +20,11 @@
   --ui-font-size-4xl: 3rem;
   --ui-font-size-5xl: 3.75rem;
   --ui-tracking-numeric: 0.01em;
-  --ui-tracking-badge: 0.02em;
   --ui-tracking-h1: 0.025em;
-  --ui-tracking-table-header: 0.06em;
-  --ui-tracking-live: 0.08em;
-  --ui-tracking-eyebrow: 0.14em;
-  --ui-tracking-tagline: 0.18em;
   --ui-type-display-hero-family: var(--ui-font-display);
   --ui-type-display-hero-size: 3rem;
   --ui-type-display-hero-size-sm: 3.75rem;
-  --ui-type-display-hero-line-height: 0.95;
+  --ui-type-display-hero-line-height: 1;
   --ui-type-display-hero-weight: 700;
   --ui-type-h1-family: var(--ui-font-display);
   --ui-type-h1-size: 2.25rem;
@@ -43,10 +38,10 @@
   --ui-type-card-title-family: var(--ui-font-sans);
   --ui-type-card-title-size: 1.125rem;
   --ui-type-card-title-weight: 800;
-  --ui-type-eyebrow-family: var(--ui-font-sans);
-  --ui-type-eyebrow-size: 0.75rem;
-  --ui-type-eyebrow-weight: 800;
-  --ui-type-eyebrow-tracking: 0.14em;
+  --ui-type-section-title-family: var(--ui-font-sans);
+  --ui-type-section-title-size: 1rem;
+  --ui-type-section-title-line-height: 1.5;
+  --ui-type-section-title-weight: 800;
   --ui-type-body-family: var(--ui-font-sans);
   --ui-type-body-size: 1rem;
   --ui-type-body-line-height: 1.5;
@@ -68,7 +63,6 @@
   --ui-type-table-header-family: var(--ui-font-sans);
   --ui-type-table-header-size: 0.75rem;
   --ui-type-table-header-weight: 700;
-  --ui-type-table-header-tracking: 0.06em;
   --ui-type-button-family: var(--ui-font-sans);
   --ui-type-button-size: 0.9375rem;
   --ui-type-button-line-height: 1;
@@ -150,18 +144,16 @@
   --ui-table-header-position: static;
   --ui-brand-card-edge: 1px;
   --ui-brand-card-edge-color: color-mix(in srgb, var(--ui-primary) 55%, transparent);
-  --ui-glass-blur: blur(18px) saturate(170%);
   --ui-table-cell-padding: 0.75rem;
   --ui-input-padding: 0.625rem 0.875rem;
-  --ui-mesh-display: block;
 }
 
 /* Tema light (default) */
 :root,
 [data-theme='light'] {
   --ui-bg: #FFF6E8;
-  --ui-surface: rgb(255 255 255 / 0.72);
-  --ui-surface-strong: rgb(255 255 255 / 0.86);
+  --ui-surface: #FFFCF7;
+  --ui-surface-strong: #FFFFFF;
   --ui-surface-solid: #FFFCF7;
   --ui-surface-sunken: rgb(30 30 30 / 0.05);
   --ui-text: #1E1E1E;
@@ -187,17 +179,16 @@
   --ui-warning-soft: rgb(245 165 36 / 0.18);
   --ui-border: rgb(30 30 30 / 0.10);
   --ui-border-strong: #7A726A;
-  --ui-glass-edge: rgb(255 255 255 / 0.75);
+  --ui-glass-edge: rgb(30 30 30 / 0.08);
   --ui-focus: #1E1E1E;
   --ui-nav-active-bg: #1E1E1E;
   --ui-nav-active-fg: #FFB936;
   --ui-skeleton: rgb(30 30 30 / 0.08);
   --ui-skeleton-shine: rgb(255 255 255 / 0.6);
   --ui-backdrop: rgb(15 15 16 / 0.45);
-  --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .6) inset, 0 10px 30px -12px rgb(90 50 0 / .25), 0 2px 6px -2px rgb(30 30 30 / .08);
-  --ui-shadow-float: 0 18px 40px -16px rgb(30 30 30 / .4), 0 4px 12px -4px rgb(30 30 30 / .15);
-  --ui-shadow-header: 0 8px 24px -18px rgb(30 30 30 / .4);
-  --ui-mesh-alpha: 0.45;
+  --ui-shadow-glass: 0 1px 2px rgb(90 50 0 / .08), 0 6px 16px -8px rgb(90 50 0 / .18);
+  --ui-shadow-float: 0 12px 20px -10px rgb(30 30 30 / .3), 0 4px 8px -4px rgb(30 30 30 / .12);
+  --ui-shadow-header: 0 6px 16px -12px rgb(30 30 30 / .35);
   --bo-bg: #F3F2F0;
   --bo-surface: #FFFFFF;
   --bo-surface-alt: #F8F7F5;
@@ -218,8 +209,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --ui-bg: #0F0F10;
-    --ui-surface: rgb(30 30 30 / 0.70);
-    --ui-surface-strong: rgb(30 30 30 / 0.86);
+    --ui-surface: #1A1918;
+    --ui-surface-strong: #262422;
     --ui-surface-solid: #1E1E1E;
     --ui-surface-sunken: rgb(255 255 255 / 0.06);
     --ui-text: #F7F5F2;
@@ -245,17 +236,16 @@
     --ui-warning-soft: rgb(245 165 36 / 0.20);
     --ui-border: rgb(255 255 255 / 0.10);
     --ui-border-strong: #8C857D;
-    --ui-glass-edge: rgb(255 255 255 / 0.12);
+    --ui-glass-edge: rgb(255 255 255 / 0.08);
     --ui-focus: #FFB936;
     --ui-nav-active-bg: #FFB936;
     --ui-nav-active-fg: #1E1E1E;
     --ui-skeleton: rgb(255 255 255 / 0.08);
     --ui-skeleton-shine: rgb(255 255 255 / 0.12);
     --ui-backdrop: rgb(15 15 16 / 0.45);
-    --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6);
-    --ui-shadow-float: 0 18px 40px -12px rgb(0 0 0 / .7);
-    --ui-shadow-header: 0 8px 24px -18px rgb(0 0 0 / .7);
-    --ui-mesh-alpha: 0.30;
+    --ui-shadow-glass: 0 1px 2px rgb(0 0 0 / .5), 0 6px 16px -8px rgb(0 0 0 / .6);
+    --ui-shadow-float: 0 12px 20px -10px rgb(0 0 0 / .7);
+    --ui-shadow-header: 0 6px 16px -12px rgb(0 0 0 / .7);
     --bo-bg: #111112;
     --bo-surface: #1B1B1D;
     --bo-surface-alt: #232326;
@@ -276,8 +266,8 @@
 /* Tema dark forzato */
 [data-theme='dark'] {
   --ui-bg: #0F0F10;
-  --ui-surface: rgb(30 30 30 / 0.70);
-  --ui-surface-strong: rgb(30 30 30 / 0.86);
+  --ui-surface: #1A1918;
+  --ui-surface-strong: #262422;
   --ui-surface-solid: #1E1E1E;
   --ui-surface-sunken: rgb(255 255 255 / 0.06);
   --ui-text: #F7F5F2;
@@ -303,17 +293,16 @@
   --ui-warning-soft: rgb(245 165 36 / 0.20);
   --ui-border: rgb(255 255 255 / 0.10);
   --ui-border-strong: #8C857D;
-  --ui-glass-edge: rgb(255 255 255 / 0.12);
+  --ui-glass-edge: rgb(255 255 255 / 0.08);
   --ui-focus: #FFB936;
   --ui-nav-active-bg: #FFB936;
   --ui-nav-active-fg: #1E1E1E;
   --ui-skeleton: rgb(255 255 255 / 0.08);
   --ui-skeleton-shine: rgb(255 255 255 / 0.12);
   --ui-backdrop: rgb(15 15 16 / 0.45);
-  --ui-shadow-glass: 0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6);
-  --ui-shadow-float: 0 18px 40px -12px rgb(0 0 0 / .7);
-  --ui-shadow-header: 0 8px 24px -18px rgb(0 0 0 / .7);
-  --ui-mesh-alpha: 0.30;
+  --ui-shadow-glass: 0 1px 2px rgb(0 0 0 / .5), 0 6px 16px -8px rgb(0 0 0 / .6);
+  --ui-shadow-float: 0 12px 20px -10px rgb(0 0 0 / .7);
+  --ui-shadow-header: 0 6px 16px -12px rgb(0 0 0 / .7);
   --bo-bg: #111112;
   --bo-surface: #1B1B1D;
   --bo-surface-alt: #232326;
@@ -349,7 +338,6 @@
   --ui-text-muted: var(--bo-text-muted);
   --ui-shadow-glass: none;
   --ui-shadow-float: var(--bo-shadow-float);
-  --ui-glass-blur: none;
   --ui-radius-card: 0.5rem;
   --ui-radius-control: 0.375rem;
   --ui-control-height-sm: 2rem;
@@ -358,5 +346,4 @@
   --ui-touch-target: 2.25rem;
   --ui-table-cell-padding: 0.5rem 0.75rem;
   --ui-input-padding: 0.375rem 0.75rem;
-  --ui-mesh-display: none;
 }

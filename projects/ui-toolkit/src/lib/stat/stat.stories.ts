@@ -14,8 +14,8 @@ const meta: Meta<Stat> = {
   parameters: {
     docs: {
       description: {
-        component: `Tile glass, padding 1rem, struttura \`<dl>\`. Label 0.75rem/700 UPPERCASE muted con icona in tile 2rem radius 0.75rem;
-valore font-numeric (Barlow Condensed, tabular-nums) 2.25rem/700; hint text-sm muted. \`tone\` colora tile icona e valore (sempre *-text, ≥ 4.5:1).
+        component: `Superficie, padding 1rem, struttura \`<dl>\`. Label 0.875rem/600 muted in frase, icona opzionale 1rem in linea (senza tile);
+valore font-numeric (Barlow Condensed, tabular-nums) 2.25rem/700; hint text-sm muted. \`tone\` colora solo il valore (sempre *-text, ≥ 4.5:1).
 
 **Accessibilità** — \`dt\`/\`dd\` associano etichetta e valore per gli screen reader; l'icona è decorativa.`,
       },

@@ -19,7 +19,7 @@ const SLIDES = `
   @for (p of partite; track $index) {
     <ui-glass-card>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
-        <span class="ui-eyebrow">{{ p.campo }} · {{ p.ora }}</span>
+        <span class="ui-meta">{{ p.campo }}, {{ p.ora }}</span>
         @if (p.live) { <ui-badge tone="live">Live</ui-badge> }
       </div>
       <p class="ui-card-title" style="margin:.5rem 0 0">{{ p.casa }} – {{ p.ospiti }}</p>

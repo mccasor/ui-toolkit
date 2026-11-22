@@ -9,7 +9,7 @@ import type { Partita } from './data';
   imports: [Header, TabBar, TabBarItem, Footer, Button, SbIcon, Avatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ui-header title="Torneo C85" tagline="Calcio a 5 · Bergamo" homeHref="#home" skipTo="#main">
+    <ui-header title="Torneo C85" tagline="Calcio a 5, Bergamo" homeHref="#home" skipTo="#main">
       ${iconSvg('trophy', 'fill', 'uiHeaderLogo')}
       <div uiHeaderActions>
         <button uiButton variant="ghost" iconOnly aria-label="Cerca"><sb-icon name="search" /></button>
@@ -51,7 +51,7 @@ export class PatternShell {
   template: `
     <a uiGlassCard interactive [variant]="m().stato === 'live' ? 'brand' : 'default'" [href]="'#' + m().id" class="card">
       <div class="top">
-        <span class="ui-eyebrow">{{ m().campo }} · {{ m().ora }}</span>
+        <span class="ui-meta">{{ m().campo }}, {{ m().ora }}</span>
         @switch (m().stato) {
           @case ('live') { <ui-badge tone="live">Live</ui-badge> }
           @case ('finita') { <ui-badge>Finita</ui-badge> }

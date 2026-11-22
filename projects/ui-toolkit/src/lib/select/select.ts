@@ -231,9 +231,7 @@ const normalize = (s: string) =>
     .group-h {
       padding: 0.5rem 0.75rem 0.25rem;
       font-size: var(--ui-font-size-xs);
-      font-weight: 800;
-      letter-spacing: var(--ui-tracking-eyebrow);
-      text-transform: uppercase;
+      font-weight: 700;
       color: var(--ui-text-muted);
     }
     .option {

@@ -55,7 +55,7 @@ const meta: Meta<Args> = {
       description: {
         component: `\`columns\`, \`rows\`, \`caption\` (sr-only di default), \`stack\`, \`rowKey\`, \`rowLink\`, template di cella \`<ng-template uiCell="chiave" let-row let-value="value">\`.
 
-- **≥ 640px**: tabella vera; header 0.75rem UPPERCASE muted (tracking 0.06em), celle padding 0.75rem, divisori border, hover surface-sunken. Numeri in font-numeric.
+- **≥ 640px**: tabella vera; header 0.75rem/700 muted in frase (senza maiuscole né tracking), celle padding 0.75rem, divisori border, hover surface-sunken. Numeri in font-numeric.
 - **< 640px con \`stack\`**: ogni riga una card a griglia 2 colonne con label da \`data-label\`, cella primaria a tutta larghezza.
 - **< 640px senza \`stack\`**: righe compatte su una linea, cella primaria troncata.
 - **Backoffice**: header sticky su surface-alt, zebra, hover row-hover, celle dense.

@@ -17,7 +17,20 @@ const MARCATORI: ChartData = {
   labels: ['Marco Bianchi', 'Luca Ferrari', 'Andrea Colombo', 'Davide Ricci', 'Simone Galli'],
   datasets: [{ label: 'Gol', data: [11, 9, 8, 6, 5] }],
 };
-const ESITI: ChartData = { labels: ['Vittorie casa', 'Pareggi', 'Vittorie ospiti'], datasets: [{ label: 'Partite', data: [18, 6, 12] }] };
+/** parte del tutto: una sola barra orizzontale impilata, una serie per parte (max 3 nella rampa) */
+const ESITI: ChartData = {
+  labels: ['Partite'],
+  datasets: [
+    { label: 'Vittorie casa', data: [18] },
+    { label: 'Pareggi', data: [6] },
+    { label: 'Vittorie ospiti', data: [12] },
+  ],
+};
+/** due squadre a confronto + la media del girone come serie di contesto */
+const CONFRONTO: ChartData = {
+  labels: GOL.labels,
+  datasets: [GOL.datasets[0], GOL.datasets[1], { label: 'Media girone', data: [1.6, 2, 2.4, 2.2, 2.6, 3], context: true }],
+};
 
 type Args = { type: Chart['type'] extends () => infer T ? T : never; height: string };
 
@@ -30,8 +43,6 @@ const card = (title: string, insight: string, chart: string, style = '') => `<ui
 const COPY: Record<string, [string, string]> = {
   line: ['Gol per giornata', 'I Leoni chiudono in crescita, le Aquile segnano di più nelle ultime giornate.'],
   bar: ['Classifica punti', 'Leoni in testa con 3 punti sui Falchi.'],
-  doughnut: ['Esiti delle partite', 'La metà delle partite finisce con la vittoria in casa.'],
-  radar: ['Gol per giornata', 'Andamento a confronto delle prime tre squadre.'],
 };
 
 const meta: Meta<Args> = {
@@ -39,9 +50,9 @@ const meta: Meta<Args> = {
   component: Chart,
   decorators: [moduleMetadata({ imports: [Chart, GlassCard] })],
   args: { type: 'line', height: '12rem' },
-  argTypes: { type: { control: 'inline-radio', options: ['line', 'bar', 'doughnut', 'radar'] } },
+  argTypes: { type: { control: 'inline-radio', options: ['line', 'bar'] } },
   render: (args) => ({
-    props: { ...args, data: args.type === 'doughnut' ? ESITI : args.type === 'bar' ? PUNTI : GOL },
+    props: { ...args, data: args.type === 'bar' ? PUNTI : GOL },
     template: card(
       COPY[args.type][0],
       COPY[args.type][1],
@@ -54,18 +65,20 @@ const meta: Meta<Args> = {
       description: {
         component: `Wrapper Chart.js 4 caricato on demand: \`type\`, \`data\`, \`options\`, \`ariaLabel\`, \`height\` (12rem). Chart.js è una peer dependency
 opzionale. Colori di assi (text-muted), griglia (border) e serie letti dai token e aggiornati al cambio tema: le serie usano \`chartSeries(mode)\`,
-palette agganciata alla banda OKLCH del modo (L 0.43–0.77 light, 0.48–0.67 dark, contrasto ≥ 3:1, ΔE ≥ 15 e ≥ 8 in protanopia/deuteranopia).
+una rampa di luminosità sulla tinta accento (light L 0.42 / 0.54 / 0.66, dark arancio brand / 0.70 / 0.57; contrasto ≥ 3:1, ΔE ≥ 12 e ≥ 8 in
+protanopia/deuteranopia). Al massimo 3 serie in evidenza: le serie \`context: true\` (media, riferimento) sono in text-muted tratteggiato.
 
 **Accessibilità** — canvas \`role="img"\` con \`aria-label\`; i dati sono anche in una tabella \`sr-only\` con caption e intestazioni;
 \`aria-busy\` finché la libreria non è caricata; animazioni off con reduced motion. Il canvas è focusabile: ←/→ (Home/End) scorrono le categorie
 mostrando il tooltip e annunciando i valori in una live region; Esc chiude.
 
-**Codifica** — le serie non sono mai distinte dal solo colore: forma del punto (cerchio, quadrato, triangolo, rombo…) e tratteggio
-diversi per serie, ripetuti nella legenda. Barre sempre con baseline a zero; griglia solo sull'asse dei valori; legenda nascosta con una
+**Codifica** — una sola tinta: la prima serie è l'accento, le altre si allontanano di luminosità; le linee hanno tratteggi diversi,
+ripetuti nella legenda, e nessun marker (il punto compare al passaggio o con la tastiera). Barre sempre con baseline a zero; griglia solo sull'asse dei valori; legenda nascosta con una
 sola serie (il titolo basta). Numeri formattati con la lingua della pagina.
 
 **Scelta del grafico** — confronto tra valori → \`bar\` (orizzontale con \`options: { indexAxis: 'y' }\` per etichette lunghe);
-andamento nel tempo → \`line\`; parte-tutto con al massimo 5 parti → \`doughnut\` (oltre, in sviluppo, compare un avviso: usare \`bar\`).
+andamento nel tempo → \`line\`; parte del tutto → barra orizzontale impilata (\`stacked: true\`), mai torta o ciambella (in sviluppo compare un avviso);
+più di 3 serie → piccoli multipli o tabella.
 Dare al grafico un titolo e una didascalia che dica il messaggio, non solo cosa mostra.`,
       },
     },
@@ -113,8 +126,30 @@ export const BarreOrizzontali: Story = {
     ),
   }),
 };
-export const Radar: Story = { args: { type: 'radar', height: '16rem' } };
-export const Doughnut: Story = { args: { type: 'doughnut', height: '14rem' } };
+export const Contesto: Story = {
+  name: 'Line con serie di contesto',
+  render: () => ({
+    props: { data: CONFRONTO },
+    template: card(
+      'Leoni e Falchi contro la media',
+      'I Leoni restano sopra la media del girone in quattro giornate su sei.',
+      `<ui-chart type="line" [data]="data" ariaLabel="Gol per giornata di Leoni e Falchi rispetto alla media del girone" categoryLabel="Giornata" />`,
+      'max-width:36rem',
+    ),
+  }),
+};
+export const ParteDelTutto: Story = {
+  name: 'Parte del tutto (barra impilata)',
+  render: () => ({
+    props: { data: ESITI, options: { indexAxis: 'y', scales: { x: { stacked: true }, y: { stacked: true, display: false } } } },
+    template: card(
+      'Esiti delle partite',
+      'La metà delle partite finisce con la vittoria in casa.',
+      `<ui-chart type="bar" [data]="data" [options]="options" height="6rem" ariaLabel="Esiti delle 36 partite: vittorie in casa, pareggi, vittorie ospiti" categoryLabel="Totale" />`,
+      'max-width:36rem',
+    ),
+  }),
+};
 export const ReducedMotion: Story = { name: 'Reduced motion', globals: { motion: 'reduce' } };
 
 const ALL = () => ({

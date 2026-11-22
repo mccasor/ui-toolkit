@@ -21,7 +21,7 @@ const meta: Meta<EmptyState> = {
   parameters: {
     docs: {
       description: {
-        component: `Colonna centrata, padding 2.5rem 1.5rem: tile icona 4rem radius 1rem su brand-soft con icona 32px (stroke 1.75) accent-text,
+        component: `Colonna centrata, padding 2.5rem 1.5rem: icona 32px accent-text senza tile (peso regular),
 titolo 1.125rem/800, descrizione muted max 24rem, slot azioni \`[uiEmptyActions]\`.
 
 **Accessibilità** — l'icona è decorativa (\`aria-hidden\`); \`headingLevel\` rende il titolo un heading del livello giusto nella pagina.`,

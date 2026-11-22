@@ -15,19 +15,19 @@ import { FOUNDATION_STYLES } from './shared';
       </p>
       <div class="demos">
         <section class="glass fd-card demo" aria-labelledby="d-press">
-          <h2 id="d-press" class="ui-card-title">Press bottone · 160ms</h2>
+          <h2 id="d-press" class="ui-card-title">Press bottone, 160ms</h2>
           <p class="ui-body-sm fd-muted">scale(0.97) su :active, colore 160ms</p>
           <button type="button" class="ui-btn ui-btn--primary">Premi</button>
         </section>
 
         <section class="glass fd-card demo" aria-labelledby="d-card">
-          <h2 id="d-card" class="ui-card-title">Card interattiva · 200ms</h2>
+          <h2 id="d-card" class="ui-card-title">Card interattiva, 200ms</h2>
           <p class="ui-body-sm fd-muted">hover translateY(-2px) + shadow-float, active scale(0.99)</p>
           <a href="#" class="lift glass" (click)="$event.preventDefault()">Passa sopra</a>
         </section>
 
         <section class="glass fd-card demo" aria-labelledby="d-dialog">
-          <h2 id="d-dialog" class="ui-card-title">Dialog · 220ms</h2>
+          <h2 id="d-dialog" class="ui-card-title">Dialog, 220ms</h2>
           <p class="ui-body-sm fd-muted">pop-in da opacity 0, translateY(8px) scale(0.98)</p>
           <button type="button" class="ui-btn ui-btn--secondary ui-btn--sm" (click)="replay('dialog')">Riproduci</button>
           <div class="stage">
@@ -38,7 +38,7 @@ import { FOUNDATION_STYLES } from './shared';
         </section>
 
         <section class="glass fd-card demo" aria-labelledby="d-sheet">
-          <h2 id="d-sheet" class="ui-card-title">Bottom sheet · 260ms</h2>
+          <h2 id="d-sheet" class="ui-card-title">Bottom sheet, 260ms</h2>
           <p class="ui-body-sm fd-muted">slide-up da translateY(100%)</p>
           <button type="button" class="ui-btn ui-btn--secondary ui-btn--sm" (click)="replay('sheet')">Riproduci</button>
           <div class="stage clip">
@@ -49,7 +49,7 @@ import { FOUNDATION_STYLES } from './shared';
         </section>
 
         <section class="glass fd-card demo" aria-labelledby="d-toast">
-          <h2 id="d-toast" class="ui-card-title">Toast · 260ms</h2>
+          <h2 id="d-toast" class="ui-card-title">Toast, 260ms</h2>
           <p class="ui-body-sm fd-muted">da opacity 0, translateY(-12px) scale(0.98)</p>
           <button type="button" class="ui-btn ui-btn--secondary ui-btn--sm" (click)="replay('toast')">Riproduci</button>
           <div class="stage">
@@ -61,7 +61,7 @@ import { FOUNDATION_STYLES } from './shared';
 
         <section class="glass fd-card demo" aria-labelledby="d-loop">
           <h2 id="d-loop" class="ui-card-title">Loop</h2>
-          <p class="ui-body-sm fd-muted">spinner 700ms lineare · live dot 1.4s · skeleton 1.4s</p>
+          <p class="ui-body-sm fd-muted">spinner 700ms lineare, live dot 1.4s, skeleton 1.4s</p>
           <div class="loops">
             <span class="ui-spinner" aria-hidden="true"></span>
             <span class="live"><span class="ui-live-dot" aria-hidden="true"></span> Live</span>
@@ -70,7 +70,7 @@ import { FOUNDATION_STYLES } from './shared';
         </section>
 
         <section class="glass fd-card demo" aria-labelledby="d-h">
-          <h2 id="d-h" class="ui-card-title">Altezza carousel · 200ms</h2>
+          <h2 id="d-h" class="ui-card-title">Altezza carousel, 200ms</h2>
           <p class="ui-body-sm fd-muted">si adatta al pannello attivo</p>
           <button type="button" class="ui-btn ui-btn--secondary ui-btn--sm" (click)="tall.set(!tall())">Cambia pannello</button>
           <div class="grow" [style.height]="tall() ? '8rem' : '3rem'"></div>
@@ -109,7 +109,7 @@ import { FOUNDATION_STYLES } from './shared';
       .lift:hover { transform: translateY(var(--ui-card-lift)); box-shadow: var(--ui-shadow-float); }
       .lift:active { transform: scale(var(--ui-card-active-scale)); }
       .loops { display: flex; gap: 1.25rem; align-items: center; font-size: 1.25rem; }
-      .live { display: inline-flex; gap: 0.5rem; align-items: center; font-size: var(--ui-font-size-xs); font-weight: 700; text-transform: uppercase; letter-spacing: var(--ui-tracking-live); color: var(--ui-danger-text); }
+      .live { display: inline-flex; gap: 0.5rem; align-items: center; font-size: var(--ui-font-size-xs); font-weight: 700; color: var(--ui-danger-text); }
       .sk { width: 6rem; height: 1rem; }
       .grow { width: 100%; background: var(--ui-brand-soft); border-radius: var(--ui-radius-tile); transition: height var(--ui-duration-carousel-height) var(--ui-ease); }
       .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.375rem 1rem; margin: 0; font-size: var(--ui-font-size-sm); }

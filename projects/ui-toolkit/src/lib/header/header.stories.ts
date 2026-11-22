@@ -11,7 +11,7 @@ const meta: Meta<Header> = {
   title: 'Components/Header',
   component: Header,
   decorators: [moduleMetadata({ imports: [Header, Button, SbIcon] })],
-  args: { title: 'Torneo C85', tagline: 'Calcio a 5 · Bergamo', homeHref: '#home', skipTo: '#main' },
+  args: { title: 'Torneo C85', tagline: 'Calcio a 5, Bergamo', homeHref: '#home', skipTo: '#main' },
   render: (args) => ({
     props: args,
     template: `<div style="margin:-1.5rem -1rem 0">
@@ -26,8 +26,8 @@ const meta: Meta<Header> = {
     docs: {
       description: {
         component: `Sticky, glass a tutta larghezza senza radius, solo bordo inferiore, ombra 0 8px 24px -18px. Altezza 3.75rem (+ safe-area):
-logo (tile 2.5rem radius 0.875rem con gradiente #2c2c30 → #0f0f10) + titolo display 1.375rem UPPERCASE tracking 0.025em + tagline 0.6875rem/700
-UPPERCASE tracking 0.18em muted. Resta fermo nelle view transition (\`view-transition-name: ui-header\`).
+logo (tile 2.5rem radius 0.875rem con gradiente #2c2c30 → #0f0f10) + titolo display 1.375rem UPPERCASE tracking 0.025em + tagline 0.75rem/600
+muted in frase (niente maiuscole spaziate). Resta fermo nelle view transition (\`view-transition-name: ui-header\`).
 
 **Accessibilità** — landmark \`<header>\` (banner); logo decorativo; con \`skipTo\` lo skip link "Vai al contenuto" è il primo elemento focusabile
 e compare al focus.`,

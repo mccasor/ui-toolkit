@@ -13,7 +13,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { chartSeries, relativeLuminance, withAlpha, type Mode } from 'ui-toolkit/tokens';
+import { CHART_MAX_SERIES, chartSeries, relativeLuminance, withAlpha, type Mode } from 'ui-toolkit/tokens';
 import { prefersReducedMotion } from '../util/media';
 import { uniqueId } from '../util/id';
 
@@ -23,6 +23,8 @@ export type ChartPoint = number | null | { x: number | string; y: number; r?: nu
 export interface ChartDataset {
   label?: string;
   data: ChartPoint[];
+  /** serie di riferimento (media, anno precedente): disegnata in text-muted, fuori dalla rampa */
+  context?: boolean;
   [key: string]: unknown;
 }
 export interface ChartData {
@@ -44,9 +46,9 @@ interface ChartInstance {
   tooltip?: { setActiveElements(els: ActiveElement[], pos: { x: number; y: number }): void };
 }
 
-/** Forme e tratteggi per serie: la serie non è mai distinta dal solo colore (legenda con le stesse forme). */
-const POINT_STYLES = ['circle', 'rect', 'triangle', 'rectRot', 'star', 'crossRot', 'rectRounded'] as const;
-const DASHES: number[][] = [[], [6, 4], [2, 3], [10, 3, 2, 3]];
+/** Tratteggi per serie (linee): con la rampa di luminosità la serie non è mai distinta dal solo colore. */
+const DASHES: number[][] = [[], [6, 4], [2, 3]];
+const CONTEXT_DASH = [4, 4];
 const CATEGORICAL = ['line', 'bar', 'radar'];
 
 /**
@@ -55,7 +57,8 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
  * e aggiornati al cambio tema; animazioni off con reduced motion.
  * Accessibilità: canvas `role="img"` con `ariaLabel` + tabella sr-only con i dati. Il canvas è focusabile:
  * ←/→ (Home/End) scorrono le categorie mostrando il tooltip e annunciandone i valori in una live region, Esc chiude.
- * Codifica: serie distinte anche da forma del punto e tratteggio; barre sempre da zero; legenda solo con più serie.
+ * Codifica: una rampa di luminosità sulla tinta accento (max 3 serie, la prima è la più contrastata), serie `context` in
+ * text-muted; linee senza marker e con tratteggi diversi; barre sempre da zero; legenda solo con più serie.
  */
 @Component({
   selector: 'ui-chart',
@@ -180,23 +183,29 @@ export class Chart {
     const categorical = CATEGORICAL.includes(type);
     const horizontal = (this.options() as { indexAxis?: string }).indexAxis === 'y';
     const multi = this.data().datasets.length > 1;
-    if (radial && isDevMode() && (this.data().labels?.length ?? 0) > 5) {
-      console.warn(`[ui-chart] "${this.ariaLabel()}": ${type} con più di 5 fette è difficile da leggere, preferire type="bar".`);
+    if (isDevMode()) {
+      if (radial) console.warn(`[ui-chart] "${this.ariaLabel()}": per una parte del tutto usare una barra orizzontale impilata, non ${type}.`);
+      const loud = this.data().datasets.filter((d) => !d.context).length;
+      if (!radial && loud > CHART_MAX_SERIES)
+        console.warn(`[ui-chart] "${this.ariaLabel()}": ${loud} serie in evidenza, massimo ${CHART_MAX_SERIES}. Segnare le altre come context, o usare piccoli multipli o una tabella.`);
     }
-    const datasets = this.data().datasets.map((d, i) => {
-      const c = series[i % series.length];
-      const colors = radial ? (d.data.map((_, j) => series[j % series.length]) as string[]) : c;
-      const shape = POINT_STYLES[i % POINT_STYLES.length];
+    const line = type === 'line' || type === 'radar';
+    let k = 0;
+    const datasets = this.data().datasets.map((d) => {
+      const i = d.context ? -1 : k++;
+      const c = i < 0 || i >= series.length ? t.muted : series[i];
+      const colors = radial ? (d.data.map((_, j) => series[j] ?? t.muted) as string[]) : c;
       return {
         borderWidth: type === 'bar' ? 0 : 2,
         borderColor: radial ? t.surface : c,
-        backgroundColor: type === 'line' ? withAlpha(c, 0.15) : type === 'radar' ? withAlpha(c, 0.2) : colors,
+        backgroundColor: line ? withAlpha(c, type === 'radar' ? 0.2 : 0.12) : colors,
+        fill: false,
         pointBackgroundColor: c,
         pointBorderColor: c,
-        pointStyle: shape,
-        pointRadius: type === 'line' || type === 'radar' ? 3.5 : 3,
-        pointHoverRadius: 6,
-        borderDash: type === 'line' || type === 'radar' ? DASHES[i % DASHES.length] : undefined,
+        pointRadius: line ? 0 : 3,
+        pointHoverRadius: 5,
+        pointHitRadius: 12,
+        borderDash: line ? (i < 0 ? CONTEXT_DASH : DASHES[i % DASHES.length]) : undefined,
         cubicInterpolationMode: 'monotone',
         borderRadius: type === 'bar' ? 2 : undefined,
         maxBarThickness: 24,
@@ -228,7 +237,15 @@ export class Chart {
         legend: {
           display: multi || radial,
           align: 'start',
-          labels: { color: t.muted, font: { family: t.font, size: 12, weight: 600 }, usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 12 },
+          labels: {
+            color: t.muted,
+            font: { family: t.font, size: 12, weight: 600 },
+            usePointStyle: true,
+            ...(line ? { pointStyle: 'line', pointStyleWidth: 20 } : { pointStyle: 'rect' }),
+            boxWidth: 8,
+            boxHeight: 8,
+            padding: 12,
+          },
         },
         tooltip: {
           backgroundColor: t.text,

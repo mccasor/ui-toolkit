@@ -1,5 +1,5 @@
 /**
- * ui-toolkit — fonte unica dei design token (C85 glass).
+ * ui-toolkit — fonte unica dei design token (C85).
  *
  * Tutti i valori sono presi alla lettera da "Linee guida libreria componenti C85".
  * Dove il documento non fissa un valore e serve comunque un token, il valore è
@@ -14,7 +14,7 @@
 export const BRAND = {
   orange: { hex: '#FFB936', oklch: [0.83, 0.158, 78], use: 'primary, attivo, selezione, focus in dark' },
   red: { hex: '#CE2828', oklch: [0.55, 0.201, 27], use: 'danger, errori, cartellini' },
-  green: { hex: '#2E8B57', oklch: [0.57, 0.119, 155], use: 'success, solo nel mesh e nei soft' },
+  green: { hex: '#2E8B57', oklch: [0.57, 0.119, 155], use: 'success, solo nei soft' },
   ink: { hex: '#1E1E1E', oklch: [0.24, 0, null], use: 'testo, testo su primary, nav attiva in light' },
 } as const;
 
@@ -62,14 +62,13 @@ export interface ThemeTokens {
   shadowFloat: string;
   /** ombra header "0 8px 24px -18px": il documento non dà il colore → @derived ink (light) / nero (dark) come le altre ombre */
   shadowHeader: string;
-  meshAlpha: string;
 }
 
 export const THEMES: { light: ThemeTokens; dark: ThemeTokens } = {
   light: {
     bg: '#FFF6E8',
-    surface: 'rgb(255 255 255 / 0.72)',
-    surfaceStrong: 'rgb(255 255 255 / 0.86)',
+    surface: '#FFFCF7',
+    surfaceStrong: '#FFFFFF',
     surfaceSolid: '#FFFCF7',
     surfaceSunken: 'rgb(30 30 30 / 0.05)',
     text: '#1E1E1E',
@@ -96,23 +95,21 @@ export const THEMES: { light: ThemeTokens; dark: ThemeTokens } = {
     warningSoft: 'rgb(245 165 36 / 0.18)',
     border: 'rgb(30 30 30 / 0.10)',
     borderStrong: '#7A726A',
-    glassEdge: 'rgb(255 255 255 / 0.75)',
+    glassEdge: 'rgb(30 30 30 / 0.08)',
     focus: '#1E1E1E',
     navActiveBg: '#1E1E1E',
     navActiveFg: '#FFB936',
     skeleton: 'rgb(30 30 30 / 0.08)',
     skeletonShine: 'rgb(255 255 255 / 0.6)',
     backdrop: 'rgb(15 15 16 / 0.45)',
-    shadowGlass:
-      '0 1px 0 0 rgb(255 255 255 / .6) inset, 0 10px 30px -12px rgb(90 50 0 / .25), 0 2px 6px -2px rgb(30 30 30 / .08)',
-    shadowFloat: '0 18px 40px -16px rgb(30 30 30 / .4), 0 4px 12px -4px rgb(30 30 30 / .15)',
-    shadowHeader: '0 8px 24px -18px rgb(30 30 30 / .4)',
-    meshAlpha: '0.45',
+    shadowGlass: '0 1px 2px rgb(90 50 0 / .08), 0 6px 16px -8px rgb(90 50 0 / .18)',
+    shadowFloat: '0 12px 20px -10px rgb(30 30 30 / .3), 0 4px 8px -4px rgb(30 30 30 / .12)',
+    shadowHeader: '0 6px 16px -12px rgb(30 30 30 / .35)',
   },
   dark: {
     bg: '#0F0F10',
-    surface: 'rgb(30 30 30 / 0.70)',
-    surfaceStrong: 'rgb(30 30 30 / 0.86)',
+    surface: '#1A1918',
+    surfaceStrong: '#262422',
     surfaceSolid: '#1E1E1E',
     surfaceSunken: 'rgb(255 255 255 / 0.06)',
     text: '#F7F5F2',
@@ -139,17 +136,16 @@ export const THEMES: { light: ThemeTokens; dark: ThemeTokens } = {
     warningSoft: 'rgb(245 165 36 / 0.20)',
     border: 'rgb(255 255 255 / 0.10)',
     borderStrong: '#8C857D',
-    glassEdge: 'rgb(255 255 255 / 0.12)',
+    glassEdge: 'rgb(255 255 255 / 0.08)',
     focus: '#FFB936',
     navActiveBg: '#FFB936',
     navActiveFg: '#1E1E1E',
     skeleton: 'rgb(255 255 255 / 0.08)',
     skeletonShine: 'rgb(255 255 255 / 0.12)',
     backdrop: 'rgb(15 15 16 / 0.45)',
-    shadowGlass: '0 1px 0 0 rgb(255 255 255 / .06) inset, 0 12px 32px -12px rgb(0 0 0 / .6)',
-    shadowFloat: '0 18px 40px -12px rgb(0 0 0 / .7)',
-    shadowHeader: '0 8px 24px -18px rgb(0 0 0 / .7)',
-    meshAlpha: '0.30',
+    shadowGlass: '0 1px 2px rgb(0 0 0 / .5), 0 6px 16px -8px rgb(0 0 0 / .6)',
+    shadowFloat: '0 12px 20px -10px rgb(0 0 0 / .7)',
+    shadowHeader: '0 6px 16px -12px rgb(0 0 0 / .7)',
   },
 };
 
@@ -231,7 +227,6 @@ export const BACKOFFICE_REMAP: Record<string, string> = {
   'text-muted': 'var(--bo-text-muted)',
   'shadow-glass': 'none',
   'shadow-float': 'var(--bo-shadow-float)',
-  'glass-blur': 'none',
   'radius-card': '0.5rem',
   'radius-control': '0.375rem',
   /** @derived sm/lg: un gradino sotto/sopra il compatto 2.25rem del documento */
@@ -242,7 +237,6 @@ export const BACKOFFICE_REMAP: Record<string, string> = {
   /** @derived tabelle dense e input compatti coerenti con controlli da 2.25rem */
   'table-cell-padding': '0.5rem 0.75rem',
   'input-padding': '0.375rem 0.75rem',
-  'mesh-display': 'none',
 };
 
 /**
@@ -257,10 +251,8 @@ export const STRUCTURAL_DEFAULTS: Record<string, string> = {
   'table-header-position': 'static',
   'brand-card-edge': '1px',
   'brand-card-edge-color': 'color-mix(in srgb, var(--ui-primary) 55%, transparent)',
-  'glass-blur': 'blur(18px) saturate(170%)',
   'table-cell-padding': '0.75rem',
   'input-padding': '0.625rem 0.875rem',
-  'mesh-display': 'block',
 };
 
 /* ------------------------------------------------------- Tipografia */
@@ -288,31 +280,27 @@ export interface TypeStyle {
 }
 
 export const TYPE: Record<string, TypeStyle> = {
-  displayHero: { family: 'display', size: '3rem', sizeSm: '3.75rem', lineHeight: '0.95', weight: 700, transform: 'uppercase', use: 'titolo pagina/torneo, landing' },
+  displayHero: { family: 'display', size: '3rem', sizeSm: '3.75rem', lineHeight: '1', weight: 700, transform: 'uppercase', use: 'titolo pagina/torneo, landing' },
   h1: { family: 'display', size: '2.25rem', sizeSm: '3rem', lineHeight: '1', weight: 700, transform: 'uppercase', tracking: '0.025em', use: 'titoli di pagina interni' },
   h2Display: { family: 'display', size: '1.875rem', weight: 700, transform: 'uppercase', use: 'blocchi principali' },
   cardTitle: { family: 'sans', size: '1.125rem', weight: 800, use: 'titolo dentro card' },
-  eyebrow: { family: 'sans', size: '0.75rem', weight: 800, transform: 'uppercase', tracking: '0.14em', color: 'muted', use: 'etichetta sopra le sezioni' },
+  sectionTitle: { family: 'sans', size: '1rem', lineHeight: '1.5', weight: 800, use: 'titolo di sezione (frase, senza maiuscole spaziate)' },
   body: { family: 'sans', size: '1rem', lineHeight: '1.5', weight: '400–500', use: 'testo corrente' },
   bodySm: { family: 'sans', size: '0.875rem', lineHeight: '1.25rem', weight: '400–600', use: 'metadati, liste, hint' },
   label: { family: 'sans', size: '0.875rem', weight: 700, use: 'label di form' },
   caption: { family: 'sans', size: '0.75rem', lineHeight: '1rem', weight: '600–700', use: 'badge, note' },
   micro: { family: 'sans', size: '0.6875rem', weight: 700, use: 'chip iniziali, header tabella backoffice' },
-  tableHeader: { family: 'sans', size: '0.75rem', weight: 700, transform: 'uppercase', tracking: '0.06em', color: 'muted', use: 'header tabella' },
+  tableHeader: { family: 'sans', size: '0.75rem', weight: 700, color: 'muted', use: 'header tabella (frase, senza tracking)' },
   button: { family: 'sans', size: '0.9375rem', lineHeight: '1', weight: 700, use: 'bottone (sm 0.875rem, lg 1rem)' },
   numberLg: { family: 'display', size: '3rem', weight: 800, numeric: true, use: 'punteggi live, KPI' },
   numeric: { family: 'display', weight: 700, numeric: true, tracking: '0.01em', use: 'classifiche, minuti' },
   boH1: { family: 'sans', size: '1.375rem', lineHeight: '1.2', weight: 800, use: 'titoli pagina gestionale' },
 };
 
+/** Tracking solo sulla voce display (maiuscole condensed) e sui numeri: etichette e badge non sono spaziati. */
 export const TRACKING = {
   numeric: '0.01em',
-  badge: '0.02em',
   h1: '0.025em',
-  tableHeader: '0.06em',
-  live: '0.08em',
-  eyebrow: '0.14em',
-  tagline: '0.18em',
 } as const;
 
 export const FONT_SIZE = {
@@ -413,16 +401,3 @@ export const MOTION = {
   cardLift: '-2px',
 } as const;
 
-/* -------------------------------------------------------------- Mesh */
-
-export const MESH = {
-  inset: '-20vmax',
-  saturate: '115%',
-  fadeStop: '70%',
-  blobs: [
-    { color: 'orange', at: '12% 8%', radius: '40vmax' },
-    { color: 'red', at: '92% 22%', radius: '34vmax' },
-    { color: 'green', at: '70% 96%', radius: '36vmax' },
-    { color: 'orange', at: '8% 88%', radius: '30vmax' },
-  ],
-} as const;

@@ -6,7 +6,7 @@ export interface FooterLink {
 }
 
 /**
- * Footer: bordo superiore border, link 0.875rem/600 muted (target 44px), hover text + sottolineatura offset 4px, separatore ·.
+ * Footer: bordo superiore border, link 0.875rem/600 muted (target 44px), hover text + sottolineatura offset 4px, link separati dallo spazio (nessun separatore ·).
  * Contenuto libero (es. copyright) nello slot.
  */
 @Component({
@@ -40,9 +40,8 @@ export interface FooterLink {
       justify-content: space-between;
       gap: 0.5rem 1.5rem;
     }
-    ul { display: flex; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; }
+    ul { display: flex; flex-wrap: wrap; align-items: center; gap: 0 1.25rem; margin: 0; padding: 0; list-style: none; }
     li { display: flex; align-items: center; }
-    li + li::before { content: '·' / ''; padding-inline: 0.5rem; color: var(--ui-text-muted); }
     a {
       display: inline-flex;
       align-items: center;
