@@ -13,7 +13,7 @@ Documentazione e storie: Storybook del repository ([mccasor/ui-toolkit](https://
 Il pacchetto non è su npm: si installa dal tarball allegato alle [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
 
 ```bash
-npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.2.1/ui-toolkit-0.2.1.tgz
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.3.0/ui-toolkit-0.3.0.tgz
 ```
 
 Basta questo comando: `chart.js` è una dipendenza del pacchetto (caricata on demand solo se usi `<ui-chart>`), e `@angular/cdk` è una peer dependency che npm ≥ 7 e pnpm installano in automatico, in un'unica copia condivisa con l'app. Con Yarn aggiungila a mano: `yarn add @angular/cdk@^22.3.0`.

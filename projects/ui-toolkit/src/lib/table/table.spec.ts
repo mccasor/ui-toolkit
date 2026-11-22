@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideUiLinkHandler } from '../util/link';
-import { Table, TableCell, type TableColumn } from './table';
+import { Table, TableCell, TableHeader, TableRowDetail, type TableColumn } from './table';
 
 interface Row { id: number; squadra: string; pt: number }
 
@@ -65,5 +65,43 @@ describe('Table', () => {
     a.dispatchEvent(withCtrl);
     expect(handler).toHaveBeenCalledTimes(1);
     expect(withCtrl.defaultPrevented).toBe(false);
+  });
+
+  describe('totale, intestazioni, dettaglio, colonne fisse', () => {
+    interface Line { id: string; name: string; amount: number }
+    @Component({
+      imports: [Table, TableCell, TableHeader, TableRowDetail],
+      template: `<ui-table caption="Report" [columns]="cols" [rows]="rows" rowKey="id" [footer]="total" [rowExpanded]="open" scrollable maxHeight="20rem">
+        <ng-template uiHeader="amount" let-column><span class="head">{{ column.label }} (€)</span></ng-template>
+        <ng-template uiCell="amount" let-value="value" let-footer="footer"><span [class.tot]="footer">{{ value }}</span></ng-template>
+        <ng-template uiRowDetail let-row><p class="det">Dettaglio {{ row.name }}</p></ng-template>
+      </ui-table>`,
+    })
+    class Rich {
+      cols: TableColumn<Line>[] = [
+        { key: 'name', label: 'Voce', primary: true, sticky: true },
+        { key: 'amount', label: 'Importo', numeric: true, class: 'money' },
+      ];
+      rows: Line[] = [{ id: 'a', name: 'Quote', amount: 100 }, { id: 'b', name: 'Arbitri', amount: -30 }];
+      total: Line = { id: 't', name: 'Totale', amount: 70 };
+      open = (r: Line) => r.id === 'b';
+    }
+
+    it('riga di totale in tfoot con gli stessi template, intestazione custom, dettaglio e classi', async () => {
+      const f = TestBed.createComponent(Rich);
+      await f.whenStable();
+      const el: HTMLElement = f.nativeElement;
+      expect(el.querySelector('thead .head')?.textContent).toBe('Importo (€)');
+      expect(el.querySelector('tfoot th[scope=row]')?.textContent).toContain('Totale');
+      expect(el.querySelector('tfoot .tot')?.textContent).toBe('70');
+      expect(el.querySelectorAll('tbody tr.detail')).toHaveLength(1);
+      expect(el.querySelector('tbody tr.detail td')?.getAttribute('colspan')).toBe('2');
+      expect(el.querySelector('.det')?.textContent).toContain('Arbitri');
+      expect(el.querySelectorAll('.sticky')).toHaveLength(4);
+      expect(el.querySelectorAll('td.money')).toHaveLength(3);
+      expect(el.querySelector('table')?.classList).toContain('scrollable');
+      expect(el.querySelector('table')?.classList).not.toContain('compact');
+      expect((el.querySelector('.scroll') as HTMLElement).style.maxHeight).toBe('20rem');
+    });
   });
 });
