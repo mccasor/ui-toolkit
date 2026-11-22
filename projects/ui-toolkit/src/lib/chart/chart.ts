@@ -198,15 +198,15 @@ export class Chart {
         pointHoverRadius: 6,
         borderDash: type === 'line' || type === 'radar' ? DASHES[i % DASHES.length] : undefined,
         cubicInterpolationMode: 'monotone',
-        borderRadius: type === 'bar' ? 4 : undefined,
-        maxBarThickness: 48,
+        borderRadius: type === 'bar' ? 2 : undefined,
+        maxBarThickness: 24,
         ...d,
       };
     });
     const ticks = { color: t.muted, font: { family: t.font, size: 12, weight: 600 } };
     // indice (categorie) senza griglia, valori con griglia leggera e baseline a zero per le barre
     const index = { ticks, grid: { display: false }, border: { color: t.border } };
-    const value = { ticks, grid: { color: t.border }, border: { display: false }, beginAtZero: type === 'bar' };
+    const value = { ticks: { ...ticks, maxTicksLimit: 5 }, grid: { color: t.border }, border: { display: false }, beginAtZero: type === 'bar' };
     const scales = radial
       ? undefined
       : type === 'radar'

@@ -28,6 +28,15 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* superfici del browser dalla palette: selezione e scrollbar */
+::selection {
+  background: var(--ui-brand-soft);
+  color: var(--ui-text);
+}
+html {
+  scrollbar-color: var(--ui-border-strong) transparent;
+}
+
 body {
   margin: 0;
   min-height: 100dvh;
@@ -377,9 +386,9 @@ body::before,
   font: inherit;
   font-size: var(--ui-font-size-base);
   line-height: 1.5;
-  transition:
-    border-color var(--ui-duration-micro) var(--ui-ease),
-    box-shadow var(--ui-duration-micro) var(--ui-ease);
+  caret-color: var(--ui-accent-text);
+  /* solo il bordo è animato: l'anello di focus compare istantaneo */
+  transition: border-color var(--ui-duration-micro) var(--ui-ease);
 }
 .ui-input::placeholder {
   color: color-mix(in srgb, var(--ui-text-muted) 85%, transparent);
@@ -664,8 +673,8 @@ textarea.ui-input {
   }
   .glass,
   .glass-strong {
-    background: #fff;
-    border: 1px solid #000;
+    background: var(--ui-surface-solid);
+    border: 1px solid var(--ui-text);
     border-radius: 0 !important;
     box-shadow: none;
     -webkit-backdrop-filter: none;
