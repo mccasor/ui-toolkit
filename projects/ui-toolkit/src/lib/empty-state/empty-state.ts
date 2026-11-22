@@ -1,16 +1,24 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Icon } from '../icon/icon';
 
 /**
  * Stato vuoto: colonna centrata (padding 2.5rem 1.5rem), icona 32px accent-text senza tile,
  * titolo 1.125rem/800, descrizione muted max 24rem, slot azioni.
  *
- * Slot: `[uiEmptyIcon]` per l'icona (decorativa, aria-hidden), contenuto con attributo `uiEmptyActions` per le azioni.
+ * Icona: `icon` (nome di `<ui-icon>`) o lo slot `[uiEmptyIcon]` (decorativa, aria-hidden); contenuto con attributo
+ * `uiEmptyActions` per le azioni.
  */
 @Component({
   selector: 'ui-empty-state',
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="icon" aria-hidden="true"><ng-content select="[uiEmptyIcon]" /></div>
+    <div class="icon" aria-hidden="true">
+      @if (icon(); as name) {
+        <ui-icon [name]="name" [size]="32" />
+      }
+      <ng-content select="[uiEmptyIcon]" />
+    </div>
     <p class="title" [attr.role]="headingLevel() ? 'heading' : null" [attr.aria-level]="headingLevel()">{{ title() }}</p>
     @if (description()) {
       <p class="desc">{{ description() }}</p>
@@ -44,6 +52,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class EmptyState {
   readonly title = input.required<string>();
   readonly description = input<string>();
+  /** Nome di `<ui-icon>` (in alternativa allo slot `[uiEmptyIcon]`). */
+  readonly icon = input<string>();
   /** livello di heading del titolo (es. 2, 3); null = paragrafo */
   readonly headingLevel = input<number | null>(null);
 }

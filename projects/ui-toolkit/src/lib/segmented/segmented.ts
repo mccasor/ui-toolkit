@@ -12,6 +12,7 @@ import {
   input,
   model,
 } from '@angular/core';
+import { Icon } from '../icon/icon';
 import { uniqueId } from '../util/id';
 
 export interface SegmentedOption<T = string> {
@@ -20,6 +21,8 @@ export interface SegmentedOption<T = string> {
   disabled?: boolean;
   /** id del tabpanel controllato (aria-controls) */
   controls?: string;
+  /** Icona di `<ui-icon>` (18px), se non c'è il template `uiSegmentedIcon`. */
+  icon?: string;
 }
 
 /** Template opzionale per l'icona (18px) di ogni opzione: `<ng-template uiSegmentedIcon let-option>…</ng-template>` */
@@ -34,7 +37,7 @@ export class SegmentedIcon {
  */
 @Component({
   selector: 'ui-segmented',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (o of options(); track o.value; let i = $index) {
@@ -50,6 +53,8 @@ export class SegmentedIcon {
       >
         @if (icon(); as tpl) {
           <span class="icon" aria-hidden="true"><ng-container *ngTemplateOutlet="tpl.template; context: { $implicit: o }" /></span>
+        } @else if (o.icon) {
+          <span class="icon" aria-hidden="true"><ui-icon [name]="o.icon" [size]="18" /></span>
         }
         <span>{{ o.label }}</span>
       </button>

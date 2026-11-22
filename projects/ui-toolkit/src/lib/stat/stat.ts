@@ -1,19 +1,26 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Icon } from '../icon/icon';
 
 export type StatTone = 'neutral' | 'brand' | 'success' | 'danger';
 
 /**
  * Statistica: superficie, padding 1rem, `<dl>`. Label 0.875rem/600 muted in frase (niente maiuscole spaziate),
  * icona opzionale 1rem in linea, senza tile; valore font-numeric 2.25rem/700 + hint text-sm muted. `tone` colora solo il valore.
- * Icona da fuori con `[uiStatIcon]` (decorativa).
+ * Icona: `icon` (nome di `<ui-icon>`) o lo slot `[uiStatIcon]` (decorativa).
  */
 @Component({
   selector: 'ui-stat',
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <dl>
       <dt class="label">
-        <span class="icon" aria-hidden="true"><ng-content select="[uiStatIcon]" /></span>
+        <span class="icon" aria-hidden="true">
+          @if (icon(); as name) {
+            <ui-icon [name]="name" [size]="16" />
+          }
+          <ng-content select="[uiStatIcon]" />
+        </span>
         <span>{{ label() }}</span>
       </dt>
       <dd class="value font-numeric">{{ value() }}</dd>
@@ -51,4 +58,6 @@ export class Stat {
   readonly value = input.required<string | number>();
   readonly hint = input<string>();
   readonly tone = input<StatTone>('neutral');
+  /** Nome di `<ui-icon>` (in alternativa allo slot `[uiStatIcon]`). */
+  readonly icon = input<string>();
 }
