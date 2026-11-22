@@ -35,7 +35,7 @@ import { uniqueId } from '../util/id';
 import { mediaQuery } from '../util/media';
 import { applyThemeContext } from '../util/theme-context';
 
-export interface SelectOption<T = unknown> {
+export interface SelectOption<T = string> {
   value: T;
   label: string;
   /** riga secondaria */
@@ -270,7 +270,7 @@ const normalize = (s: string) =>
     .empty { margin: 0; padding: 0.75rem; font-size: var(--ui-font-size-sm); color: var(--ui-text-muted); }
   `,
 })
-export class Select<T = unknown> {
+export class Select<T = string> {
   readonly options = input.required<readonly SelectOption<T>[]>();
   readonly value = model<T | null>(null);
   readonly placeholder = input<string>();

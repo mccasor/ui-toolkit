@@ -14,7 +14,8 @@ import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
 import { injectLinkClick } from '../util/link';
 
-export interface TableColumn<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- righe di qualsiasi forma
+export interface TableColumn<T = any> {
   key: string;
   label: string;
   /** cella primaria: intestazione di riga, a tutta larghezza in stack, troncata in compatto, porta il link di riga */
@@ -31,7 +32,8 @@ export interface TableColumn<T = Record<string, unknown>> {
   hideOnMobile?: boolean;
 }
 
-export interface TableCellContext<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface TableCellContext<T = any> {
   $implicit: T;
   value: unknown;
   column: TableColumn<T>;
@@ -41,7 +43,8 @@ export interface TableCellContext<T> {
 
 /** Template di cella custom: `<ng-template uiCell="squadra" let-row let-value="value">…</ng-template>` */
 @Directive({ selector: 'ng-template[uiCell]' })
-export class TableCell<T = unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class TableCell<T = any> {
   readonly key = input.required<string>({ alias: 'uiCell' });
   readonly template = inject<TemplateRef<TableCellContext<T>>>(TemplateRef);
   static ngTemplateContextGuard<T>(_d: TableCell<T>, ctx: unknown): ctx is TableCellContext<T> {
@@ -184,7 +187,8 @@ export class TableCell<T = unknown> {
     }
   `,
 })
-export class Table<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class Table<T = any> {
   readonly columns = input.required<readonly TableColumn<T>[]>();
   readonly rows = input.required<readonly T[]>();
   /** didascalia (obbligatoria per l'accessibilità), sr-only di default */
@@ -193,8 +197,8 @@ export class Table<T = Record<string, unknown>> {
   readonly stack = input(false, { transform: booleanAttribute });
   /** chiave di riga: nome di proprietà o funzione (default: indice) */
   readonly rowKey = input<keyof T | ((row: T) => unknown)>();
-  /** URL della riga: rende la riga navigabile con un solo link esteso */
-  readonly rowLink = input<(row: T) => string | null | undefined>();
+  /** URL della riga (o i suoi segmenti, uniti con `/`): rende la riga navigabile con un solo link esteso */
+  readonly rowLink = input<(row: T) => string | readonly (string | number)[] | null | undefined>();
   protected readonly uiLabels = injectUiLabels();
   readonly emptyText = input<string>();
   protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().tableEmpty);
@@ -213,7 +217,9 @@ export class Table<T = Record<string, unknown>> {
     return c.value ? c.value(row) : (row as Record<string, unknown>)[c.key];
   }
   protected linkOf(row: T): string | null {
-    return this.rowLink()?.(row) ?? null;
+    const link = this.rowLink()?.(row);
+    if (link == null) return null;
+    return typeof link === 'string' ? link : link.map(String).join('/').replace(/\/{2,}/g, '/');
   }
   protected alignOf(c: TableColumn<T>) {
     return c.align ?? (c.numeric ? 'end' : 'start');

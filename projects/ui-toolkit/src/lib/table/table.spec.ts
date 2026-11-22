@@ -22,7 +22,7 @@ class Host {
     { id: 1, squadra: 'Leoni', pt: 12 },
     { id: 2, squadra: 'Falchi', pt: 9 },
   ];
-  link = (r: Row) => `/squadre/${r.id}`;
+  link = (r: Row) => (r.id === 2 ? ['/squadre', r.id] : `/squadre/${r.id}`);
 }
 
 describe('Table', () => {
@@ -38,6 +38,7 @@ describe('Table', () => {
     expect(rows[0].querySelectorAll('a')).toHaveLength(1);
     expect(rows[0].querySelector('a')!.getAttribute('href')).toBe('/squadre/1');
     expect(rows[0].querySelector('th[scope=row]')!.textContent).toContain('Leoni');
+    expect(rows[1].querySelector('a')!.getAttribute('href')).toBe('/squadre/2');
     expect(rows[1].querySelector('.pt')!.textContent).toBe('9 pt');
     expect(rows[1].querySelector('td')!.getAttribute('data-label')).toBe('Punti');
   });
