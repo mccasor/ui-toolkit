@@ -71,7 +71,7 @@ describe('Table', () => {
     interface Line { id: string; name: string; amount: number }
     @Component({
       imports: [Table, TableCell, TableHeader, TableRowDetail],
-      template: `<ui-table caption="Report" [columns]="cols" [rows]="rows" rowKey="id" [footer]="total" [rowExpanded]="open" scrollable>
+      template: `<ui-table caption="Report" [columns]="cols" [rows]="rows" rowKey="id" [footer]="total" [rowExpanded]="open" scrollable maxHeight="20rem">
         <ng-template uiHeader="amount" let-column><span class="head">{{ column.label }} (€)</span></ng-template>
         <ng-template uiCell="amount" let-value="value" let-footer="footer"><span [class.tot]="footer">{{ value }}</span></ng-template>
         <ng-template uiRowDetail let-row><p class="det">Dettaglio {{ row.name }}</p></ng-template>
@@ -101,6 +101,7 @@ describe('Table', () => {
       expect(el.querySelectorAll('td.money')).toHaveLength(3);
       expect(el.querySelector('table')?.classList).toContain('scrollable');
       expect(el.querySelector('table')?.classList).not.toContain('compact');
+      expect((el.querySelector('.scroll') as HTMLElement).style.maxHeight).toBe('20rem');
     });
   });
 });

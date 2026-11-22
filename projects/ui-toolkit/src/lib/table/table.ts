@@ -112,7 +112,7 @@ export class TableRowDetail<T = any> {
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="scroll" role="region" tabindex="0" [attr.aria-labelledby]="captionId">
+    <div class="scroll" role="region" tabindex="0" [attr.aria-labelledby]="captionId" [style.max-height]="maxHeight() ?? null">
       <table role="table" [class.stack]="stack() && !scrollable()" [class.compact]="!stack() && !scrollable()" [class.scrollable]="scrollable()" [class.linked]="!!rowLink()">
         <caption [id]="captionId" [class.sr-only]="!captionVisible()">{{ caption() }}</caption>
         <thead role="rowgroup">
@@ -192,7 +192,9 @@ export class TableRowDetail<T = any> {
   styles: `
     :host { display: block; min-width: 0; color: var(--ui-text); }
     @media (max-width: 639.98px) { .hide-mobile { display: none !important; } }
-    .scroll { overflow-x: auto; border-radius: inherit; }
+    .scroll { overflow: auto; border-radius: inherit; }
+    .scroll[style*='max-height'] thead th { position: sticky; top: 0; z-index: 2; }
+    .scroll[style*='max-height'] thead th.sticky { z-index: 3; }
     .scroll:focus-visible { outline-offset: -3px; }
     table { width: 100%; border-collapse: collapse; font-size: var(--ui-font-size-sm); line-height: 1.25rem; }
     caption { text-align: start; padding: 0 0 0.75rem; font-size: var(--ui-type-card-title-size); font-weight: 800; }
@@ -285,6 +287,8 @@ export class Table<T = any> {
   readonly footer = input<T | null>(null);
   /** righe con la riga di dettaglio `uiRowDetail` aperta */
   readonly rowExpanded = input<(row: T) => boolean>();
+  /** altezza massima dell'area di scorrimento (es. `calc(100dvh - 16rem)`): intestazione e colonne `sticky` restano visibili */
+  readonly maxHeight = input<string>();
   /** chiave di riga: nome di proprietà o funzione (default: indice) */
   readonly rowKey = input<keyof T | ((row: T) => unknown)>();
   /** URL della riga (o i suoi segmenti, uniti con `/`): rende la riga navigabile con un solo link esteso */
