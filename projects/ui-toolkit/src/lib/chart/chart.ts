@@ -90,7 +90,9 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
     <span class="sr-only" [id]="hintId">{{ uiLabels().chartKeyboardHint }}</span>
     <span class="sr-only" aria-live="polite">{{ announcement() }}</span>
     @if (dataTable()) {
-    <table class="sr-only">
+    <!-- sr-only sul contenitore: una tabella ignora width: 1px e allargherebbe la pagina -->
+    <div class="sr-only">
+    <table>
       <caption>{{ ariaLabel() }}</caption>
       <thead>
         <tr>
@@ -111,6 +113,7 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
         }
       </tbody>
     </table>
+    </div>
     }
   `,
   host: { class: 'ui-chart', '[attr.data-mode]': 'mode()', '[attr.aria-busy]': 'ready() ? null : "true"' },

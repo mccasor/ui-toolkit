@@ -31,7 +31,8 @@ describe('Chart', () => {
     await f.whenStable();
     await new Promise((r) => setTimeout(r));
     expect(built).toHaveLength(1);
-    expect(f.nativeElement.querySelector('table caption')?.textContent).toContain('Gol per giornata');
+    expect(f.nativeElement.querySelector('.sr-only > table caption')?.textContent).toContain('Gol per giornata');
+    expect(f.nativeElement.querySelector('table.sr-only')).toBeNull();
     f.componentInstance.table.set(false);
     await f.whenStable();
     expect(f.nativeElement.querySelector('table')).toBeNull();
