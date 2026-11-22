@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
+import { injectLinkClick } from '../util/link';
 
 export interface TableColumn<T = Record<string, unknown>> {
   key: string;
@@ -26,12 +27,16 @@ export interface TableColumn<T = Record<string, unknown>> {
   leading?: boolean;
   /** valore della cella (default: row[key]) */
   value?: (row: T) => unknown;
+  /** nascosta sotto 640px */
+  hideOnMobile?: boolean;
 }
 
 export interface TableCellContext<T> {
   $implicit: T;
   value: unknown;
   column: TableColumn<T>;
+  /** posizione della riga */
+  index: number;
 }
 
 /** Template di cella custom: `<ng-template uiCell="squadra" let-row let-value="value">…</ng-template>` */
@@ -63,25 +68,25 @@ export class TableCell<T = unknown> {
         <thead role="rowgroup">
           <tr role="row">
             @for (c of columns(); track c.key) {
-              <th role="columnheader" scope="col" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null">{{ c.label }}</th>
+              <th role="columnheader" scope="col" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null" [class.hide-mobile]="c.hideOnMobile">{{ c.label }}</th>
             }
           </tr>
         </thead>
         <tbody role="rowgroup">
-          @for (r of rows(); track keyOf(r, $index)) {
+          @for (r of rows(); track keyOf(r, $index); let i = $index) {
             <tr role="row">
               @for (c of columns(); track c.key) {
                 @if (c.primary) {
-                  <th role="rowheader" scope="row" class="primary" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric">
+                  <th role="rowheader" scope="row" class="primary" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile">
                     @if (linkOf(r); as href) {
-                      <a class="row-link" [href]="href"><ng-container *ngTemplateOutlet="cell; context: { r, c }" /></a>
+                      <a class="row-link" [href]="href" (click)="linkClick(href, $event)"><ng-container *ngTemplateOutlet="cell; context: { r, c, i }" /></a>
                     } @else {
-                      <ng-container *ngTemplateOutlet="cell; context: { r, c }" />
+                      <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
                     }
                   </th>
                 } @else {
-                  <td role="cell" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading">
-                    <ng-container *ngTemplateOutlet="cell; context: { r, c }" />
+                  <td role="cell" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading" [class.hide-mobile]="c.hideOnMobile">
+                    <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
                   </td>
                 }
               }
@@ -95,9 +100,9 @@ export class TableCell<T = unknown> {
       </table>
     </div>
 
-    <ng-template #cell let-r="r" let-c="c">
+    <ng-template #cell let-r="r" let-c="c" let-i="i">
       @if (templates().get(c.key); as tpl) {
-        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c }" />
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c, index: i }" />
       } @else {
         {{ valueOf(r, c) }}
       }
@@ -106,6 +111,7 @@ export class TableCell<T = unknown> {
   host: { class: 'ui-table' },
   styles: `
     :host { display: block; min-width: 0; color: var(--ui-text); }
+    @media (max-width: 639.98px) { .hide-mobile { display: none !important; } }
     .scroll { overflow-x: auto; border-radius: inherit; }
     .scroll:focus-visible { outline-offset: -3px; }
     table { width: 100%; border-collapse: collapse; font-size: var(--ui-font-size-sm); line-height: 1.25rem; }
@@ -194,6 +200,7 @@ export class Table<T = Record<string, unknown>> {
   protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().tableEmpty);
 
   protected readonly captionId = uniqueId('ui-table-caption');
+  protected readonly linkClick = injectLinkClick();
   private readonly cells = contentChildren(TableCell);
   protected readonly templates = computed(() => new Map(this.cells().map((c) => [c.key(), c.template as TemplateRef<TableCellContext<unknown>>])));
 
