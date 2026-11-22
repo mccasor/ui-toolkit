@@ -35,7 +35,8 @@ export interface TableColumn<T = any> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface TableCellContext<T = any> {
   $implicit: T;
-  value: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- valore della cella, di qualsiasi tipo
+  value: any;
   column: TableColumn<T>;
   /** posizione della riga */
   index: number;
