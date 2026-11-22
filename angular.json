@@ -21,6 +21,11 @@
                 "glob": "**/*",
                 "input": "projects/ui-toolkit/styles",
                 "output": "styles"
+              },
+              {
+                "glob": "LICENSE",
+                "input": ".",
+                "output": "."
               }
             ],
             "allowedNonPeerDependencies": [

@@ -104,3 +104,7 @@ chartSeries('dark');    // rampa delle serie dei grafici
 - I componenti usano solo token, nessun colore letterale: per personalizzare ridefinisci le custom properties `--ui-*`.
 - `<ui-chart>` carica `chart.js` on demand: se non usi grafici non finisce nel bundle iniziale.
 - I font sono distribuiti con le loro licenze OFL in `styles/fonts/`.
+
+## Licenza
+
+MIT (vedi `LICENSE`). I font Manrope e Barlow Condensed restano sotto SIL Open Font License.
