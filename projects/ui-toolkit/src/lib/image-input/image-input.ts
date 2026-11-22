@@ -110,7 +110,7 @@ const CODE_KEYS: Record<string, ErrorKey> = {
     :host { display: block; }
     .box { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 0.375rem; }
     .box:disabled { opacity: 0.6; }
-    .legend { padding: 0; margin-bottom: 0.375rem; font-size: var(--ui-font-size-sm); font-weight: 700; color: var(--ui-text); }
+    .legend { padding: 0; margin-bottom: 0.375rem; font-size: var(--ui-font-size-sm); font-weight: 600; color: var(--ui-text); }
     .req { color: var(--ui-danger-text); margin-inline-start: 0.125rem; }
     .row { display: flex; align-items: flex-start; gap: 1rem; }
     .side { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 0; }

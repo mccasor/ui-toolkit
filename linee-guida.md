@@ -1,6 +1,6 @@
 Linee guida libreria componenti C85
 19 nov 2026 · @Telsy account
-Revisione 22 nov 2026: regole Hallmark applicate (superfici piene, etichette in frase, niente separatori a puntino, grafici a una tinta). Le differenze rispetto a Torneo sono elencate in "Registro modifiche" in fondo.
+Revisione 22 nov 2026: regole Hallmark applicate (superfici piene, etichette in frase, niente separatori a puntino, grafici a una tinta), poi rifinitura unslop (pesi, strisce laterali, logo piatto, stat). Le differenze rispetto a Torneo sono elencate in "Registro modifiche" in fondo.
 Scopo
 Questo documento è il brief per un'altra istanza di Claude: deve costruire ui-toolkit, una libreria di componenti Angular riusabile, documentata in Storybook, che parta dal design system C85 dell'app Torneo (Angular 22 + Tailwind 4). I valori vengono dal codice di produzione (src/styles.css, src/app/ui/**) salvo dove indicato come regola generale o come scostamento voluto (revisione Hallmark, vedi "Registro modifiche").
 Come usarlo:
@@ -220,13 +220,13 @@ blocchi principali
 H2 / titolo card
 sans
 1.125rem
-800
+600
 normale
 titolo dentro card
 Titolo di sezione
 sans
 1rem / 1.5
-800
+600
 in frase, colore text
 titolo dei blocchi di pagina (sostituisce l'eyebrow)
 Body
@@ -244,37 +244,37 @@ metadati, liste, hint
 Label campo
 sans
 0.875rem
-700
+600
 
 label di form
 Caption
 sans
 0.75rem / 1rem
-600–700
+600
 
 badge, note
 Micro
 sans
 0.6875rem
-700
+600
 
 chip iniziali, header tabella backoffice
 Header tabella
 sans
 0.75rem
-700
+600
 in frase, text-muted, senza tracking
 
 Bottone
 sans
 0.9375rem (sm 0.875, lg 1) lh 1
-700
+600
 
 
 Numero grande (score, stat)
 display
 3rem
-800
+700
 tabular-nums
 punteggi live, KPI
 Numero in tabella
@@ -286,11 +286,11 @@ classifiche, minuti
 H1 backoffice
 sans
 1.375rem / 1.2
-800
+600
 
 titoli pagina gestionale
 Regole
-• I pesi usati sono 400, 600, 700, 800: non introdurre 300 o 900.
+• Pesi: Manrope 400–600 (la gerarchia la fanno dimensione e colore, non il grassetto); Barlow Condensed 700 per display e numeri. Niente 300, 800, 900.
 • UPPERCASE solo sulla voce display condensed (hero, H1, H2 display, titolo dell'header): è un wordmark, non un'etichetta. Mai su etichette, header di tabella, badge, tagline o titoli di sezione.
 • Tracking solo dove serve alla forma: 0.025em sui display H1, 0.01em sui numeri. Etichette e badge senza tracking.
 • Metadati (data, campo e ora, contesto) in body small muted, uniti da virgola o dal layout: mai dal puntino "·". Niente sopratitolo sopra un titolo se non porta un fatto (data, contesto) che altrimenti mancherebbe.
@@ -329,7 +329,7 @@ bottoni md, input, tab, link in footer
 header / tab bar
 3.75rem / 4rem
 sticky, tab bar flottante
-Bordi: 1px ovunque. border (ink 10%) per divisori decorativi, border-strong per i confini dei controlli, glass-edge (ink 8% / bianco 8%) per le card, primary-border sui bottoni primari. Bordo sinistro 4px colorato per toast di stato, 3px arancio per card brand nel backoffice.
+Bordi: 1px ovunque. border (ink 10%) per divisori decorativi, border-strong per i confini dei controlli, glass-edge (ink 8% / bianco 8%) per le card, primary-border sui bottoni primari. Nessun bordo sinistro colorato: il tono del toast lo porta l'icona, la card brand ha lo stesso bordo 1px su tutti i lati.
 Ombre (tinte calde in light, nere in dark):
 --shadow-glass: 0 1px 2px rgb(90 50 0 / .08), 0 6px 16px -8px rgb(90 50 0 / .18);
 --shadow-float: 0 12px 20px -10px rgb(30 30 30 / .3), 0 4px 8px -4px rgb(30 30 30 / .12);
@@ -339,10 +339,10 @@ Ombre (tinte calde in light, nere in dark):
 --shadow-float: 0 12px 20px -10px rgb(0 0 0 / .7);
 --shadow-header: 0 6px 16px -12px rgb(0 0 0 / .7);
 Ombre corte: blur ≤ 20px, così il bordo sottile della card non sta sotto un'ombra ampia e sfumata.
-Due soli livelli di elevazione: glass (card a riposo) e float (hover di card interattive, tab attiva, toast, tab bar, menu). Il backoffice azzera shadow-glass e usa un float leggero.
+Due soli livelli di elevazione: glass (card a riposo) e float (hover di card interattive, toast, tab bar, menu). Il backoffice azzera shadow-glass e usa un float leggero.
 Superfici (.glass, nome storico): background: surface; border: 1px solid glass-edge; box-shadow: shadow-glass. Variante strong = surface-strong (un gradino più chiaro). Nessun backdrop-filter. Con prefers-contrast: more il bordo diventa border-strong; con prefers-reduced-transparency il backdrop degli overlay diventa opaco.
 Sfondo: bg pieno, nessun mesh né gradiente.
-Card brand: fondo piatto color-mix(primary 8%, surface) e bordo arancio al 55%; nel backoffice bordo sinistro 3px arancio. Nessun glow.
+Card brand: fondo piatto color-mix(primary 8%, surface) e bordo arancio al 55% su tutti i lati, anche nel backoffice. Nessun glow.
 Motion
 Un'unica curva, --ui-ease: cubic-bezier(0.22, 1, 0.36, 1) (ease-out marcato), e durate brevi: 160ms micro-interazioni, 200ms stati di card/tab, 220–260ms ingressi, 240ms transizioni di pagina.
 Animazione
@@ -385,7 +385,7 @@ I componenti sotto esistono in Torneo (src/app/ui) e vanno replicati con la stes
 Azioni
 Button — attributo su <button> e <a> (stessa resa).
 • Props: variant primary | secondary | ghost | danger · size sm | md | lg · block · iconOnly · loading · disabled · type (default button, mai submit per errore).
-• Misure: altezza sm 2.25rem / md 2.75rem / lg 3.25rem; padding orizzontale 0.875 / 1.125 / 1.5rem; icon-only quadrato; gap icona 0.5rem; radius radius-control; peso 700, line-height 1, white-space: nowrap.
+• Misure: altezza sm 2.25rem / md 2.75rem / lg 3.25rem; padding orizzontale 0.875 / 1.125 / 1.5rem; icon-only quadrato; gap icona 0.5rem; radius radius-control; peso 600, line-height 1, white-space: nowrap.
 • Varianti: primary fill primary, testo ink, bordo primary-border, hover primary-hover; secondary surface-strong, testo text, bordo border-strong, hover surface-solid; ghost trasparente, hover surface-sunken; danger fill danger, testo bianco, hover danger-hover.
 • Stati: active scale(0.97); disabled opacity 0.5 + not-allowed; loading = spinner 1em a sinistra, aria-busy, disabilitato. Su <a> disabled → aria-disabled.
 • Icon-only richiede aria-label.
@@ -393,15 +393,15 @@ Contenitori
 GlassCard (nome storico) — variant default | strong | brand · padding none | sm | md | lg · interactive. Radius 1.25rem, overflow: hidden, classe .glass (superficie piena). Brand = fondo arancio all'8% piatto + bordo arancio 55%. Interactive = lift 2px + shadow-float.
 Dialog / Sheet / Confirm / Choice — servizio che apre un pannello su superficie piena sopra un backdrop rgb(15 15 16 / .45), senza blur. Dialog centrato min(32rem, 100vw − 2rem), animazione pop-in; sheet ancorato in basso (max 40rem, 90dvh, angoli inferiori a 0, safe-area). Focus trap, Esc, ripristino del focus, aria-modal. Helper confirm({title, message, confirmLabel, cancelLabel, tone: primary|danger}) → Promise<boolean>; choose({title, options}) → valore o null.
 Feedback e stato
-Badge — pill, padding 0.25rem 0.625rem, 0.75rem/700, testo in frase senza tracking. tone: neutral (surface-sunken + border), brand (fill primary), success / warning / danger (soft + *-text), live (fill danger, testo bianco "Live", pallino pulsante: il pallino porta lo stato, non è decorativo).
-Role chip (micro badge) — cerchio 1.25rem, 0.6875rem/700, una lettera visibile + nome completo sr-only + tooltip title. Toni: primary, warning-soft, danger-soft, success-soft.
-Toast — in alto sotto l'header, larghezza min(26rem, 100%), radius 1rem, superficie strong, shadow-float, bordo sinistro 4px del tono (info = text, success, warning, danger), icona colorata col *-text, titolo bold + dettaglio text-sm muted. Due live region sempre nel DOM: assertive per errori, polite per il resto.
+Badge — pill, padding 0.25rem 0.625rem, 0.75rem/600, testo in frase senza tracking. tone: neutral (surface-sunken + border), brand (fill primary), success / warning / danger (soft + *-text), live (fill danger, testo bianco "Live", pallino pulsante: il pallino porta lo stato, non è decorativo).
+Role chip (micro badge) — cerchio 1.25rem, 0.6875rem/600, una lettera visibile + nome completo sr-only + tooltip title. Toni: primary, warning-soft, danger-soft, success-soft.
+Toast — in alto sotto l'header, larghezza min(26rem, 100%), radius 1rem, superficie strong, shadow-float, bordo 1px glass-edge, icona colorata col *-text del tono (info = text, success, warning, danger), titolo 600 + dettaglio text-sm muted. Due live region sempre nel DOM: assertive per errori, polite per il resto.
 Skeleton — variant text | rect | circle, lines, width, height. Ultima riga al 60%. aria-hidden; la regione che carica porta aria-busy.
-EmptyState — colonna centrata, padding 2.5rem 1.5rem: icona 32px accent-text senza tile, titolo 1.125rem/800, descrizione muted max 24rem, slot azioni.
+EmptyState — colonna centrata, padding 2.5rem 1.5rem: icona 32px accent-text senza tile, titolo 1.125rem/600, descrizione muted max 24rem, slot azioni.
 Spinner — 1em, bordo 2px currentColor, lato destro trasparente, 700ms lineare.
 Dati
-Stat — superficie, padding 1rem, <dl>. Label 0.875rem/600 muted in frase, icona opzionale 1rem in linea (nessuna tile); valore font-numeric 2.25rem/700 + hint text-sm muted. tone neutral | brand | success | danger (colora solo il valore).
-Table — columns, rows, caption (sr-only di default), stack, rowKey, rowLink, template di cella custom. Da 640px tabella vera: header 0.75rem/700 muted in frase, celle padding 0.75rem, divisori border, hover surface-sunken. Sotto 640px con stack ogni riga diventa una card a griglia 2 colonne con label da data-label e cella primaria a tutta larghezza; senza stack righe compatte su una linea con la cella primaria troncata. Riga navigabile = un solo link esteso su tutta la riga. Backoffice: header sticky su surface-alt, zebra, hover row-hover.
+Stat — superficie, padding 1rem, <dl>. Label 0.875rem/600 muted in frase, icona opzionale 1rem in linea (nessuna tile); valore font-numeric 2.25rem/700 + hint text-sm muted. tone neutral | brand | success | danger (colora solo il valore): una sola stat colorata per schermata, quella che conta; nelle griglie di KPI niente icone.
+Table — columns, rows, caption (sr-only di default), stack, rowKey, rowLink, template di cella custom. Da 640px tabella vera: header 0.75rem/600 muted in frase, celle padding 0.75rem, divisori border, hover surface-sunken. Sotto 640px con stack ogni riga diventa una card a griglia 2 colonne con label da data-label e cella primaria a tutta larghezza; senza stack righe compatte su una linea con la cella primaria troncata. Riga navigabile = un solo link esteso su tutta la riga. Backoffice: header sticky su surface-alt, zebra, hover row-hover.
 Chart — wrapper Chart.js 4 caricato on demand: type, data, options, ariaLabel, height (12rem). Colori assi/griglia letti dai token e aggiornati al cambio tema; canvas role=img + tabella sr-only dei dati; animazioni off con reduced motion.
 • Forma prima del grafico: confronto tra valori → barre (orizzontali per etichette lunghe); andamento nel tempo → linea; parte del tutto → una barra orizzontale impilata, mai torta o ciambella (in sviluppo il componente avvisa); più di 3 serie → piccoli multipli o tabella; un solo valore → Stat, non un grafico.
 • Codifica: rampa di luminosità sull'accento (sezione Colore), serie con context: true in text-muted tratteggiato; linee 2px senza marker (il punto compare al passaggio o da tastiera) e con tratteggi diversi per serie; barre spesse al massimo 24px, radius 2px solo sul lato del dato, baseline sempre a zero; griglia solo sull'asse dei valori, al massimo 5 linee; legenda solo con più serie; un solo asse y.
@@ -409,15 +409,15 @@ Chart — wrapper Chart.js 4 caricato on demand: type, data, options, ariaLabel,
 • Composizione: titolo (cosa mostra) e una frase con il messaggio (cosa significa) sopra il grafico.
 TeamLogo / Avatar — immagine con fallback a iniziali (max 2, font display 700, size × 0.38). Size xs 1.5 · sm 2 · md 2.5 · lg 3.5 · xl 5rem. Logo = quadrato radius 28% su tile glass, object-fit: contain; avatar = cerchio. Colore del fallback: colore scelto con on calcolato, altrimenti palette fallback via hash del nome.
 Form
-Field — wrapper con label (0.875rem/700, asterisco danger-text se required), slot controllo, hint text-sm muted, errore text-sm 600 danger-text con icona alert e role=alert. Collega id, aria-describedby, aria-invalid, required al controllo.
+Field — wrapper con label (0.875rem/600, asterisco danger-text se required), slot controllo, hint text-sm muted, errore text-sm 600 danger-text con icona alert e role=alert. Collega id, aria-describedby, aria-invalid, required al controllo.
 Input (direttiva su input/select/textarea) — min-height 2.75rem, padding 0.625rem 0.875rem, radius control, bordo border-strong, fondo surface-strong. Focus: bordo focus + anello 0 0 0 3px brand-soft, 0 0 0 1px focus. Invalid: bordo danger. Placeholder muted all'85%.
 Select — trigger role=combobox con aspetto Input; pannello overlay della stessa larghezza (si ribalta sopra), bottom sheet sotto 640px; ricerca interna accent-insensitive oltre una soglia di opzioni; opzioni con riga secondaria, avatar/logo con colore, gruppi con intestazione. Tastiera completa (frecce, Home/End, type-ahead, Enter, Esc, Tab).
-Segmented — tablist WAI-ARIA in un binario a pill su superficie (padding 0.25rem, gap 0.25rem). Tab min-height 2.75rem, padding 0 1rem, 0.875rem/700, colore muted; selezionata nav-active bg/fg + shadow-float; icona opzionale 18px. Roving tabindex, ←/→ con wrap, Home/End.
+Segmented — tablist WAI-ARIA in un binario a pill su superficie (padding 0.25rem, gap 0.25rem). Tab min-height 2.75rem, padding 0 1rem, 0.875rem/600, colore muted; selezionata nav-active bg/fg, senza ombra; icona opzionale 18px. Roving tabindex, ←/→ con wrap, Home/End.
 ColorSwatches — radio group nativo: "Nessuno" (tratteggio diagonale) + gli swatch; selezionato con doppio anello (surface 2px + text 4px).
 ImageInput — file (ridimensionato nel browser) o URL, anteprima circle o square (riusa Avatar/TeamLogo), "Rimuovi", errori nel Field.
 Navigazione e layout
-Header — sticky, superficie a tutta larghezza senza radius, solo bordo inferiore, ombra shadow-header (0 6px 16px -12px). Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem con gradiente scuro #2c2c30 → #0f0f10) + titolo display 1.375rem UPPERCASE tracking 0.025em (wordmark) + tagline 0.75rem/600 muted in frase, fino a 2 righe.
-TabBar — flottante in basso (0.75rem + safe-area), max 30rem, radius 1.5rem, superficie strong + shadow-glass + shadow-float. Voci: colonna icona+label 0.6875rem/700 (0.75rem da 640px), min-height 3.5rem; icona in una pill 3rem × 1.875rem che da attiva prende nav-active bg/fg; press scale(0.92).
+Header — sticky, superficie a tutta larghezza senza radius, solo bordo inferiore, ombra shadow-header (0 6px 16px -12px). Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem, ink pieno #1E1E1E) + titolo display 1.375rem UPPERCASE tracking 0.025em (wordmark) + tagline 0.75rem/600 muted in frase, fino a 2 righe.
+TabBar — flottante in basso (0.75rem + safe-area), max 30rem, radius 1.5rem, superficie strong + shadow-glass + shadow-float. Voci: colonna icona+label 0.6875rem/600 (0.75rem da 640px), min-height 3.5rem; icona in una pill 3rem × 1.875rem che da attiva prende nav-active bg/fg; press scale(0.92).
 Carousel — scroll-snap orizzontale nativo, slideWidth (85% default), gap 0.75rem, frecce e pallini opzionali (l'attivo si allarga a 1.25rem senza animare la larghezza: si anima solo il colore), tastiera sulla traccia. TabCarousel = Segmented sopra un Carousel di pannelli a tutta larghezza, altezza adattata al pannello attivo senza animazione.
 Sticky bar — barra di pagina che si ferma sotto l'header (top: sticky-top + 0.5rem).
 Footer — bordo superiore border, link 0.875rem/600 muted, hover text + sottolineatura offset 4px; i link sono separati dallo spazio (gap 1.25rem), senza puntino.
@@ -482,6 +482,12 @@ Registro modifiche
 • Grafici: palette categorica a 7 tinte sostituita dalla rampa di luminosità sull'accento (max 3 serie + contesto); torta e ciambella sconsigliate a favore della barra impilata.
 • Base: ::selection, scrollbar-color e caret-color dalla palette; anello di focus degli input istantaneo.
 • Motion: tolta l'animazione d'altezza del carousel (200ms) e il token --ui-duration-carousel-height: l'altezza si adatta al pannello senza transizione. Anche i pallini del carousel non animano più la larghezza.
+22 nov 2026 — rifinitura con la skill unslop (@heydamir):
+• Pesi: Manrope al massimo 600 (titoli card, sezione, H1 backoffice, label, bottoni, badge, header tabella); Barlow Condensed resta 700, il numero grande scende da 800 (non caricato) a 700.
+• Strisce laterali tolte: toast senza bordo sinistro 4px, card brand del backoffice senza bordo sinistro 3px.
+• Logo dell'header su tile ink piena invece del gradiente; token --ui-logo-tile al posto di -from/-to.
+• Segmented: la tab attiva non ha più shadow-float; la sticky bar a superficie usa shadow-glass.
+• Stat: un solo valore colorato per schermata, niente icone nelle griglie di KPI (pattern backoffice e app shell); la card del grafico del backoffice non è più brand e si allinea in altezza alla tabella.
 Lo stile resta riconoscibile come C85: stesso arancio d'azione, stessi neutri caldi, stesse famiglie, stesse misure di componenti e motion.
 Prompt da incollare
 Sei un senior design-system engineer. Costruisci "ui-toolkit", una libreria di componenti Angular riusabile con Storybook,

@@ -80,16 +80,16 @@ const ISCRIZIONI_CHART: ChartData = {
           </div>
 
           <section class="stats" aria-label="Riepilogo">
-            <ui-stat label="Squadre iscritte" [value]="24" hint="su 32 posti"><sb-icon uiStatIcon name="users" [size]="16" /></ui-stat>
-            <ui-stat label="Quote pagate" [value]="18" tone="success" hint="€ 3.240"><sb-icon uiStatIcon name="check" [size]="16" /></ui-stat>
-            <ui-stat label="In attesa" [value]="4" tone="brand"><sb-icon uiStatIcon name="calendar" [size]="16" /></ui-stat>
-            <ui-stat label="Scadute" [value]="2" tone="danger"><sb-icon uiStatIcon name="alert" [size]="16" /></ui-stat>
+            <ui-stat label="Squadre iscritte" [value]="24" hint="su 32 posti" />
+            <ui-stat label="Quote pagate" [value]="18" hint="€ 3.240" />
+            <ui-stat label="In attesa" [value]="4" hint="€ 720 da incassare" />
+            <ui-stat label="Scadute" [value]="2" tone="danger" hint="€ 360 da sollecitare" />
           </section>
 
           <div class="grid">
-            <ui-glass-card variant="brand" padding="md">
+            <ui-glass-card padding="md">
               <h2 class="ui-card-title" style="margin:0 0 .75rem">Andamento iscrizioni</h2>
-              <ui-chart type="line" [data]="chart" ariaLabel="Iscrizioni e quote pagate dal 1 al 19 novembre" categoryLabel="Data" height="14rem" />
+              <ui-chart type="line" [data]="chart" ariaLabel="Iscrizioni e quote pagate dal 1 al 19 novembre" categoryLabel="Data" height="20rem" />
             </ui-glass-card>
             <ui-glass-card padding="none">
               <ui-table caption="Iscrizioni" [columns]="cols" [rows]="rows" rowKey="id" [rowLink]="link" stack>
@@ -112,13 +112,13 @@ const ISCRIZIONI_CHART: ChartData = {
     @media (min-width: 1024px) { .layout { grid-template-columns: 15rem 1fr; } }
     .sidebar { background: var(--bo-sidebar); color: var(--bo-sidebar-text); padding: 0.75rem; }
     @media (min-width: 1024px) { .sidebar { position: sticky; top: 0; height: 100dvh; box-sizing: border-box; } }
-    .brand { display: flex; align-items: center; gap: 0.625rem; height: var(--ui-bo-topbar-height); padding: 0 0.5rem; font-weight: 800; }
+    .brand { display: flex; align-items: center; gap: 0.625rem; height: var(--ui-bo-topbar-height); padding: 0 0.5rem; font-weight: 600; }
     .mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--ui-radius-control); background: var(--bo-sidebar-active-bg); color: var(--bo-sidebar-active-fg); font-family: var(--ui-font-display); font-size: var(--ui-font-size-sm); }
     ul { list-style: none; margin: 0.5rem 0 0; padding: 0; display: flex; gap: 0.25rem; overflow-x: auto; }
     @media (min-width: 1024px) { ul { flex-direction: column; overflow: visible; } }
     .item { display: flex; align-items: center; gap: 0.625rem; min-height: 2.5rem; padding: 0 0.75rem; border-radius: var(--ui-radius-control); color: var(--bo-sidebar-muted); text-decoration: none; font-size: var(--ui-font-size-sm); font-weight: 600; white-space: nowrap; }
     .item:hover { color: var(--bo-sidebar-text); background: var(--ui-surface-sunken); }
-    .item[aria-current='page'] { background: var(--bo-sidebar-active-bg); color: var(--bo-sidebar-active-fg); font-weight: 700; }
+    .item[aria-current='page'] { background: var(--bo-sidebar-active-bg); color: var(--bo-sidebar-active-fg); font-weight: 600; }
     .main { min-width: 0; display: flex; flex-direction: column; }
     .topbar { position: sticky; top: 0; z-index: var(--ui-z-header); display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: var(--ui-bo-topbar-height); padding: 0 1.5rem; background: var(--ui-surface); border-bottom: 1px solid var(--ui-border); }
     .search { width: min(24rem, 100%); }
@@ -130,7 +130,7 @@ const ISCRIZIONI_CHART: ChartData = {
     .page-actions ui-select { width: 12rem; }
     .stats { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
     .grid { display: grid; gap: 1rem; }
-    @media (min-width: 1280px) { .grid { grid-template-columns: 2fr 3fr; align-items: start; } }
+    @media (min-width: 1280px) { .grid { grid-template-columns: 2fr 3fr; align-items: stretch; } }
     .team { display: inline-flex; align-items: center; gap: 0.5rem; }
   `,
 })

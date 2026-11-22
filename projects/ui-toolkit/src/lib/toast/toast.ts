@@ -146,7 +146,6 @@ const ICONS: Record<ToastTone, string> = {
       gap: 0.75rem;
       padding: 0.75rem 0.5rem 0.75rem 0.875rem;
       border-radius: var(--ui-radius-toast);
-      border-left: 4px solid var(--tone);
       box-shadow: var(--ui-shadow-float);
       color: var(--ui-text);
       animation: ui-toast-in var(--ui-duration-toast) var(--ui-ease) both;
@@ -157,7 +156,7 @@ const ICONS: Record<ToastTone, string> = {
     .toast[data-tone='danger'] { --tone: var(--ui-danger); --tone-text: var(--ui-danger-text); }
     .icon { flex: none; margin-top: 0.125rem; color: var(--tone-text); }
     .text { flex: 1; min-width: 0; }
-    .title { margin: 0; font-weight: 700; line-height: 1.5rem; }
+    .title { margin: 0; font-weight: 600; line-height: 1.5rem; }
     .detail { margin: 0; font-size: var(--ui-font-size-sm); line-height: 1.25rem; color: var(--ui-text-muted); }
     .close { margin: -0.25rem 0; }
   `,

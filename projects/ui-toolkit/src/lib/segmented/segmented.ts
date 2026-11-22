@@ -94,15 +94,14 @@ export class SegmentedIcon {
       color: var(--ui-text-muted);
       font-family: var(--ui-font-sans);
       font-size: var(--ui-font-size-sm);
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       transition:
         background-color var(--ui-duration-card) var(--ui-ease),
-        color var(--ui-duration-card) var(--ui-ease),
-        box-shadow var(--ui-duration-card) var(--ui-ease);
+        color var(--ui-duration-card) var(--ui-ease);
     }
     @media (hover: hover) {
       button:hover:not([aria-selected='true'], :disabled) { color: var(--ui-text); }
@@ -110,7 +109,6 @@ export class SegmentedIcon {
     button[aria-selected='true'] {
       background: var(--ui-nav-active-bg);
       color: var(--ui-nav-active-fg);
-      box-shadow: var(--ui-shadow-float);
     }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     .icon { display: inline-flex; }

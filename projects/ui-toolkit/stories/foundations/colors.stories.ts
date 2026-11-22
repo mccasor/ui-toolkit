@@ -234,7 +234,7 @@ function cell(row: Row, v: Values): Cell {
     `
       .tok { display: flex; gap: 0.75rem; align-items: center; min-width: 15rem; }
       .frame { padding: 0.375rem; border-radius: var(--ui-radius-tile); flex: none; }
-      .chip { width: 2.75rem; height: 2.75rem; border-radius: var(--ui-radius-tile); border: 2px solid transparent; display: grid; place-items: center; font-weight: 800; box-sizing: border-box; }
+      .chip { width: 2.75rem; height: 2.75rem; border-radius: var(--ui-radius-tile); border: 2px solid transparent; display: grid; place-items: center; font-weight: 600; box-sizing: border-box; }
       .brand { display: flex; gap: 0.75rem; align-items: center; }
       .brand .chip { width: 3.5rem; height: 3.5rem; border-color: var(--ui-border); }
     `,
@@ -364,7 +364,7 @@ class ColorsPage {
     `
       .tok { display: flex; gap: 0.75rem; align-items: center; }
       .sw { width: 1.5rem; height: 1.5rem; border-radius: var(--ui-radius-skeleton-text); border: 1px solid var(--ui-border); flex: none; }
-      .chip { width: 2.75rem; height: 2.75rem; border-radius: var(--ui-radius-tile); display: grid; place-items: center; font-weight: 800; flex: none; }
+      .chip { width: 2.75rem; height: 2.75rem; border-radius: var(--ui-radius-tile); display: grid; place-items: center; font-weight: 600; flex: none; }
       .round { border-radius: var(--ui-radius-pill); font-family: var(--ui-font-display); }
       .series { display: flex; gap: 0.375rem; padding: 0.75rem; border-radius: var(--ui-radius-tile); }
       .bar { flex: 1; height: 2.5rem; border-radius: var(--ui-radius-skeleton-text); }

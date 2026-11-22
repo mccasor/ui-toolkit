@@ -4,7 +4,7 @@ import { injectUiLabels } from '../util/labels';
 
 /**
  * Header di app: sticky, glass a tutta larghezza senza radius, solo bordo inferiore, ombra 0 8px 24px -18px.
- * Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem con gradiente scuro) + titolo display 1.375rem UPPERCASE tracking 0.025em
+ * Altezza 3.75rem: logo (tile 2.5rem radius 0.875rem, ink pieno) + titolo display 1.375rem UPPERCASE tracking 0.025em
  * + tagline 0.75rem/600 muted in frase (niente maiuscole spaziate). Slot: `[uiHeaderLogo]`, `[uiHeaderActions]`.
  * Con `skipTo` rende lo skip link "Vai al contenuto" come primo elemento focusabile.
  */
@@ -68,7 +68,7 @@ import { injectUiLabels } from '../util/labels';
       width: 2.5rem;
       height: 2.5rem;
       border-radius: var(--ui-radius-control);
-      background: linear-gradient(135deg, var(--ui-logo-tile-from), var(--ui-logo-tile-to));
+      background: var(--ui-logo-tile);
       color: var(--ui-primary);
       overflow: hidden;
     }

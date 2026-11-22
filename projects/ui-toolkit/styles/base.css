@@ -243,7 +243,7 @@ h3 {
   border-radius: var(--ui-radius-control);
   background: var(--ui-surface-solid);
   color: var(--ui-text);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   box-shadow: var(--ui-shadow-float);
 }
@@ -267,7 +267,7 @@ h3 {
   color: var(--ui-text);
   font-family: var(--ui-font-sans);
   font-size: var(--ui-font-size-button);
-  font-weight: 700;
+  font-weight: var(--ui-type-button-weight);
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
