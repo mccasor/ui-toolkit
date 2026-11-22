@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Injectable, computed, inject, input, signal } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 
 export type ToastTone = 'info' | 'success' | 'warning' | 'danger';
 
@@ -116,7 +117,7 @@ const ICONS: Record<ToastTone, string> = {
             <p class="detail">{{ t.detail }}</p>
           }
         </div>
-        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm close" [attr.aria-label]="closeLabel()" (click)="svc.dismiss(t.id)">
+        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm close" [attr.aria-label]="closeLabelText()" (click)="svc.dismiss(t.id)">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
       </div>
@@ -165,7 +166,9 @@ export class ToastRegion {
   protected readonly svc = inject(ToastService);
   /** override della posizione verticale (default: sotto l'header sticky) */
   readonly top = input<string>();
-  readonly closeLabel = input('Chiudi notifica');
+  protected readonly uiLabels = injectUiLabels();
+  readonly closeLabel = input<string>();
+  protected readonly closeLabelText = computed(() => this.closeLabel() ?? this.uiLabels().toastClose);
   protected iconFor(t: Toast) {
     return ICONS[t.tone];
   }

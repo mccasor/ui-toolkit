@@ -1,155 +1,298 @@
-import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input, model, numberAttribute, signal, viewChild } from '@angular/core';
-import { Avatar, TeamLogo } from '../avatar/avatar';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  InjectionToken,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  model,
+  numberAttribute,
+  output,
+  signal,
+} from '@angular/core';
+import { Avatar, TeamLogo, type AvatarSize } from '../avatar/avatar';
 import { Button } from '../button/button';
-import { Field, FieldInput } from '../field/field';
+import { Icon } from '../icon/icon';
+import { Segmented, type SegmentedOption } from '../segmented/segmented';
 import { uniqueId } from '../util/id';
+import { injectUiLabels, type UiLabels } from '../util/labels';
+import { ImageResizeError, isDataImageUrl, isHttpUrl, resizeImage, type ImageMime, type ResizeOptions } from './resize-image';
+
+export * from './resize-image';
+
+/** Trasforma il file scelto nel data URL salvato; sostituibile nei test (jsdom non ha canvas). */
+export type ImageResizer = (file: Blob, options: ResizeOptions) => Promise<string>;
+
+export const IMAGE_RESIZER = new InjectionToken<ImageResizer>('IMAGE_RESIZER', {
+  providedIn: 'root',
+  factory: () => (file: Blob, options: ResizeOptions) => resizeImage(file, options),
+});
+
+type Mode = 'file' | 'url';
+type ErrorKey = keyof UiLabels & `imageError${string}`;
+const CODE_KEYS: Record<string, ErrorKey> = {
+  notImage: 'imageErrorNotImage',
+  unreadable: 'imageErrorUnreadable',
+  noCanvas: 'imageErrorNoCanvas',
+  tooLarge: 'imageErrorTooLarge',
+};
 
 /**
- * Immagine da file (ridimensionata nel browser) o da URL, con anteprima `circle` (Avatar) o `square` (TeamLogo),
- * azione "Rimuovi" ed errori mostrati nel Field. Il valore è un data URL (file) o l'URL incollato.
+ * Immagine da file (ridimensionata nel browser in un data URL: `size`, `mime`, `fit`, `maxChars`/`targetChars`) o da
+ * URL http(s) (anche un data URL incollato), con anteprima `square` (TeamLogo) o `circle` (Avatar), trascinamento del
+ * file e «Rimuovi». Valore: '' (nessuna), URL, data URL, oppure un valore dell'app riconosciuto da `keepValue`
+ * (es. il riferimento di un'immagine già salvata: mostrato, valido e lasciato com'è).
  */
 @Component({
   selector: 'ui-image-input',
-  imports: [Field, FieldInput, Avatar, TeamLogo, Button],
+  imports: [Avatar, TeamLogo, Button, Icon, Segmented],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ui-field [label]="label()" [hint]="hint()" [error]="error()" [required]="required()">
+    <fieldset [disabled]="disabled()" class="box">
+      <legend class="legend">
+        {{ labelText() }}
+        @if (required()) {
+          <span class="req" aria-hidden="true">*</span>
+        }
+      </legend>
       <div class="row">
         @if (shape() === 'circle') {
-          <ui-avatar [name]="previewName()" [src]="value()" size="xl" decorative />
+          <ui-avatar [name]="previewAlt()" [src]="previewSrc()" [color]="previewColor()" [size]="previewSize()" (imageError)="onLoadError()" />
         } @else {
-          <ui-team-logo [name]="previewName()" [src]="value()" size="xl" decorative />
+          <ui-team-logo [name]="previewAlt()" [src]="previewSrc()" [color]="previewColor()" [size]="previewSize()" (imageError)="onLoadError()" />
         }
-        <div class="actions">
-          <label class="ui-btn ui-btn--secondary ui-btn--sm file">
-            <input #file type="file" class="sr-only" [accept]="accept()" [attr.aria-describedby]="statusId" (change)="onFile($event)" />
-            {{ busy() ? 'Elaborazione…' : uploadLabel() }}
-          </label>
-          <button uiButton variant="ghost" size="sm" [disabled]="!value()" (click)="remove()">{{ removeLabel() }}</button>
-          <span class="sr-only" [id]="statusId" aria-live="polite">{{ value() ? previewText() : '' }}</span>
+        <div class="side">
+          <ui-segmented class="modes" [options]="modes()" [value]="mode()" (valueChange)="setMode($event)" [ariaLabel]="fill(uiLabels().imageSource)" />
+          <div [id]="panelId" role="tabpanel" class="panel">
+            @if (mode() === 'file') {
+              <div class="drop" data-dropzone [class.over]="dragOver()" (dragover)="onDragOver($event)" (dragleave)="dragOver.set(false)" (drop)="onDrop($event)">
+                <input #picker type="file" [accept]="accept()" class="sr-only" tabindex="-1" aria-hidden="true" (change)="onPick(picker)" />
+                <button uiButton variant="secondary" size="sm" [loading]="busy()" [attr.aria-describedby]="describedBy()" (click)="picker.click()">
+                  <ui-icon [name]="value() ? 'edit' : 'plus'" [size]="16" />{{ value() ? uiLabels().imageChange : uiLabels().imageChoose }}
+                </button>
+                <span class="muted">{{ uiLabels().imageDrop }}</span>
+              </div>
+            } @else {
+              <input
+                class="ui-input"
+                type="url"
+                inputmode="url"
+                autocomplete="off"
+                placeholder="https://…"
+                [attr.aria-label]="fill(uiLabels().imageAddress)"
+                [value]="urlText()"
+                [attr.aria-invalid]="error() ? 'true' : null"
+                [attr.aria-describedby]="describedBy()"
+                (input)="onUrlInput($any($event.target).value)"
+                (blur)="touch.emit()"
+              />
+            }
+          </div>
+          @if (value()) {
+            <button uiButton variant="ghost" size="sm" class="remove" (click)="remove()">
+              <ui-icon name="trash" [size]="16" />{{ removeLabelText() }}
+            </button>
+          }
         </div>
       </div>
-      <input uiInput type="url" inputmode="url" class="url" [placeholder]="urlPlaceholder()" [value]="urlDraft()" (change)="onUrl($any($event.target).value)" />
-    </ui-field>
+      @if (hint()) {
+        <p class="muted" [id]="hintId">{{ hint() }}</p>
+      }
+      @if (error()) {
+        <p class="error" [id]="errorId" role="alert"><ui-icon name="alert" [size]="16" />{{ error() }}</p>
+      }
+    </fieldset>
   `,
   host: { class: 'ui-image-input' },
   styles: `
     :host { display: block; }
-    .row { display: flex; align-items: center; gap: 1rem; }
-    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .file:focus-within { outline: 3px solid var(--ui-focus); outline-offset: 2px; }
-    .url { margin-top: 0.25rem; }
+    .box { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 0.375rem; }
+    .box:disabled { opacity: 0.6; }
+    .legend { padding: 0; margin-bottom: 0.375rem; font-size: var(--ui-font-size-sm); font-weight: 700; color: var(--ui-text); }
+    .req { color: var(--ui-danger-text); margin-inline-start: 0.125rem; }
+    .row { display: flex; align-items: flex-start; gap: 1rem; }
+    .side { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 0; }
+    .modes { width: fit-content; max-width: 100%; }
+    .panel { display: flex; flex-direction: column; gap: 0.5rem; }
+    .drop {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding: 0.25rem;
+      border: 1.5px dashed transparent; border-radius: var(--ui-radius-control);
+      transition: border-color var(--ui-duration-micro) var(--ui-ease), background-color var(--ui-duration-micro) var(--ui-ease);
+    }
+    .drop.over { border-color: var(--ui-accent-text); background: var(--ui-surface-sunken); }
+    .remove { align-self: flex-start; }
+    .muted { margin: 0; font-size: var(--ui-font-size-sm); color: var(--ui-text-muted); }
+    .error { margin: 0; display: flex; align-items: center; gap: 0.375rem; font-size: var(--ui-font-size-sm); font-weight: 600; color: var(--ui-danger-text); }
   `,
 })
 export class ImageInput {
-  readonly label = input('Immagine');
-  readonly hint = input<string>('JPG, PNG o WebP, oppure incolla un URL');
+  protected readonly uiLabels = injectUiLabels();
+
+  readonly value = model('');
+  readonly label = input<string>();
+  protected readonly labelText = computed(() => this.label() ?? this.uiLabels().image);
+  readonly hint = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
-  readonly shape = input<'circle' | 'square'>('circle');
-  /** nome per le iniziali dell'anteprima vuota */
-  readonly name = input<string>('');
-  readonly value = model<string | null>(null);
-  /** lato massimo in px dopo il ridimensionamento */
-  readonly maxSize = input(512, { transform: numberAttribute });
-  /** dimensione massima del file originale (byte) */
-  readonly maxBytes = input(10 * 1024 * 1024, { transform: numberAttribute });
-  readonly accept = input('image/png,image/jpeg,image/webp,image/gif');
-  readonly uploadLabel = input('Carica immagine');
-  readonly removeLabel = input('Rimuovi');
-  readonly urlPlaceholder = input('https://…');
+  /** Errore esterno (es. validazione del form), mostrato se il campo non ne ha uno suo. */
+  readonly externalError = input<string | null | undefined>(undefined, { alias: 'error' });
+  /** Lato dell'immagine ridimensionata, in px. */
+  readonly size = input(256, { transform: numberAttribute });
+  readonly mime = input<ImageMime>('image/png');
+  /** Limite massimo del data URL salvato (file ridimensionati e data URL incollati). */
+  readonly maxChars = input(200_000, { transform: numberAttribute });
+  /** Lunghezza preferita del file ridimensionato (qualità ridotta fino a starci); default `maxChars`. */
+  readonly targetChars = input<number | undefined>(undefined);
+  readonly fit = input<'cover' | 'contain' | 'scale'>('contain');
+  readonly background = input<string | undefined>(undefined);
+  readonly accept = input('image/*');
+  /** Anteprima: `square` (TeamLogo, stemmi) o `circle` (Avatar, persone). */
+  readonly shape = input<'circle' | 'square'>('square');
+  readonly previewSize = input<AvatarSize>('xl');
+  /** Nome per le iniziali dell'anteprima vuota (default: l'etichetta). */
+  readonly previewName = input<string>();
+  readonly previewColor = input<string | null | undefined>(undefined);
+  /** Valori dell'app da accettare così come sono (es. il riferimento di un'immagine già salvata). */
+  readonly keepValue = input<(value: string) => boolean>(() => false);
+  /** Sostituisce l'`IMAGE_RESIZER` iniettato (le opzioni sono allora ignorate). */
+  readonly resizer = input<((file: Blob) => Promise<string>) | undefined>(undefined);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly removeLabel = input<string>();
+  protected readonly removeLabelText = computed(() => this.removeLabel() ?? this.uiLabels().imageRemove);
+  /** true mentre un file viene ridimensionato. */
+  readonly busyChange = output<boolean>();
+  /** L'utente ha lasciato il campo o ha cambiato l'immagine (per segnare il campo come toccato). */
+  readonly touch = output<void>();
 
-  protected readonly error = signal<string | null>(null);
-  protected readonly busy = signal(false);
-  protected readonly urlDraft = signal('');
-  protected readonly statusId = uniqueId('ui-image-status');
-  private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('file');
+  private readonly defaultResizer = inject(IMAGE_RESIZER);
+  protected readonly panelId = uniqueId('ui-image-panel');
+  protected readonly hintId = uniqueId('ui-image-hint');
+  protected readonly errorId = uniqueId('ui-image-error');
 
-  protected previewName() {
-    return this.name() || this.label();
-  }
-  protected previewText() {
-    return `Immagine impostata per ${this.previewName()}`;
-  }
+  protected readonly modes = computed<SegmentedOption[]>(() => [
+    { value: 'file', label: this.uiLabels().imageModeFile, controls: this.panelId },
+    { value: 'url', label: this.uiLabels().imageModeUrl, controls: this.panelId },
+  ]);
+  protected readonly previewAlt = computed(() => this.previewName() || this.labelText());
 
-  protected async onFile(e: Event) {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    this.error.set(null);
-    if (!file.type.startsWith('image/')) return this.fail('Il file scelto non è un’immagine.');
-    if (file.size > this.maxBytes()) return this.fail(`Immagine troppo grande (max ${Math.round(this.maxBytes() / 1048576)} MB).`);
-    this.busy.set(true);
-    try {
-      this.value.set(await resizeImage(file, this.maxSize()));
-      this.urlDraft.set('');
-    } catch {
-      this.fail('Impossibile leggere l’immagine.');
-    } finally {
-      this.busy.set(false);
-      this.fileInput().nativeElement.value = '';
-    }
-  }
+  /** Ultimo valore scritto da questo componente, per distinguerlo da quelli del genitore. */
+  private ownValue: string | null = null;
+  /** Ultimo testo scritto nel campo URL. */
+  private typed: string | null = null;
 
-  protected async onUrl(raw: string) {
-    const url = raw.trim();
-    this.urlDraft.set(url);
-    this.error.set(null);
-    if (!url) return;
-    let parsed: URL;
-    try {
-      parsed = new URL(url);
-    } catch {
-      return this.fail('Inserisci un URL valido (https://…).');
-    }
-    if (!/^https?:$/.test(parsed.protocol)) return this.fail('Sono ammessi solo URL http o https.');
-    this.busy.set(true);
-    const ok = await canLoad(url);
-    this.busy.set(false);
-    if (!ok) return this.fail('Impossibile caricare l’immagine da questo URL.');
-    this.value.set(url);
-  }
-
-  remove() {
-    this.value.set(null);
-    this.urlDraft.set('');
-    this.error.set(null);
-  }
-
-  private fail(msg: string) {
-    this.error.set(msg);
-  }
-}
-
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
+  /** URL per un valore http(s), altrimenti file; resta com'è mentre si scrive (un URL a metà non cambia modalità). */
+  protected readonly mode = linkedSignal<string, Mode>({
+    source: this.value,
+    computation: (v, prev) => (prev && v === this.ownValue ? prev.value : isHttpUrl(v) ? 'url' : 'file'),
   });
-}
+  /** Testo del campo URL: il valore, tranne un data URL da file o un valore dell'app. */
+  protected readonly urlText = linkedSignal(() => {
+    const v = this.value();
+    return v === this.typed || !(isDataImageUrl(v) || this.keepValue()(v)) ? v : '';
+  });
+  private readonly fileError = signal<ErrorKey | { text: string } | null>(null);
+  private readonly loadFailed = linkedSignal({ source: this.value, computation: () => false });
+  protected readonly busy = signal(false);
+  protected readonly dragOver = signal(false);
 
-function canLoad(url: string): Promise<boolean> {
-  return loadImage(url).then(
-    () => true,
-    () => false,
-  );
-}
+  private readonly valueError = computed(() => {
+    const v = this.value().trim();
+    if (!v || isHttpUrl(v) || this.keepValue()(v)) return null;
+    if (!isDataImageUrl(v)) return this.uiLabels().imageErrorInvalidUrl;
+    return v.length > this.maxChars() ? this.uiLabels().imageErrorValueTooLarge.replace('{max}', this.maxChars().toLocaleString()) : null;
+  });
+  /** URL http(s) validi, data URL d'immagine (anche troppo pesanti, con l'errore) e valori dell'app. */
+  protected readonly previewSrc = computed(() => {
+    const v = this.value().trim();
+    return isHttpUrl(v) || isDataImageUrl(v) || this.keepValue()(v) ? v : null;
+  });
+  protected readonly error = computed(() => {
+    const f = this.fileError();
+    const fileText = !f ? null : typeof f === 'string' ? this.uiLabels()[f] : f.text;
+    return fileText ?? this.valueError() ?? (this.loadFailed() ? this.uiLabels().imageErrorLoadFailed : null) ?? this.externalError() ?? null;
+  });
+  protected readonly describedBy = computed(() => [this.hint() ? this.hintId : '', this.error() ? this.errorId : ''].filter(Boolean).join(' ') || null);
 
-/** Ridimensiona nel browser (lato massimo `max`) e ricodifica in WebP (fallback JPEG/PNG). */
-export async function resizeImage(file: Blob, max: number): Promise<string> {
-  const src = URL.createObjectURL(file);
-  try {
-    const img = await loadImage(src);
-    const scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
-    const w = Math.max(1, Math.round(img.naturalWidth * scale));
-    const h = Math.max(1, Math.round(img.naturalHeight * scale));
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
-    const webp = canvas.toDataURL('image/webp', 0.85);
-    return webp.startsWith('data:image/webp') ? webp : canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.85);
-  } finally {
-    URL.revokeObjectURL(src);
+  protected fill(text: string): string {
+    return text.replace('{label}', this.labelText());
+  }
+
+  protected setMode(mode: string | null): void {
+    if (mode) this.mode.set(mode as Mode);
+    this.fileError.set(null);
+  }
+
+  private emit(v: string): void {
+    this.ownValue = v;
+    this.value.set(v);
+  }
+
+  protected onUrlInput(text: string): void {
+    this.typed = text;
+    this.fileError.set(null);
+    this.emit(text);
+  }
+
+  protected onLoadError(): void {
+    if (isHttpUrl(this.value())) this.loadFailed.set(true);
+  }
+
+  protected onPick(picker: HTMLInputElement): void {
+    const file = picker.files?.[0];
+    picker.value = '';
+    if (file) void this.useFile(file);
+  }
+
+  protected onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (!this.disabled()) this.dragOver.set(true);
+  }
+
+  protected onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.dragOver.set(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (file && !this.disabled()) void this.useFile(file);
+  }
+
+  private async useFile(file: File): Promise<void> {
+    this.fileError.set(null);
+    if (!file.type.startsWith('image/')) {
+      this.fileError.set('imageErrorNotImage');
+      return;
+    }
+    this.setBusy(true);
+    try {
+      const own = this.resizer();
+      const url = own
+        ? await own(file)
+        : await this.defaultResizer(file, {
+            size: this.size(),
+            mime: this.mime(),
+            maxChars: this.maxChars(),
+            targetChars: this.targetChars(),
+            fit: this.fit(),
+            background: this.background(),
+          });
+      this.emit(url);
+    } catch (e) {
+      this.fileError.set(e instanceof ImageResizeError ? (e.code ? CODE_KEYS[e.code] : { text: e.message }) : 'imageErrorGeneric');
+    } finally {
+      this.setBusy(false);
+      this.touch.emit();
+    }
+  }
+
+  private setBusy(busy: boolean): void {
+    this.busy.set(busy);
+    this.busyChange.emit(busy);
+  }
+
+  protected remove(): void {
+    this.fileError.set(null);
+    this.typed = null;
+    this.emit('');
+    this.touch.emit();
   }
 }

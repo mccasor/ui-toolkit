@@ -10,7 +10,7 @@ class Host {
   opts: SegmentedOption[] = [
     { value: 'a', label: 'Partite' },
     { value: 'b', label: 'Classifica', disabled: true },
-    { value: 'c', label: 'Squadre' },
+    { value: 'c', label: 'Squadre', icon: 'users' },
   ];
   value = signal<string | null>('a');
 }
@@ -27,6 +27,12 @@ describe('Segmented', () => {
     };
     return { f, tabs, list, key };
   }
+
+  it("l'icona dell'opzione è un <ui-icon> decorativo", async () => {
+    const { tabs } = await setup();
+    expect(tabs[0].querySelector('ui-icon')).toBeNull();
+    expect(tabs[2].querySelector('.icon[aria-hidden=true] ui-icon svg')).not.toBeNull();
+  });
 
   it('ruoli e roving tabindex', async () => {
     const { tabs, list } = await setup();

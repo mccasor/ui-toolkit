@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 
 export interface FooterLink {
   label: string;
@@ -15,7 +16,7 @@ export interface FooterLink {
   template: `
     <footer class="inner">
       @if (links().length) {
-        <nav [attr.aria-label]="label()">
+        <nav [attr.aria-label]="labelText()">
           <ul>
             @for (l of links(); track l.href) {
               <li><a [href]="l.href">{{ l.label }}</a></li>
@@ -60,5 +61,7 @@ export interface FooterLink {
 })
 export class Footer {
   readonly links = input<readonly FooterLink[]>([]);
-  readonly label = input('Link a piè di pagina');
+  protected readonly uiLabels = injectUiLabels();
+  readonly label = input<string>();
+  protected readonly labelText = computed(() => this.label() ?? this.uiLabels().footer);
 }

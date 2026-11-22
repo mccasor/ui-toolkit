@@ -12,12 +12,15 @@ import {
   booleanAttribute,
   inject,
   input,
+  output,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 /** Riesportati per i componenti aperti con DialogService. */
 export { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Button } from '../button/button';
+import { Icon } from '../icon/icon';
+import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
 import { applyThemeContext } from '../util/theme-context';
 
@@ -31,6 +34,8 @@ export interface UiDialogConfig<D = unknown> {
   disableClose?: boolean;
   /** elemento da cui ereditare il tema (.bo / data-theme); default: elemento attivo */
   origin?: Element | null;
+  /** dialog centrato largo min(64rem, 100vw − 2rem), per foto e video (ignorato nello sheet) */
+  wide?: boolean;
 }
 
 export interface ConfirmOptions {
@@ -39,12 +44,15 @@ export interface ConfirmOptions {
   confirmLabel?: string;
   cancelLabel?: string;
   tone?: 'primary' | 'danger';
+  sheet?: boolean | 'auto';
 }
 
 export interface ChoiceOption<T> {
   value: T;
   label: string;
   description?: string;
+  /** variante del bottone nel layout `buttons` (default secondary) */
+  tone?: 'primary' | 'secondary' | 'danger';
 }
 
 export interface ChooseOptions<T> {
@@ -53,6 +61,8 @@ export interface ChooseOptions<T> {
   options: readonly ChoiceOption<T>[];
   cancelLabel?: string;
   sheet?: boolean | 'auto';
+  /** `list` (default): opzioni come righe; `buttons`: bottoni nelle azioni dopo «Annulla» (es. Salva / Scarta) */
+  layout?: 'list' | 'buttons';
 }
 
 /**
@@ -77,7 +87,7 @@ export class DialogService {
       backdropClass: 'ui-overlay-backdrop',
       panelClass: ['ui-dialog-pane', sheet ? 'ui-dialog-pane--sheet' : 'ui-dialog-pane--center'],
       positionStrategy: position,
-      width: sheet ? '100%' : 'min(32rem, calc(100vw - 2rem))',
+      width: sheet ? '100%' : config.wide ? 'min(64rem, calc(100vw - 2rem))' : 'min(32rem, calc(100vw - 2rem))',
       maxWidth: sheet ? '40rem' : 'calc(100vw - 2rem)',
       maxHeight: sheet ? '90dvh' : 'calc(100dvh - 2rem)',
       ariaModal: true,
@@ -94,7 +104,7 @@ export class DialogService {
 
   /** Conferma → Promise<boolean> (Esc, backdrop e annulla = false). */
   async confirm(options: ConfirmOptions): Promise<boolean> {
-    const ref = this.open<boolean, ConfirmOptions>(ConfirmDialog, { data: options });
+    const ref = this.open<boolean, ConfirmOptions>(ConfirmDialog, { data: options, sheet: options.sheet });
     return (await firstValueFrom(ref.closed)) === true;
   }
 
@@ -103,6 +113,11 @@ export class DialogService {
     const ref = this.open<{ value: T }, ChooseOptions<T>>(ChoiceDialog, { data: options as ChooseOptions<unknown> as ChooseOptions<T>, sheet: options.sheet ?? 'auto' });
     const r = await firstValueFrom(ref.closed);
     return r ? r.value : null;
+  }
+
+  /** Chiude tutti i dialog aperti (es. al cambio pagina). */
+  closeAll(): void {
+    this.cdk.closeAll();
   }
 }
 
@@ -116,13 +131,14 @@ export class DialogActions {}
  */
 @Component({
   selector: 'ui-dialog',
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="head">
       <h2 class="title" [id]="titleId">{{ title() }}</h2>
       @if (closable()) {
-        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm close" aria-label="Chiudi" (click)="ref?.close()">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm close" [attr.aria-label]="uiLabels().close" (click)="close()">
+          <ui-icon name="close" />
         </button>
       }
     </header>
@@ -151,7 +167,15 @@ export class DialogShell {
   readonly title = input.required<string>();
   readonly description = input<string>();
   readonly closable = input(true, { transform: booleanAttribute });
+  /** Emesso quando si preme il bottone di chiusura (il dialog CDK, se c'è, viene chiuso comunque). */
+  readonly closed = output<void>();
+  protected readonly uiLabels = injectUiLabels();
   protected readonly ref = inject(DialogRef, { optional: true });
+
+  protected close(): void {
+    this.closed.emit();
+    this.ref?.close();
+  }
   protected readonly titleId = uniqueId('ui-dialog-title');
   protected readonly descId = uniqueId('ui-dialog-desc');
 
@@ -174,13 +198,14 @@ export class DialogShell {
   template: `
     <ui-dialog [title]="data.title" [description]="data.message" [closable]="false">
       <div uiDialogActions>
-        <button uiButton variant="secondary" (click)="ref.close(false)">{{ data.cancelLabel ?? 'Annulla' }}</button>
-        <button uiButton [variant]="data.tone === 'danger' ? 'danger' : 'primary'" (click)="ref.close(true)">{{ data.confirmLabel ?? 'Conferma' }}</button>
+        <button uiButton variant="secondary" (click)="ref.close(false)">{{ data.cancelLabel ?? uiLabels().cancel }}</button>
+        <button uiButton [variant]="data.tone === 'danger' ? 'danger' : 'primary'" (click)="ref.close(true)">{{ data.confirmLabel ?? uiLabels().confirm }}</button>
       </div>
     </ui-dialog>
   `,
 })
 export class ConfirmDialog {
+  protected readonly uiLabels = injectUiLabels();
   protected readonly data = inject<ConfirmOptions>(DIALOG_DATA);
   protected readonly ref = inject<DialogRef<boolean>>(DialogRef);
 }
@@ -191,6 +216,7 @@ export class ConfirmDialog {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ui-dialog [title]="data.title" [description]="data.message">
+      @if (data.layout !== 'buttons') {
       <ul class="choices">
         @for (o of data.options; track $index) {
           <li>
@@ -203,8 +229,14 @@ export class ConfirmDialog {
           </li>
         }
       </ul>
+      }
       <div uiDialogActions>
-        <button uiButton variant="ghost" (click)="ref.close()">{{ data.cancelLabel ?? 'Annulla' }}</button>
+        <button uiButton variant="ghost" (click)="ref.close()">{{ data.cancelLabel ?? uiLabels().cancel }}</button>
+        @if (data.layout === 'buttons') {
+          @for (o of data.options; track $index) {
+            <button uiButton [variant]="o.tone ?? 'secondary'" (click)="ref.close({ value: o.value })">{{ o.label }}</button>
+          }
+        }
       </div>
     </ui-dialog>
   `,
@@ -232,6 +264,7 @@ export class ConfirmDialog {
   `,
 })
 export class ChoiceDialog<T> {
+  protected readonly uiLabels = injectUiLabels();
   protected readonly data = inject<ChooseOptions<T>>(DIALOG_DATA);
   protected readonly ref = inject<DialogRef<{ value: T }>>(DialogRef);
 }

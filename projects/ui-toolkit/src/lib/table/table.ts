@@ -10,9 +10,12 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
+import { injectLinkClick } from '../util/link';
 
-export interface TableColumn<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- righe di qualsiasi forma
+export interface TableColumn<T = any> {
   key: string;
   label: string;
   /** cella primaria: intestazione di riga, a tutta larghezza in stack, troncata in compatto, porta il link di riga */
@@ -25,17 +28,24 @@ export interface TableColumn<T = Record<string, unknown>> {
   leading?: boolean;
   /** valore della cella (default: row[key]) */
   value?: (row: T) => unknown;
+  /** nascosta sotto 640px */
+  hideOnMobile?: boolean;
 }
 
-export interface TableCellContext<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface TableCellContext<T = any> {
   $implicit: T;
-  value: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- valore della cella, di qualsiasi tipo
+  value: any;
   column: TableColumn<T>;
+  /** posizione della riga */
+  index: number;
 }
 
 /** Template di cella custom: `<ng-template uiCell="squadra" let-row let-value="value">…</ng-template>` */
 @Directive({ selector: 'ng-template[uiCell]' })
-export class TableCell<T = unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class TableCell<T = any> {
   readonly key = input.required<string>({ alias: 'uiCell' });
   readonly template = inject<TemplateRef<TableCellContext<T>>>(TemplateRef);
   static ngTemplateContextGuard<T>(_d: TableCell<T>, ctx: unknown): ctx is TableCellContext<T> {
@@ -62,41 +72,41 @@ export class TableCell<T = unknown> {
         <thead role="rowgroup">
           <tr role="row">
             @for (c of columns(); track c.key) {
-              <th role="columnheader" scope="col" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null">{{ c.label }}</th>
+              <th role="columnheader" scope="col" [attr.data-align]="alignOf(c)" [style.width]="c.width ?? null" [class.hide-mobile]="c.hideOnMobile">{{ c.label }}</th>
             }
           </tr>
         </thead>
         <tbody role="rowgroup">
-          @for (r of rows(); track keyOf(r, $index)) {
+          @for (r of rows(); track keyOf(r, $index); let i = $index) {
             <tr role="row">
               @for (c of columns(); track c.key) {
                 @if (c.primary) {
-                  <th role="rowheader" scope="row" class="primary" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric">
+                  <th role="rowheader" scope="row" class="primary" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.hide-mobile]="c.hideOnMobile">
                     @if (linkOf(r); as href) {
-                      <a class="row-link" [href]="href"><ng-container *ngTemplateOutlet="cell; context: { r, c }" /></a>
+                      <a class="row-link" [href]="href" (click)="linkClick(href, $event)"><ng-container *ngTemplateOutlet="cell; context: { r, c, i }" /></a>
                     } @else {
-                      <ng-container *ngTemplateOutlet="cell; context: { r, c }" />
+                      <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
                     }
                   </th>
                 } @else {
-                  <td role="cell" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading">
-                    <ng-container *ngTemplateOutlet="cell; context: { r, c }" />
+                  <td role="cell" [attr.data-label]="c.label" [attr.data-align]="alignOf(c)" [class.num]="c.numeric" [class.leading]="c.leading" [class.hide-mobile]="c.hideOnMobile">
+                    <ng-container *ngTemplateOutlet="cell; context: { r, c, i }" />
                   </td>
                 }
               }
             </tr>
           } @empty {
             <tr role="row" class="empty">
-              <td role="cell" [attr.colspan]="columns().length">{{ emptyText() }}</td>
+              <td role="cell" [attr.colspan]="columns().length">{{ emptyTextText() }}</td>
             </tr>
           }
         </tbody>
       </table>
     </div>
 
-    <ng-template #cell let-r="r" let-c="c">
+    <ng-template #cell let-r="r" let-c="c" let-i="i">
       @if (templates().get(c.key); as tpl) {
-        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c }" />
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: r, value: valueOf(r, c), column: c, index: i }" />
       } @else {
         {{ valueOf(r, c) }}
       }
@@ -105,6 +115,7 @@ export class TableCell<T = unknown> {
   host: { class: 'ui-table' },
   styles: `
     :host { display: block; min-width: 0; color: var(--ui-text); }
+    @media (max-width: 639.98px) { .hide-mobile { display: none !important; } }
     .scroll { overflow-x: auto; border-radius: inherit; }
     .scroll:focus-visible { outline-offset: -3px; }
     table { width: 100%; border-collapse: collapse; font-size: var(--ui-font-size-sm); line-height: 1.25rem; }
@@ -177,7 +188,8 @@ export class TableCell<T = unknown> {
     }
   `,
 })
-export class Table<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class Table<T = any> {
   readonly columns = input.required<readonly TableColumn<T>[]>();
   readonly rows = input.required<readonly T[]>();
   /** didascalia (obbligatoria per l'accessibilità), sr-only di default */
@@ -186,11 +198,14 @@ export class Table<T = Record<string, unknown>> {
   readonly stack = input(false, { transform: booleanAttribute });
   /** chiave di riga: nome di proprietà o funzione (default: indice) */
   readonly rowKey = input<keyof T | ((row: T) => unknown)>();
-  /** URL della riga: rende la riga navigabile con un solo link esteso */
-  readonly rowLink = input<(row: T) => string | null | undefined>();
-  readonly emptyText = input('Nessun dato');
+  /** URL della riga (o i suoi segmenti, uniti con `/`): rende la riga navigabile con un solo link esteso */
+  readonly rowLink = input<(row: T) => string | readonly (string | number)[] | null | undefined>();
+  protected readonly uiLabels = injectUiLabels();
+  readonly emptyText = input<string>();
+  protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().tableEmpty);
 
   protected readonly captionId = uniqueId('ui-table-caption');
+  protected readonly linkClick = injectLinkClick();
   private readonly cells = contentChildren(TableCell);
   protected readonly templates = computed(() => new Map(this.cells().map((c) => [c.key(), c.template as TemplateRef<TableCellContext<unknown>>])));
 
@@ -203,7 +218,9 @@ export class Table<T = Record<string, unknown>> {
     return c.value ? c.value(row) : (row as Record<string, unknown>)[c.key];
   }
   protected linkOf(row: T): string | null {
-    return this.rowLink()?.(row) ?? null;
+    const link = this.rowLink()?.(row);
+    if (link == null) return null;
+    return typeof link === 'string' ? link : link.map(String).join('/').replace(/\/{2,}/g, '/');
   }
   protected alignOf(c: TableColumn<T>) {
     return c.align ?? (c.numeric ? 'end' : 'start');

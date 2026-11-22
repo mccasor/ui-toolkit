@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, effect, inject, input, computed } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 
 /**
  * Tab bar flottante in basso (0.75rem + safe-area), max 30rem, radius 1.5rem, glass strong + shadow-glass + shadow-float.
@@ -7,7 +8,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, effec
 @Component({
   selector: 'ui-tab-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<nav class="bar glass-strong" [attr.aria-label]="label()"><ng-content /></nav>`,
+  template: `<nav class="bar glass-strong" [attr.aria-label]="labelText()"><ng-content /></nav>`,
   host: { class: 'ui-tab-bar', '[class.ui-tab-bar--static]': '!fixed()' },
   styles: `
     :host {
@@ -32,7 +33,9 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, effec
 })
 export class TabBar {
   /** nome accessibile della navigazione */
-  readonly label = input('Navigazione principale');
+  protected readonly uiLabels = injectUiLabels();
+  readonly label = input<string>();
+  protected readonly labelText = computed(() => this.label() ?? this.uiLabels().tabBar);
   /** false = in flusso (anteprime, storie) */
   readonly fixed = input(true, { transform: booleanAttribute });
 }

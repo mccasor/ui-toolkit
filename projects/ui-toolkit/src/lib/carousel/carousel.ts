@@ -14,6 +14,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { uniqueId } from '../util/id';
 import { prefersReducedMotion } from '../util/media';
 
@@ -43,19 +44,19 @@ import { prefersReducedMotion } from '../util/media';
     @if (arrows() || dots()) {
       <div class="controls">
         @if (arrows()) {
-          <button type="button" class="ui-btn ui-btn--secondary ui-btn--icon ui-btn--sm" [attr.aria-controls]="trackId" [attr.aria-label]="prevLabel()" [disabled]="index() <= 0" (click)="goTo(index() - 1)">
+          <button type="button" class="ui-btn ui-btn--secondary ui-btn--icon ui-btn--sm" [attr.aria-controls]="trackId" [attr.aria-label]="prevLabelText()" [disabled]="index() <= 0" (click)="goTo(index() - 1)">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6" /></svg>
           </button>
         }
         @if (dots()) {
-          <div class="dots" role="group" [attr.aria-label]="dotsLabel()">
+          <div class="dots" role="group" [attr.aria-label]="dotsLabelText()">
             @for (d of dotList(); track $index) {
               <button type="button" class="dot" [attr.aria-label]="'Vai alla slide ' + ($index + 1)" [attr.aria-current]="$index === index() ? 'true' : null" [attr.aria-controls]="trackId" (click)="goTo($index)"></button>
             }
           </div>
         }
         @if (arrows()) {
-          <button type="button" class="ui-btn ui-btn--secondary ui-btn--icon ui-btn--sm" [attr.aria-controls]="trackId" [attr.aria-label]="nextLabel()" [disabled]="index() >= count() - 1" (click)="goTo(index() + 1)">
+          <button type="button" class="ui-btn ui-btn--secondary ui-btn--icon ui-btn--sm" [attr.aria-controls]="trackId" [attr.aria-label]="nextLabelText()" [disabled]="index() >= count() - 1" (click)="goTo(index() + 1)">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" /></svg>
           </button>
         }
@@ -128,9 +129,13 @@ export class Carousel {
   /** imposta role/aria sulle slide (group "n di m"); disattivalo se le slide hanno già una semantica (es. tabpanel) */
   readonly decorateSlides = input(true, { transform: booleanAttribute });
   readonly index = model(0);
-  readonly prevLabel = input('Slide precedente');
-  readonly nextLabel = input('Slide successiva');
-  readonly dotsLabel = input('Scegli la slide');
+  protected readonly uiLabels = injectUiLabels();
+  readonly prevLabel = input<string>();
+  protected readonly prevLabelText = computed(() => this.prevLabel() ?? this.uiLabels().carouselPrev);
+  readonly nextLabel = input<string>();
+  protected readonly nextLabelText = computed(() => this.nextLabel() ?? this.uiLabels().carouselNext);
+  readonly dotsLabel = input<string>();
+  protected readonly dotsLabelText = computed(() => this.dotsLabel() ?? this.uiLabels().carouselDots);
   readonly trackLabel = input<string | null>(null);
 
   protected readonly trackId = uniqueId('ui-carousel-track');
@@ -205,7 +210,9 @@ export class Carousel {
     const target = Math.max(0, Math.min(slides.length - 1, i));
     const track = this.track().nativeElement;
     const left = slides[target].offsetLeft - (slides[0]?.offsetLeft ?? 0);
-    track.scrollTo({ left, behavior: instant || prefersReducedMotion() ? 'auto' : 'smooth' });
+    // scrollTo manca in jsdom e nei vecchi browser
+    if (typeof track.scrollTo === 'function') track.scrollTo({ left, behavior: instant || prefersReducedMotion() ? 'auto' : 'smooth' });
+    else track.scrollLeft = left;
     this.settledIndex = target;
     if (this.index() !== target) this.index.set(target);
   }

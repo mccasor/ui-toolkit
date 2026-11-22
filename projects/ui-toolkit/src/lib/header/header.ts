@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 
 /**
  * Header di app: sticky, glass a tutta larghezza senza radius, solo bordo inferiore, ombra 0 8px 24px -18px.
@@ -12,7 +13,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (skipTo()) {
-      <a class="ui-skip-link" [href]="skipTo()">{{ skipLabel() }}</a>
+      <a class="ui-skip-link" [href]="skipTo()">{{ skipLabelText() }}</a>
     }
     <header class="bar glass">
       <div class="inner">
@@ -107,5 +108,7 @@ export class Header {
   readonly homeLabel = input<string>();
   /** destinazione dello skip link (es. "#main"); vuoto = nessuno skip link */
   readonly skipTo = input<string>();
-  readonly skipLabel = input('Vai al contenuto');
+  protected readonly uiLabels = injectUiLabels();
+  readonly skipLabel = input<string>();
+  protected readonly skipLabelText = computed(() => this.skipLabel() ?? this.uiLabels().skipToContent);
 }

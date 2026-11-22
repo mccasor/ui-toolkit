@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, Directive, booleanAttribute, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Directive, booleanAttribute, computed, inject, input, linkedSignal, output, resource } from '@angular/core';
 import { avatarColors, initials } from 'ui-toolkit/tokens';
+import { UI_IMAGE_RESOLVER } from '../util/image-resolver';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -17,24 +18,43 @@ abstract class AvatarBase {
   /** decorativo: nascosto alle tecnologie assistive (es. accanto al nome già scritto) */
   readonly decorative = input(false, { transform: booleanAttribute });
 
-  protected readonly failed = signal(false);
-  protected readonly showImage = computed(() => !!this.src() && !this.failed());
+  /** emesso quando l'immagine non si carica (si vedono le iniziali) */
+  readonly imageError = output<void>();
+
+  private readonly resolver = inject(UI_IMAGE_RESOLVER, { optional: true });
+  /** legge l'immagine di una `src` gestita dal resolver dell'app, se non è già in cache */
+  private readonly resolved = resource({
+    params: () => {
+      const src = this.src();
+      return src && this.resolver?.handles(src) && this.resolver.peek(src) === undefined ? src : undefined;
+    },
+    loader: ({ params }) => this.resolver!.resolve(params),
+  });
+  /** cosa mostra l'<img>: `src`, o l'immagine risolta dall'app ('' finché non arriva) */
+  protected readonly imageSrc = computed(() => {
+    const src = this.src();
+    if (!src) return '';
+    if (!this.resolver?.handles(src)) return src;
+    this.resolved.status();
+    return this.resolver.peek(src) ?? '';
+  });
+  /** si azzera a ogni nuova sorgente: un URL nuovo si ritenta */
+  protected readonly failed = linkedSignal({ source: this.src, computation: () => false });
+  protected readonly showImage = computed(() => !!this.imageSrc() && !this.failed());
+
+  protected onImageError(): void {
+    this.failed.set(true);
+    this.imageError.emit();
+  }
   protected readonly colors = computed(() => avatarColors(this.name(), this.color()));
   protected readonly letters = computed(() => initials(this.name()));
   protected readonly dimension = computed(() => AVATAR_SIZES[this.size()]);
 
-  constructor() {
-    // nuova sorgente → ritenta l'immagine
-    effect(() => {
-      this.src();
-      this.failed.set(false);
-    });
-  }
 }
 
 const TEMPLATE = `
   @if (showImage()) {
-    <img [src]="src()" alt="" (error)="failed.set(true)" />
+    <img [src]="imageSrc()" alt="" (error)="onImageError()" />
   } @else {
     <span class="initials" aria-hidden="true">{{ letters() }}</span>
   }

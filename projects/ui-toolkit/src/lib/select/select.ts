@@ -27,13 +27,15 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { Avatar, TeamLogo } from '../avatar/avatar';
+import { Icon } from '../icon/icon';
 import { UI_FIELD } from '../field/field';
 import { uniqueId } from '../util/id';
 import { mediaQuery } from '../util/media';
 import { applyThemeContext } from '../util/theme-context';
 
-export interface SelectOption<T = unknown> {
+export interface SelectOption<T = string> {
   value: T;
   label: string;
   /** riga secondaria */
@@ -42,7 +44,9 @@ export interface SelectOption<T = unknown> {
   group?: string;
   disabled?: boolean;
   /** avatar/logo a sinistra: immagine o iniziali con colore (on calcolato) */
-  avatar?: { name?: string; src?: string; color?: string | null; shape?: 'circle' | 'square' };
+  avatar?: { name?: string; src?: string | null; color?: string | null; shape?: 'circle' | 'square' };
+  /** icona di `<ui-icon>` a sinistra (se non c'è l'avatar) */
+  icon?: string;
 }
 
 interface Group<T> {
@@ -68,7 +72,7 @@ const normalize = (s: string) =>
  */
 @Component({
   selector: 'ui-select',
-  imports: [NgTemplateOutlet, Avatar, TeamLogo],
+  imports: [NgTemplateOutlet, Avatar, TeamLogo, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -80,40 +84,48 @@ const normalize = (s: string) =>
       [id]="triggerId()"
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="open() ? listboxId : null"
-      [attr.aria-activedescendant]="open() && !searchable() && activeIndex() >= 0 ? optionId(activeIndex()) : null"
+      [attr.aria-activedescendant]="open() && !searchOn() && activeIndex() >= 0 ? optionId(activeIndex()) : null"
       [attr.aria-labelledby]="labelledBy()"
       [attr.aria-label]="field ? null : ariaLabel() ?? null"
       [attr.aria-describedby]="field?.describedBy() ?? null"
       [attr.aria-invalid]="invalid() || field?.invalid() ? 'true' : null"
-      [attr.aria-required]="field?.required() ? 'true' : null"
+      [attr.aria-required]="isRequired() ? 'true' : null"
       [disabled]="disabled()"
       (click)="toggle()"
       (keydown)="onTriggerKeydown($event)"
+      (blur)="!open() && touch.emit()"
     >
       <span class="value" [id]="valueId">
         @if (selected(); as s) {
           @if (s.avatar) {
             <ng-container *ngTemplateOutlet="avatarTpl; context: { $implicit: s }" />
+          } @else if (s.icon) {
+            <ui-icon [name]="s.icon" [size]="18" />
           }
           <span class="label">{{ s.label }}</span>
         } @else {
-          <span class="placeholder">{{ placeholder() }}</span>
+          <span class="placeholder">{{ placeholder() ?? uiLabels().selectPlaceholder }}</span>
         }
       </span>
-      <svg class="chevron" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6" /></svg>
+      <ui-icon class="chevron" name="chevron-down" />
     </button>
+    @if (clearable() && selected() && !disabled()) {
+      <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm clear" [attr.aria-label]="uiLabels().clear" (click)="clear()">
+        <ui-icon name="close" [size]="16" />
+      </button>
+    }
 
     <ng-template #panelTpl>
       <div class="panel" [class.sheet]="sheet()" (keydown)="onPanelKeydown($event)">
         @if (sheet()) {
           <div class="sheet-head">
             <span class="sheet-title" aria-hidden="true">{{ title() }}</span>
-            <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm" aria-label="Chiudi" (click)="close(true)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            <button type="button" class="ui-btn ui-btn--ghost ui-btn--icon ui-btn--sm" [attr.aria-label]="uiLabels().close" (click)="close(true)">
+              <ui-icon name="close" />
             </button>
           </div>
         }
-        @if (searchable()) {
+        @if (searchOn()) {
           <input
             #search
             class="ui-input search"
@@ -124,14 +136,14 @@ const normalize = (s: string) =>
             autocomplete="off"
             [attr.aria-controls]="listboxId"
             [attr.aria-activedescendant]="activeIndex() >= 0 ? optionId(activeIndex()) : null"
-            [attr.aria-label]="searchLabel()"
-            [placeholder]="searchLabel()"
+            [attr.aria-label]="searchLabelText()"
+            [placeholder]="searchPlaceholder() ?? searchLabelText()"
             [value]="query()"
             (input)="onQuery($any($event.target).value)"
           />
         }
         @if (filtered().length === 0) {
-          <p class="empty" role="status">{{ emptyText() }}</p>
+          <p class="empty" role="status">{{ emptyTextText() }}</p>
         }
         <div class="list" role="listbox" [id]="listboxId" [attr.aria-labelledby]="labelledBy()" [attr.aria-label]="field ? null : ariaLabel() ?? null">
           @for (g of groups(); track g.id) {
@@ -165,6 +177,8 @@ const normalize = (s: string) =>
       >
         @if (o.avatar) {
           <ng-container *ngTemplateOutlet="avatarTpl; context: { $implicit: o }" />
+        } @else if (o.icon) {
+          <ui-icon [name]="o.icon" [size]="18" />
         }
         <span class="text">
           <span class="label">{{ o.label }}</span>
@@ -173,7 +187,7 @@ const normalize = (s: string) =>
           }
         </span>
         @if (isSelected(o)) {
-          <svg class="check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+          <ui-icon class="check" name="check" />
         }
       </div>
     </ng-template>
@@ -186,9 +200,11 @@ const normalize = (s: string) =>
       }
     </ng-template>
   `,
-  host: { class: 'ui-select' },
+  host: { class: 'ui-select', '[class.ui-select--clearable]': 'clearable()' },
   styles: `
-    :host { display: block; min-width: 0; }
+    :host { display: block; min-width: 0; position: relative; }
+    :host(.ui-select--clearable) .trigger { padding-inline-end: 3.75rem; }
+    .clear { position: absolute; inset-inline-end: 2.25rem; top: 50%; transform: translateY(-50%); }
     .trigger {
       display: flex;
       align-items: center;
@@ -254,19 +270,33 @@ const normalize = (s: string) =>
     .empty { margin: 0; padding: 0.75rem; font-size: var(--ui-font-size-sm); color: var(--ui-text-muted); }
   `,
 })
-export class Select<T = unknown> {
+export class Select<T = string> {
   readonly options = input.required<readonly SelectOption<T>[]>();
   readonly value = model<T | null>(null);
-  readonly placeholder = input('Seleziona…');
+  readonly placeholder = input<string>();
   /** Nome accessibile se non è dentro un `ui-field`. */
   readonly ariaLabel = input<string>();
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly invalid = input(false, { transform: booleanAttribute });
   /** Oltre questo numero di opzioni compare la ricerca interna. */
   readonly searchThreshold = input(8, { transform: numberAttribute });
-  readonly searchLabel = input('Cerca');
-  readonly emptyText = input('Nessun risultato');
+  protected readonly uiLabels = injectUiLabels();
+  readonly searchLabel = input<string>();
+  protected readonly searchLabelText = computed(() => this.searchLabel() ?? this.uiLabels().search);
+  readonly emptyText = input<string>();
+  protected readonly emptyTextText = computed(() => this.emptyText() ?? this.uiLabels().noResults);
   readonly compareWith = input<(a: T | null, b: T | null) => boolean>((a, b) => a === b);
+  /** forza la ricerca interna (true/false) invece della soglia `searchThreshold` */
+  readonly searchable = input<boolean | undefined>(undefined);
+  /** segnaposto della ricerca (default: l'etichetta della ricerca) */
+  readonly searchPlaceholder = input<string>();
+  /** bottone per svuotare la scelta (valore null) */
+  readonly clearable = input(false, { transform: booleanAttribute });
+  readonly required = input(false, { transform: booleanAttribute });
+  /** id del trigger fuori da un `ui-field` (es. per una `<label for>` esterna) */
+  readonly controlId = input<string>();
+  /** emesso quando l'utente lascia il controllo a pannello chiuso (es. per segnare il campo come toccato) */
+  readonly touch = output<void>();
   readonly opened = output<void>();
   readonly closed = output<void>();
 
@@ -281,7 +311,8 @@ export class Select<T = unknown> {
   protected readonly listboxId = uniqueId('ui-select-listbox');
   protected readonly valueId = uniqueId('ui-select-value');
   private readonly ownId = uniqueId('ui-select');
-  protected readonly triggerId = computed(() => this.field?.controlId() ?? this.ownId);
+  protected readonly triggerId = computed(() => this.controlId() ?? this.field?.controlId() ?? this.ownId);
+  protected readonly isRequired = computed(() => this.required() || !!this.field?.required());
   protected readonly labelledBy = computed(() => (this.field ? this.field.labelId : null));
 
   protected readonly open = signal(false);
@@ -293,7 +324,7 @@ export class Select<T = unknown> {
   private typeahead = '';
   private typeaheadTimer: ReturnType<typeof setTimeout> | undefined;
 
-  protected readonly searchable = computed(() => this.options().length > this.searchThreshold());
+  protected readonly searchOn = computed(() => this.searchable() ?? this.options().length > this.searchThreshold());
   protected readonly selected = computed(() => this.options().find((o) => this.compareWith()(o.value, this.value())) ?? null);
   protected title() {
     const id = this.labelledBy();
@@ -347,6 +378,16 @@ export class Select<T = unknown> {
     this.open.set(true);
     this.attach();
     this.opened.emit();
+  }
+
+  /** Porta il focus sul trigger. */
+  focus() {
+    this.triggerRef().nativeElement.focus();
+  }
+
+  protected clear() {
+    this.value.set(null);
+    this.focus();
   }
 
   close(restoreFocus = true) {
@@ -448,7 +489,7 @@ export class Select<T = unknown> {
         if (e.key === 'ArrowUp' && !this.selected()) this.move('last');
       } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
         this.show();
-        if (!this.searchable()) this.onTypeahead(e.key);
+        if (!this.searchOn()) this.onTypeahead(e.key);
       }
       return;
     }

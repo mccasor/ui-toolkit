@@ -3,6 +3,8 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  InjectionToken,
+  booleanAttribute,
   afterNextRender,
   isDevMode,
   computed,
@@ -13,6 +15,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { injectUiLabels } from '../util/labels';
 import { CHART_MAX_SERIES, chartSeries, relativeLuminance, withAlpha, type Mode } from 'ui-toolkit/tokens';
 import { prefersReducedMotion } from '../util/media';
 import { uniqueId } from '../util/id';
@@ -32,11 +35,17 @@ export interface ChartData {
   datasets: ChartDataset[];
 }
 
+/** Costruttore Chart.js (o un sostituto nei test). */
+export type ChartConstructor = new (el: HTMLCanvasElement, cfg: unknown) => ChartInstance;
+
+/** Caricamento di Chart.js: di default `import('chart.js/auto')`; nei test l'app può fornire un finto costruttore. */
+export const UI_CHART_LOADER = new InjectionToken<() => Promise<ChartConstructor>>('UI_CHART_LOADER');
+
 interface ActiveElement {
   datasetIndex: number;
   index: number;
 }
-interface ChartInstance {
+export interface ChartInstance {
   data: ChartData;
   options: Record<string, unknown>;
   update(mode?: string): void;
@@ -45,6 +54,9 @@ interface ChartInstance {
   setActiveElements(els: ActiveElement[]): void;
   tooltip?: { setActiveElements(els: ActiveElement[], pos: { x: number; y: number }): void };
 }
+
+const defaultLoader = async (): Promise<ChartConstructor> =>
+  ((await import('chart.js/auto')) as unknown as { default: ChartConstructor }).default;
 
 /** Tratteggi per serie (linee): con la rampa di luminosità la serie non è mai distinta dal solo colore. */
 const DASHES: number[][] = [[], [6, 4], [2, 3]];
@@ -75,15 +87,18 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
         (blur)="clearActive()"
       ></canvas>
     </div>
-    <span class="sr-only" [id]="hintId">Usa le frecce sinistra e destra per scorrere i valori.</span>
+    <span class="sr-only" [id]="hintId">{{ uiLabels().chartKeyboardHint }}</span>
     <span class="sr-only" aria-live="polite">{{ announcement() }}</span>
-    <table class="sr-only">
+    @if (dataTable()) {
+    <!-- sr-only sul contenitore: una tabella ignora width: 1px e allargherebbe la pagina -->
+    <div class="sr-only">
+    <table>
       <caption>{{ ariaLabel() }}</caption>
       <thead>
         <tr>
-          <th scope="col">{{ categoryLabel() }}</th>
+          <th scope="col">{{ categoryLabelText() }}</th>
           @for (d of data().datasets; track $index) {
-            <th scope="col">{{ d.label ?? 'Serie ' + ($index + 1) }}</th>
+            <th scope="col">{{ d.label ?? uiLabels().chartSeries + ' ' + ($index + 1) }}</th>
           }
         </tr>
       </thead>
@@ -98,6 +113,10 @@ const CATEGORICAL = ['line', 'bar', 'radar'];
         }
       </tbody>
     </table>
+    </div>
+    }
+    <!-- contenuto accessibile dell'app (es. una tabella già formattata, con dataTable=false) -->
+    <ng-content />
   `,
   host: { class: 'ui-chart', '[attr.data-mode]': 'mode()', '[attr.aria-busy]': 'ready() ? null : "true"' },
   styles: `
@@ -114,8 +133,12 @@ export class Chart {
   /** descrizione del grafico per gli screen reader (obbligatoria) */
   readonly ariaLabel = input.required<string>();
   readonly height = input('12rem');
+  /** tabella sr-only con i dati; da spegnere se la pagina mostra già gli stessi dati, o ne proietta una sua (contenuto di `<ui-chart>`) */
+  readonly dataTable = input(true, { transform: booleanAttribute });
   /** intestazione della colonna categorie nella tabella sr-only */
-  readonly categoryLabel = input('Categoria');
+  protected readonly uiLabels = injectUiLabels();
+  readonly categoryLabel = input<string>();
+  protected readonly categoryLabelText = computed(() => this.categoryLabel() ?? this.uiLabels().chartCategory);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
@@ -127,6 +150,7 @@ export class Chart {
   private nf = new Intl.NumberFormat(locale());
   private readonly themeTick = signal(0);
   private chart: ChartInstance | null = null;
+  private readonly loader = inject(UI_CHART_LOADER, { optional: true });
   private ChartCtor: (new (el: HTMLCanvasElement, cfg: unknown) => ChartInstance) | null = null;
   private builtType: ChartKind | null = null;
 
@@ -135,8 +159,7 @@ export class Chart {
   constructor() {
     const destroy = inject(DestroyRef);
     afterNextRender(async () => {
-      const mod = (await import('chart.js/auto')) as unknown as { default: new (el: HTMLCanvasElement, cfg: unknown) => ChartInstance };
-      this.ChartCtor = mod.default;
+      this.ChartCtor = await (this.loader ?? defaultLoader)();
       this.render();
       this.ready.set(true);
     });
@@ -148,11 +171,11 @@ export class Chart {
       mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class', 'data-contrast', 'data-motion'] });
       const scope = this.host.closest('.bo, [data-theme]');
       if (scope && scope !== document.documentElement) mo.observe(scope, { attributes: true, attributeFilter: ['data-theme', 'class'] });
-      const mql = matchMedia('(prefers-color-scheme: dark)');
-      mql.addEventListener('change', bump);
+      const mql = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+      mql?.addEventListener('change', bump);
       destroy.onDestroy(() => {
         mo.disconnect();
-        mql.removeEventListener('change', bump);
+        mql?.removeEventListener('change', bump);
         this.chart?.destroy();
       });
     });
