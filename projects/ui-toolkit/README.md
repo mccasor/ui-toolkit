@@ -13,14 +13,12 @@ Documentazione e storie: Storybook del repository ([mccasor/ui-toolkit](https://
 Il pacchetto non è su npm: si installa dal tarball allegato alle [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
 
 ```bash
-npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.0/ui-toolkit-0.1.0.tgz
-# peer dependency (se non già presenti)
-npm i @angular/cdk@^22.3.0
-# solo se usi <ui-chart>
-npm i chart.js@^4.4.0
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.1/ui-toolkit-0.1.1.tgz
 ```
 
-Requisiti: Angular ≥ 22.3 (`@angular/core`, `@angular/common`, `@angular/cdk`).
+Basta questo comando: `chart.js` è una dipendenza del pacchetto (caricata on demand solo se usi `<ui-chart>`), e `@angular/cdk` è una peer dependency che npm ≥ 7 e pnpm installano in automatico, in un'unica copia condivisa con l'app. Con Yarn aggiungila a mano: `yarn add @angular/cdk@^22.3.0`.
+
+Requisiti: Angular ≥ 22.3.
 
 ## Stili
 
@@ -91,5 +89,5 @@ chartSeries('dark');    // rampa delle serie dei grafici
 ## Note
 
 - I componenti usano solo token, nessun colore letterale: per personalizzare ridefinisci le custom properties `--ui-*`.
-- `<ui-chart>` carica `chart.js` on demand: installalo solo se lo usi.
+- `<ui-chart>` carica `chart.js` on demand: se non usi grafici non finisce nel bundle iniziale.
 - I font sono distribuiti con le loro licenze OFL in `styles/fonts/`.

@@ -1,11 +1,10 @@
 {
   "name": "ui-toolkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "peerDependencies": {
     "@angular/common": "^22.3.0",
     "@angular/core": "^22.3.0",
-    "@angular/cdk": "^22.3.0",
-    "chart.js": "^4.4.0"
+    "@angular/cdk": "^22.3.0"
   },
   "sideEffects": [
     "*.css"
@@ -17,11 +16,6 @@
   },
   "description": "Design system C85: componenti Angular + token (ui-toolkit/tokens), temi light, dark e backoffice.",
   "license": "UNLICENSED",
-  "peerDependenciesMeta": {
-    "chart.js": {
-      "optional": true
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mccasor/ui-toolkit.git"
@@ -36,5 +30,8 @@
     "components",
     "tokens",
     "c85"
-  ]
+  ],
+  "dependencies": {
+    "chart.js": "^4.4.0"
+  }
 }

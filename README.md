@@ -26,10 +26,10 @@ npm run pack             # build + tarball installabile in release/ui-toolkit-<v
 Il pacchetto non è su npm: ogni versione è un tarball allegato a una [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
 
 ```bash
-npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.0/ui-toolkit-0.1.0.tgz
-npm i @angular/cdk@^22.3.0          # peer dependency
-npm i chart.js@^4.4.0               # solo se usi <ui-chart>
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.1/ui-toolkit-0.1.1.tgz
 ```
+
+Un solo comando: `chart.js` è una dipendenza del pacchetto e `@angular/cdk` (peer dependency) viene installata in automatico da npm ≥ 7 e pnpm. Con Yarn aggiungila a mano (`yarn add @angular/cdk@^22.3.0`).
 
 Poi, nel CSS globale dell'app:
 

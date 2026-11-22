@@ -22,6 +22,9 @@
                 "input": "projects/ui-toolkit/styles",
                 "output": "styles"
               }
+            ],
+            "allowedNonPeerDependencies": [
+              "chart.js"
             ]
           },
           "configurations": {
