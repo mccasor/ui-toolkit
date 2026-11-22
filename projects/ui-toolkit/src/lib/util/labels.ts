@@ -20,6 +20,23 @@ export interface UiLabels {
   image: string;
   imageUpload: string;
   imageRemove: string;
+  /** `{label}` = etichetta del campo */
+  imageSource: string;
+  imageAddress: string;
+  imageModeFile: string;
+  imageModeUrl: string;
+  imageChoose: string;
+  imageChange: string;
+  imageDrop: string;
+  imageErrorNotImage: string;
+  imageErrorUnreadable: string;
+  imageErrorNoCanvas: string;
+  imageErrorTooLarge: string;
+  imageErrorGeneric: string;
+  imageErrorLoadFailed: string;
+  imageErrorInvalidUrl: string;
+  /** `{max}` = caratteri ammessi */
+  imageErrorValueTooLarge: string;
   color: string;
   colorNone: string;
   skipToContent: string;
@@ -47,6 +64,21 @@ export const UI_LABELS_IT: UiLabels = {
   image: 'Immagine',
   imageUpload: 'Carica immagine',
   imageRemove: 'Rimuovi',
+  imageSource: 'Origine: {label}',
+  imageAddress: 'Indirizzo: {label}',
+  imageModeFile: 'Carica file',
+  imageModeUrl: 'URL',
+  imageChoose: 'Scegli immagine',
+  imageChange: 'Cambia immagine',
+  imageDrop: 'o trascinala qui',
+  imageErrorNotImage: "Il file scelto non è un'immagine.",
+  imageErrorUnreadable: "Impossibile leggere l'immagine. Prova con un altro file.",
+  imageErrorNoCanvas: "Il browser non riesce a elaborare l'immagine.",
+  imageErrorTooLarge: "Immagine troppo pesante anche dopo il ridimensionamento: prova con un'immagine più semplice.",
+  imageErrorGeneric: "Impossibile elaborare l'immagine. Prova con un altro file.",
+  imageErrorLoadFailed: "Impossibile caricare l'immagine da questo indirizzo.",
+  imageErrorInvalidUrl: 'Inserisci un URL valido (http o https)',
+  imageErrorValueTooLarge: 'Immagine troppo pesante: massimo {max} caratteri.',
   color: 'Colore',
   colorNone: 'Nessuno',
   skipToContent: 'Vai al contenuto',
