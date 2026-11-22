@@ -10,7 +10,8 @@
     "tokens": "tsx scripts/build-tokens.ts",
     "test:tokens": "vitest run --project=tokens",
     "test:storybook": "vitest run --project=storybook",
-    "icons": "tsx scripts/build-story-icons.ts"
+    "icons": "tsx scripts/build-story-icons.ts",
+    "pack": "npm run build && mkdir -p release && npm pack ./dist/ui-toolkit --pack-destination ./release"
   },
   "private": true,
   "packageManager": "npm@10.9.8",

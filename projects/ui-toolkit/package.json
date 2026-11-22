@@ -15,11 +15,26 @@
     "./tokens": "./tokens/src/public-api.ts",
     "./styles/*": "./styles/*"
   },
-  "description": "C85 glass design system: componenti Angular + token (ui-toolkit/tokens).",
+  "description": "Design system C85: componenti Angular + token (ui-toolkit/tokens), temi light, dark e backoffice.",
   "license": "UNLICENSED",
   "peerDependenciesMeta": {
     "chart.js": {
       "optional": true
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mccasor/ui-toolkit.git"
+  },
+  "homepage": "https://github.com/mccasor/ui-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/mccasor/ui-toolkit/issues"
+  },
+  "keywords": [
+    "angular",
+    "design-system",
+    "components",
+    "tokens",
+    "c85"
+  ]
 }

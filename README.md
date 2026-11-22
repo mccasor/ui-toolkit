@@ -17,6 +17,33 @@ npm run storybook        # Storybook su :6006
 npm run test:tokens      # contrasti WCAG, CSS ≡ TS, deriveTone, font, lint colori
 npm run test:storybook   # ogni storia in Chromium headless con axe (a11y: error) + play
 npm test                 # tutto
+npm run icons            # rigenera le icone Phosphor usate dalle storie
+npm run pack             # build + tarball installabile in release/ui-toolkit-<versione>.tgz
 ```
 
-La pubblicazione del pacchetto è gestita dal proprietario del progetto (nessun registry configurato).
+## Installare in un altro progetto
+
+Il pacchetto non è su npm: ogni versione è un tarball allegato a una [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
+
+```bash
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.0/ui-toolkit-0.1.0.tgz
+npm i @angular/cdk@^22.3.0          # peer dependency
+npm i chart.js@^4.4.0               # solo se usi <ui-chart>
+```
+
+Poi, nel CSS globale dell'app:
+
+```css
+@import 'ui-toolkit/styles/fonts.css';
+@import 'ui-toolkit/styles/tokens.css';
+@import 'ui-toolkit/styles/base.css';
+```
+
+Uso dei componenti, temi e Tailwind: vedi il [README del pacchetto](projects/ui-toolkit/README.md).
+
+### Nuova versione
+
+1. aggiorna `version` in `projects/ui-toolkit/package.json`;
+2. `npm test && npm run pack`;
+3. `git tag vX.Y.Z && git push --tags`;
+4. `gh release create vX.Y.Z release/ui-toolkit-X.Y.Z.tgz --title "vX.Y.Z" --notes "…"`.

@@ -471,7 +471,7 @@ Decisioni aperte
 • Framework: Angular standalone (porting diretto da Torneo: signals, OnPush, zoneless, Angular CDK per overlay e dialog).
 • Tema backoffice: incluso nella libreria, come terzo tema accanto a light e dark.
 • Icone: fuori scope per ora, si definiscono in un secondo momento. I componenti accettano un'icona tramite slot o prop, senza dipendere da un set specifico.
-• Pubblicazione del pacchetto: fuori scope, gestita dal proprietario del progetto. Non configurare registry né pipeline di publish.
+• Pubblicazione del pacchetto: nessun registry né pipeline. Ogni versione è un tarball (npm run pack) allegato a una GitHub Release di mccasor/ui-toolkit e si installa con npm i <url del .tgz> (22 nov 2026).
 Registro modifiche
 22 nov 2026 — revisione con la skill Hallmark (audit + applicazione delle regole). Scostamenti voluti da Torneo:
 • Superfici: niente vetro sfocato (blur 18px saturate 170%) né mesh di gradienti; surface e surface-strong diventano opache (#FFFCF7 / #FFFFFF light, #1A1918 / #262422 dark), glass-edge diventa ink/bianco all'8%, ombre corte (blur ≤ 20px). Backdrop degli overlay senza blur. Card brand senza glow, fondo tinto piatto.

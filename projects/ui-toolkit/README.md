@@ -1,64 +1,95 @@
-# UiToolkit
+# ui-toolkit
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.3.0.
+Componenti Angular e design token del design system C85. Superfici calde e piene, un solo colore d'azione (arancio) e numeri in condensed. Tre temi: light, dark e backoffice.
 
-## Code scaffolding
+- `ui-toolkit`: componenti standalone (signal input/model, OnPush, compatibili zoneless).
+- `ui-toolkit/tokens`: token TypeScript e helper colore (contrasto, OKLCH, `deriveTone`, palette dei grafici).
+- `ui-toolkit/styles/*`: CSS dei token, base, font self-hosted e preset Tailwind 4.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Documentazione e storie: Storybook del repository ([mccasor/ui-toolkit](https://github.com/mccasor/ui-toolkit)).
 
-```bash
-ng generate component component-name
-```
+## Installazione
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the library, run:
+Il pacchetto non è su npm: si installa dal tarball allegato alle [GitHub Release](https://github.com/mccasor/ui-toolkit/releases).
 
 ```bash
-ng build ui-toolkit
+npm i https://github.com/mccasor/ui-toolkit/releases/download/v0.1.0/ui-toolkit-0.1.0.tgz
+# peer dependency (se non già presenti)
+npm i @angular/cdk@^22.3.0
+# solo se usi <ui-chart>
+npm i chart.js@^4.4.0
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
+Requisiti: Angular ≥ 22.3 (`@angular/core`, `@angular/common`, `@angular/cdk`).
 
-### Publishing the Library
+## Stili
 
-Once the project is built, you can publish your library by following these steps:
+Importa gli stili una volta sola, nel CSS globale dell'app (es. `src/styles.css`):
 
-1. Navigate to the `dist` directory:
-
-   ```bash
-   cd dist/ui-toolkit
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```css
+@import 'ui-toolkit/styles/fonts.css';   /* Manrope + Barlow Condensed, woff2 self-hosted */
+@import 'ui-toolkit/styles/tokens.css';  /* custom properties --ui-*, --bo-*, --brand-* */
+@import 'ui-toolkit/styles/base.css';    /* superfici, tipografia, bottoni, input, preferenze, stampa */
 ```
 
-## Running end-to-end tests
+Con Tailwind 4 aggiungi il preset dopo `tailwindcss`:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```css
+@import 'tailwindcss';
+@import 'ui-toolkit/styles/tokens.css';
+@import 'ui-toolkit/styles/tailwind-preset.css'; /* bg-surface, text-muted, text-accent, font-display, rounded-card… */
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+In alternativa a `@import`, puoi elencare i file in `angular.json` → `styles`:
+`node_modules/ui-toolkit/styles/fonts.css`, `…/tokens.css`, `…/base.css`.
 
-## Additional Resources
+## Uso
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```ts
+import { Component, inject, signal } from '@angular/core';
+import { Button, Field, FieldInput, GlassCard, ToastRegion, ToastService } from 'ui-toolkit';
+
+@Component({
+  selector: 'app-root',
+  imports: [Button, Field, FieldInput, GlassCard, ToastRegion],
+  template: `
+    <ui-glass-card>
+      <ui-field label="Nome squadra" required>
+        <input uiInput [value]="nome()" (input)="nome.set($any($event.target).value)" />
+      </ui-field>
+      <button uiButton variant="primary" (click)="salva()">Salva</button>
+    </ui-glass-card>
+    <ui-toast-region />
+  `,
+})
+export class App {
+  private readonly toast = inject(ToastService);
+  protected readonly nome = signal('');
+  protected salva() {
+    this.toast.success('Squadra salvata', this.nome());
+  }
+}
+```
+
+Componenti disponibili: Button, GlassCard, Badge, RoleChip, Spinner, Skeleton, Field/FieldInput, Segmented, Select, Dialog (DialogService: `open`, `confirm`, `choose`), Toast (ToastService + `<ui-toast-region>`), EmptyState, Stat, Table, Avatar, TeamLogo, Carousel, TabCarousel, Header, TabBar, Chart, ColorSwatches, ImageInput, StickyBar, Footer.
+
+### Temi
+
+- **light / dark**: senza attributo segue `prefers-color-scheme`; per forzarlo usa `<html data-theme="light">` o `data-theme="dark"`.
+- **backoffice**: aggiungi la classe `bo` al contenitore (piatto, compatto, desktop).
+- Preferenze forzabili su `<html>`: `data-motion="reduce"`, `data-transparency="reduce"`, `data-contrast="more"`.
+
+### Token in TypeScript
+
+```ts
+import { THEMES, contrastRatio, deriveTone, chartSeries } from 'ui-toolkit/tokens';
+
+deriveTone(255);        // fill / hover / border / text / soft per una nuova tinta
+chartSeries('dark');    // rampa delle serie dei grafici
+```
+
+## Note
+
+- I componenti usano solo token, nessun colore letterale: per personalizzare ridefinisci le custom properties `--ui-*`.
+- `<ui-chart>` carica `chart.js` on demand: installalo solo se lo usi.
+- I font sono distribuiti con le loro licenze OFL in `styles/fonts/`.

@@ -50,3 +50,5 @@ storybook-static
 /storybook-static
 debug-storybook.log
 *storybook.log
+/release
+*.tgz
