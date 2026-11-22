@@ -51,4 +51,61 @@ describe('Select', () => {
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(trigger.textContent).toContain('Gamma');
   });
+
+  describe('estensioni per le app', () => {
+    @Component({
+      imports: [Select],
+      template: `<ui-select ariaLabel="Squadra" controlId="team-pick" [options]="opts" [(value)]="value" clearable required
+                            [searchable]="true" searchPlaceholder="Cerca squadra" (touch)="touched = touched + 1" />`,
+    })
+    class Ext {
+      opts: SelectOption<string>[] = [
+        { value: 'a', label: 'Leoni', icon: 'shield' },
+        { value: 'b', label: 'Tigri', avatar: { src: null, color: '#C62828', shape: 'square' } },
+      ];
+      value = signal<string | null>('a');
+      touched = 0;
+    }
+
+    async function setup() {
+      const f = TestBed.createComponent(Ext);
+      await f.whenStable();
+      const el: HTMLElement = f.nativeElement;
+      const trigger = el.querySelector('[role=combobox]') as HTMLButtonElement;
+      return { f, el, trigger };
+    }
+
+    it('controlId, required e icona dell\'opzione scelta', async () => {
+      const { trigger } = await setup();
+      expect(trigger.id).toBe('team-pick');
+      expect(trigger.getAttribute('aria-required')).toBe('true');
+      expect(trigger.querySelector('ui-icon')).not.toBeNull();
+    });
+
+    it('clearable: svuota il valore e torna sul trigger', async () => {
+      const { f, el, trigger } = await setup();
+      (el.querySelector('.clear') as HTMLButtonElement).click();
+      await f.whenStable();
+      expect(f.componentInstance.value()).toBeNull();
+      expect(document.activeElement).toBe(trigger);
+      expect(el.querySelector('.clear')).toBeNull();
+    });
+
+    it('searchable forzato con due opzioni e segnaposto', async () => {
+      const { f, trigger } = await setup();
+      trigger.click();
+      await f.whenStable();
+      const search = document.querySelector('.cdk-overlay-container input.search') as HTMLInputElement;
+      expect(search.placeholder).toBe('Cerca squadra');
+      trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      document.querySelector('.cdk-overlay-container')!.innerHTML = '';
+    });
+
+    it('touch quando si lascia il trigger', async () => {
+      const { f, trigger } = await setup();
+      trigger.focus();
+      trigger.blur();
+      expect(f.componentInstance.touched).toBe(1);
+    });
+  });
 });

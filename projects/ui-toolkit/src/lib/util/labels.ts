@@ -10,6 +10,7 @@ export interface UiLabels {
   carouselNext: string;
   carouselDots: string;
   search: string;
+  selectPlaceholder: string;
   noResults: string;
   clear: string;
   tableEmpty: string;
@@ -36,6 +37,7 @@ export const UI_LABELS_IT: UiLabels = {
   carouselNext: 'Slide successiva',
   carouselDots: 'Scegli la slide',
   search: 'Cerca',
+  selectPlaceholder: 'Seleziona…',
   noResults: 'Nessun risultato',
   clear: 'Svuota',
   tableEmpty: 'Nessun dato',
